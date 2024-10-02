@@ -27,16 +27,16 @@ public class PlayerAttack: MonoBehaviour {
     }
 
     private void Attack() {
-        // cooldownTimer = 0;
-        // print(playerInventory.EquipedWeapon.GetType() == typeof(RangeWeapon) ? "Range" : "Melee");
+        cooldownTimer = 0;
+        print(playerInventory.EquipedWeapon.GetType() == typeof(RangeWeapon) ? "Range" : "Melee");
 
-        // var weapon = GetWeapon(playerInventory.EquipedWeapon.GetType() == typeof(RangeWeapon));
-        // if (weapon == null) {
-        //     return;
-        // }
-        // weapon.transform.position = attackPoint.position;
+        var weapon = GetWeapon(playerInventory.EquipedWeapon.GetType() == typeof(RangeWeapon));
+        if (weapon == null) {
+            return;
+        }
+        weapon.transform.position = attackPoint.position;
         
-        // weapon.GetComponent<Weapon>().SetDirection(Mathf.Sign(transform.localScale.x));
+        weapon.GetComponent<Weapon>().SetDirection(Mathf.Sign(transform.localScale.x));
     }
 
     private GameObject GetWeapon(bool isRanged) {
