@@ -6,6 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D body;
     private BoxCollider2D boxCollider;
+    private Animator anim;
     [SerializeField] private LayerMask groundLayer;
     
     [SerializeField] private LayerMask wallLayer;
@@ -20,15 +21,24 @@ public class PlayerMovement : MonoBehaviour
     private void Awake() {
         body = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
+        anim = GetComponent<Animator>();
     }
 
     private void Update() {
         horizontalInput = Input.GetAxis("Horizontal");
         
         if (horizontalInput > 0.0f) {
-            transform.localScale = Vector3.one;
+            transform.localScale = new  Vector3(4, 4, 4);
         } else if (horizontalInput < -0.01f) {
-            transform.localScale = new Vector3(-1, 1, 1);
+            transform.localScale = new Vector3(-4, 4, 4);
+        }
+
+        print("horizontalInput = "  + horizontalInput);
+        anim.SetBool("Run", horizontalInput != 0);
+        if (isGrounded()) {
+            anim.SetBool("Jump", false);
+        } else {
+            anim.SetBool("Jump", true);
         }
 
 
@@ -56,6 +66,7 @@ public class PlayerMovement : MonoBehaviour
     private void Jump() {
         if ( isGrounded() ) {
             print("jump of the ground");
+            anim.SetBool("Jump", true);
             body.velocity = new Vector2(body.velocity.x, jumpPower);
         } else if ( isOnWall() && !isGrounded() ) {
             if (horizontalInput == 0) {
