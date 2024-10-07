@@ -1,13 +1,8 @@
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerAttack: MonoBehaviour {
-    [SerializeField] private float attackSwordCooldown;
-    [SerializeField] private float attackProjectileCooldown;
     [SerializeField] private float attackRange;
     [SerializeField] private Transform attackPoint;
-    [SerializeField] private GameObject[] rangedWeapons;
 
 
     private float cooldownTimer = Mathf.Infinity;
@@ -16,37 +11,17 @@ public class PlayerAttack: MonoBehaviour {
 
     private void Awake() {
         playerMovement = GetComponent<PlayerMovement>();
-        playerInventory = PlayerInventory.getInstance();
+        playerInventory = PlayerInventory.GetInstance();
     }
 
     private void Update() {
-        if (Input.GetMouseButton(0) && cooldownTimer > attackProjectileCooldown && playerMovement.canAttack()) {
+        if (Input.GetMouseButton(0) && cooldownTimer > playerInventory.EquippedWeapon.AttackCooldown) {
             Attack();
         }
-        cooldownTimer += Time.deltaTime;
     }
 
     private void Attack() {
-        cooldownTimer = 0;
-        print(playerInventory.EquipedWeapon.GetType() == typeof(RangeWeapon) ? "Range" : "Melee");
-
-        var weapon = GetWeapon(playerInventory.EquipedWeapon.GetType() == typeof(RangeWeapon));
-        if (weapon == null) {
-            return;
-        }
-        weapon.transform.position = attackPoint.position;
-        
-        weapon.GetComponent<Weapon>().SetDirection(Mathf.Sign(transform.localScale.x));
+        playerInventory.EquippedWeapon.Attack();
     }
 
-    private GameObject GetWeapon(bool isRanged) {
-        if (isRanged) {
-            for (int i = 0; i < rangedWeapons.Length; i++) {
-                if (!rangedWeapons[i].activeInHierarchy) {
-                    return rangedWeapons[i];
-                }
-            }
-        } 
-        return null;
-    }
 }
