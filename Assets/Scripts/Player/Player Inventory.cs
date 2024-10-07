@@ -18,7 +18,7 @@ public class PlayerInventory {
 
     private PlayerInventory()
     {
-        EquipedWeapon = new RangeWeapon();
+        EquipedWeapon = new MeleeWeapon();
     }
 
     public static PlayerInventory getInstance() {

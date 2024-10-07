@@ -5,9 +5,9 @@ using UnityEngine;
 public class PlayerAttack: MonoBehaviour {
     [SerializeField] private float attackSwordCooldown;
     [SerializeField] private float attackProjectileCooldown;
+    [SerializeField] private float attackRange;
     [SerializeField] private Transform attackPoint;
     [SerializeField] private GameObject[] rangedWeapons;
-    [SerializeField] private GameObject[] meleeWeapons;
 
 
     private float cooldownTimer = Mathf.Infinity;
@@ -46,13 +46,7 @@ public class PlayerAttack: MonoBehaviour {
                     return rangedWeapons[i];
                 }
             }
-        } else {
-            for (int i = 0; i < meleeWeapons.Length; i++) {
-                if (!meleeWeapons[i].activeInHierarchy) {
-                    return meleeWeapons[i];
-                }
-            }
-        }
+        } 
         return null;
     }
 }
