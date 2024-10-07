@@ -1,16 +1,16 @@
 public class Claws: Weapon {
+
     public Claws() {
         Name = "Claws";
         IsRemoveble = false;
         IsRanged = false;
         Damage = 20f;
         AttackRange = 2f;
-        AttackCooldown = 0.5f;
+        AttackCooldown = 1f;
     }
 
     public override void Attack()
     {
-        throw new System.NotImplementedException();
     }
 
     public override void UpgradeWeapon()

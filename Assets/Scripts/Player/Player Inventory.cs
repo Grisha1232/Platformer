@@ -4,7 +4,6 @@ using UnityEditorInternal;
 public class PlayerInventory {
 
     private PlayerInventory() {
-        EquippedWeapon = new Claws();
     }
     private static PlayerInventory _instance;
     public static PlayerInventory GetInstance() {
@@ -14,7 +13,7 @@ public class PlayerInventory {
         return _instance;
     }
     public Item[] Items { get; protected set; }
-    public Weapon EquippedWeapon { get; protected set; }
+    public Weapon EquippedWeapon { get; set; }
 
 
 }

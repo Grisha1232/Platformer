@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D body;
     private BoxCollider2D boxCollider;
-    private Animator anim;
+    public Animator Anim { get; private set; }
     [SerializeField] private LayerMask groundLayer;
     
     [SerializeField] private LayerMask wallLayer;
@@ -14,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpPower;
     private float wallJumpCooldown;
     private float horizontalInput;
+    private bool canMove;
 
 /// <summary>
 /// This methods calls every time game is start
@@ -21,10 +22,15 @@ public class PlayerMovement : MonoBehaviour
     private void Awake() {
         body = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
-        anim = GetComponent<Animator>();
+        Anim = GetComponent<Animator>();
+        canMove = true;
     }
 
     private void Update() {
+        
+        if (!canMove) {
+            return;
+        }
         horizontalInput = Input.GetAxis("Horizontal");
         
         if (horizontalInput > 0.0f) {
@@ -33,12 +39,11 @@ public class PlayerMovement : MonoBehaviour
             transform.localScale = new Vector3(-4, 4, 4);
         }
 
-        print("horizontalInput = "  + horizontalInput);
-        anim.SetBool("Run", horizontalInput != 0);
+        Anim.SetBool("Run", horizontalInput != 0);
         if (isGrounded()) {
-            anim.SetBool("grounded", true);
+            Anim.SetBool("grounded", true);
         } else {
-            anim.SetBool("grounded", false);
+            Anim.SetBool("grounded", false);
         }
 
 
@@ -49,10 +54,11 @@ public class PlayerMovement : MonoBehaviour
             if (isOnWall() && !isGrounded()) {
                 body.gravityScale = 1;
                 body.velocity = Vector2.zero;
-                anim.SetBool("OnWall", true);
+                Anim.SetBool("grounded", false);
+                Anim.SetBool("OnWall", true);
             } else {
                 body.gravityScale = 3;
-                anim.SetBool("OnWall", false);
+                Anim.SetBool("OnWall", false);
             }
             
             if ( Input.GetKey(KeyCode.Space) ) {
@@ -68,18 +74,18 @@ public class PlayerMovement : MonoBehaviour
     private void Jump() {
         if ( isGrounded() ) {
             print("jump of the ground");
-            anim.SetBool("Jump", true);
+            Anim.SetBool("Jump", true);
             body.velocity = new Vector2(body.velocity.x, jumpPower);
         } else if ( isOnWall() && !isGrounded() ) {
             if (horizontalInput == 0) {
                 body.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * speed, 0);
-                anim.SetBool("OnWall", false);
-                anim.SetBool("grounded", false);
+                Anim.SetBool("OnWall", false);
+                Anim.SetBool("grounded", false);
                 //transform.localScale = new Vector3(-Mathf.Sign(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             } else {
-                body.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * 3, jumpPower);
-                anim.SetBool("OnWall", false);
-                anim.SetBool("grounded", false);
+                body.velocity = new Vector2(Mathf.Sign(transform.localScale.x) * 3, jumpPower);
+                Anim.SetBool("OnWall", false);
+                Anim.SetBool("grounded", false);
             }
             
             wallJumpCooldown = 0;
@@ -97,6 +103,14 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public bool canAttack() {
-        return !isOnWall();
+        return !isOnWall() && isGrounded();
     }
+
+    public void setCanMove(bool val) {
+        if (!val) {
+            body.velocity = new Vector2(0, body.velocity.y);
+        }
+        canMove = val;
+    }
+
 }

@@ -169,7 +169,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 664c5cbfe4700984eb38731b9d82771d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _itemName: 
   speed: 10
+  direction: 0
+  hit: 0
+  boxCollider: {fileID: 0}
+  lifeTime: 0
 --- !u!50 &122383126
 Rigidbody2D:
   serializedVersion: 4
@@ -1074,7 +1079,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 664c5cbfe4700984eb38731b9d82771d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _itemName: 
   speed: 10
+  direction: 0
+  hit: 0
+  boxCollider: {fileID: 0}
+  lifeTime: 0
 --- !u!50 &654300447
 Rigidbody2D:
   serializedVersion: 4
@@ -1417,7 +1427,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 664c5cbfe4700984eb38731b9d82771d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _itemName: 
   speed: 10
+  direction: 0
+  hit: 0
+  boxCollider: {fileID: 0}
+  lifeTime: 0
 --- !u!50 &821530529
 Rigidbody2D:
   serializedVersion: 4
@@ -1589,7 +1604,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 664c5cbfe4700984eb38731b9d82771d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _itemName: 
   speed: 10
+  direction: 0
+  hit: 0
+  boxCollider: {fileID: 0}
+  lifeTime: 0
 --- !u!50 &838445480
 Rigidbody2D:
   serializedVersion: 4
@@ -1729,6 +1749,7 @@ GameObject:
   - component: {fileID: 849517010}
   - component: {fileID: 849517011}
   - component: {fileID: 849517012}
+  - component: {fileID: 849517013}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1908,29 +1929,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 969465f7ddef10b4baa25b774bb0bd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackSwordCooldown: 0.5
-  attackProjectileCooldown: 0.5
+  attackRange: 0
   attackPoint: {fileID: 1925641484}
-  rangedWeapons:
-  - {fileID: 1873832133}
-  - {fileID: 1418218236}
-  - {fileID: 1477420316}
-  - {fileID: 122383123}
-  - {fileID: 2063810903}
-  - {fileID: 821530526}
-  - {fileID: 1777782195}
-  - {fileID: 838445477}
-  - {fileID: 1552082864}
-  - {fileID: 2086975364}
-  - {fileID: 654300444}
-  meleeWeapons:
-  - {fileID: 1332150324}
-  - {fileID: 374346664}
-  - {fileID: 448028415}
-  - {fileID: 933487959}
-  - {fileID: 961342856}
-  - {fileID: 1075416631}
-  - {fileID: 725671771}
 --- !u!95 &849517012
 Animator:
   serializedVersion: 5
@@ -1952,6 +1952,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &849517013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849517005}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4650ef3ede163da44a533b5f4ca00621, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &933487959
 GameObject:
   m_ObjectHideFlags: 0
@@ -2683,7 +2695,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 664c5cbfe4700984eb38731b9d82771d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _itemName: 
   speed: 10
+  direction: 0
+  hit: 0
+  boxCollider: {fileID: 0}
+  lifeTime: 0
 --- !u!50 &1418218239
 Rigidbody2D:
   serializedVersion: 4
@@ -2855,7 +2872,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 664c5cbfe4700984eb38731b9d82771d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _itemName: 
   speed: 10
+  direction: 0
+  hit: 0
+  boxCollider: {fileID: 0}
+  lifeTime: 0
 --- !u!50 &1477420319
 Rigidbody2D:
   serializedVersion: 4
@@ -3027,7 +3049,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 664c5cbfe4700984eb38731b9d82771d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _itemName: 
   speed: 10
+  direction: 0
+  hit: 0
+  boxCollider: {fileID: 0}
+  lifeTime: 0
 --- !u!50 &1552082867
 Rigidbody2D:
   serializedVersion: 4
@@ -3329,7 +3356,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 664c5cbfe4700984eb38731b9d82771d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _itemName: 
   speed: 10
+  direction: 0
+  hit: 0
+  boxCollider: {fileID: 0}
+  lifeTime: 0
 --- !u!50 &1777782198
 Rigidbody2D:
   serializedVersion: 4
@@ -3658,7 +3690,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 664c5cbfe4700984eb38731b9d82771d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _itemName: 
   speed: 10
+  direction: 0
+  hit: 0
+  boxCollider: {fileID: 0}
+  lifeTime: 0
 --- !u!1 &1925641483
 GameObject:
   m_ObjectHideFlags: 0
@@ -3905,7 +3942,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 664c5cbfe4700984eb38731b9d82771d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _itemName: 
   speed: 10
+  direction: 0
+  hit: 0
+  boxCollider: {fileID: 0}
+  lifeTime: 0
 --- !u!50 &2063810906
 Rigidbody2D:
   serializedVersion: 4
@@ -4077,7 +4119,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 664c5cbfe4700984eb38731b9d82771d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _itemName: 
   speed: 10
+  direction: 0
+  hit: 0
+  boxCollider: {fileID: 0}
+  lifeTime: 0
 --- !u!50 &2086975367
 Rigidbody2D:
   serializedVersion: 4
