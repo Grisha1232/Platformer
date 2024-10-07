@@ -28,10 +28,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update() {
         
+        horizontalInput = Input.GetAxis("Horizontal");
         if (!canMove) {
             return;
         }
-        horizontalInput = Input.GetAxis("Horizontal");
         
         if (horizontalInput > 0.0f) {
             transform.localScale = new  Vector3(4, 4, 4);
@@ -47,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-        if (wallJumpCooldown > 0.2f) {
+        if (wallJumpCooldown > 0.4f) {
 
             body.velocity = new Vector2(horizontalInput * speed, body.velocity.y);
 
@@ -72,18 +72,19 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void Jump() {
+        transform.localRotation = new Quaternion(0, 0, 0, 0);
         if ( isGrounded() ) {
             print("jump of the ground");
             Anim.SetBool("Jump", true);
             body.velocity = new Vector2(body.velocity.x, jumpPower);
         } else if ( isOnWall() && !isGrounded() ) {
             if (horizontalInput == 0) {
-                body.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * speed, 0);
+                body.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * speed, jumpPower / 2f);
                 Anim.SetBool("OnWall", false);
                 Anim.SetBool("grounded", false);
                 //transform.localScale = new Vector3(-Mathf.Sign(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             } else {
-                body.velocity = new Vector2(Mathf.Sign(transform.localScale.x) * 3, jumpPower);
+                body.velocity = new Vector2(Mathf.Sign(transform.localScale.x) * speed, jumpPower);
                 Anim.SetBool("OnWall", false);
                 Anim.SetBool("grounded", false);
             }
