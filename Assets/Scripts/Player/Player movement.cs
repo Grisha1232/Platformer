@@ -4,114 +4,102 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private Rigidbody2D body;
+    public float moveSpeed = 5f;
+    public float jumpForce = 10f;
+    public float dashSpeed = 15f;
+    public float dashTime = 0.2f;
+    public LayerMask groundLayer;
+
+    private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
-    public Animator Anim { get; private set; }
-    [SerializeField] private LayerMask groundLayer;
-    
-    [SerializeField] private LayerMask wallLayer;
-    [SerializeField] private float speed;
-    [SerializeField] private float jumpPower;
-    private float wallJumpCooldown;
-    private float horizontalInput;
-    private bool canMove;
+    private Animator anim;
+    private bool isDashing = false;
+    private float dashTimer;
+    private bool isMovementBlocked = false;
 
-/// <summary>
-/// This methods calls every time game is start
-/// </summary>
-    private void Awake() {
-        body = GetComponent<Rigidbody2D>();
+    void Start()
+    {
         boxCollider = GetComponent<BoxCollider2D>();
-        Anim = GetComponent<Animator>();
-        canMove = true;
+        rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
     }
 
-    private void Update() {
-        
-        horizontalInput = Input.GetAxis("Horizontal");
-        if (!canMove) {
-            return;
+    void Update()
+    {
+        if (isDashing) {
+            Dash();
         }
-        
-        if (horizontalInput > 0.0f) {
-            transform.localScale = new  Vector3(4, 4, 4);
-        } else if (horizontalInput < -0.01f) {
-            transform.localScale = new Vector3(-4, 4, 4);
+        if (isDashing || isMovementBlocked)
+        {
+            return;  // Пока движение заблокировано атакой или рывком, игнорируем управление
         }
 
-        Anim.SetBool("Run", horizontalInput != 0);
-        if (isGrounded()) {
-            Anim.SetBool("grounded", true);
-        } else {
-            Anim.SetBool("grounded", false);
-        }
+        Move();
+        Jump();
 
-
-        if (wallJumpCooldown > 0.4f) {
-
-            body.velocity = new Vector2(horizontalInput * speed, body.velocity.y);
-
-            if (isOnWall() && !isGrounded()) {
-                body.gravityScale = 1;
-                body.velocity = Vector2.zero;
-                Anim.SetBool("grounded", false);
-                Anim.SetBool("OnWall", true);
-            } else {
-                body.gravityScale = 3;
-                Anim.SetBool("OnWall", false);
-            }
-            
-            if ( Input.GetKey(KeyCode.Space) ) {
-                print("performing jump");
-                Jump();
-            }
-
-        } else {
-            wallJumpCooldown += Time.deltaTime;
+        if (Input.GetKeyDown(KeyCode.LeftAlt) && !isDashing)
+        {
+            StartDash();
         }
     }
 
-    private void Jump() {
-        transform.localRotation = new Quaternion(0, 0, 0, 0);
-        if ( isGrounded() ) {
-            print("jump of the ground");
-            Anim.SetBool("Jump", true);
-            body.velocity = new Vector2(body.velocity.x, jumpPower);
-        } else if ( isOnWall() && !isGrounded() ) {
-            if (horizontalInput == 0) {
-                body.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * speed, jumpPower / 2f);
-                Anim.SetBool("OnWall", false);
-                Anim.SetBool("grounded", false);
-                //transform.localScale = new Vector3(-Mathf.Sign(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-            } else {
-                body.velocity = new Vector2(Mathf.Sign(transform.localScale.x) * speed, jumpPower);
-                Anim.SetBool("OnWall", false);
-                Anim.SetBool("grounded", false);
-            }
-            
-            wallJumpCooldown = 0;
+    void Move()
+    {
+        float moveInput = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+
+        anim.SetFloat("Speed", Mathf.Abs(moveInput));
+
+        // Поворот спрайта в зависимости от направления
+        if (moveInput != 0)
+        {
+            transform.localScale = new Vector3(Mathf.Sign(moveInput) * 4, 4f, 4f);
         }
     }
 
-    private bool isOnWall() {
-        RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, new Vector2(transform.localScale.x, 0), 0.1f, wallLayer);
-        return raycastHit.collider != null;
+    void Jump()
+    {
+        if (Input.GetButtonDown("Jump") && Mathf.Abs(rb.velocity.y) < 0.1f)
+        {
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            anim.SetTrigger("Jump");
+        }
     }
 
-    private bool isGrounded() {
+    void StartDash()
+    {
+        isDashing = true;
+        dashTimer = dashTime;
+        anim.SetTrigger("Dash");
+    }
+
+    void Dash()
+    {
+        float dashDirection = Mathf.Sign(transform.localScale.x);
+        rb.velocity = new Vector2(dashDirection * dashSpeed, 0f);
+        dashTimer -= Time.deltaTime;
+
+        if (dashTimer <= 0)
+        {
+            isDashing = false;
+        }
+    }
+
+    // Остановка движения для блокировки его во время атак
+    public void BlockMovement()
+    {
+        isMovementBlocked = true;
+    }
+
+    public void UnblockMovement()
+    {
+        isMovementBlocked = false;
+    }
+
+    public void isGrounded() {
         RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.down, 0.1f, groundLayer);
-        return raycastHit.collider != null;
-    }
-
-    public bool canAttack() {
-        return !isOnWall() && isGrounded();
-    }
-
-    public void setCanMove(bool val) {
-        if (!val) {
-            body.velocity = new Vector2(0, body.velocity.y);
+        if (raycastHit.collider != null) {
+            anim.SetTrigger("isGrounded");
         }
-        canMove = val;
     }
-
 }

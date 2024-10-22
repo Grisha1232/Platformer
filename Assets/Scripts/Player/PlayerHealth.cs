@@ -1,7 +1,13 @@
 using UnityEngine;
 
-public class PlayerHealth : MonoBehaviour, IDamageable
+class PlayerHealth : MonoBehaviour, IDamageable
 {
-    float IDamageable.Health { get; set; }
-    bool IDamageable.CanBeDamaged { get; set; }
+    public float Health { get; set; }
+    public bool CanBeDamaged { get; set; }
+
+    public void TakeDamage(float damageTaken)
+    {
+        Health -= damageTaken;
+    }
+
 }

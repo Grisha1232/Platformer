@@ -6,7 +6,7 @@ public class Claws: Weapon {
         IsRanged = false;
         Damage = 20f;
         AttackRange = 2f;
-        AttackCooldown = 1f;
+        AttackCooldown = 0.5f;
     }
 
     public override void Attack()
