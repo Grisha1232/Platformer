@@ -48,9 +48,6 @@ public class PlayerMeleeAttack : MonoBehaviour
 
     void MeleeComboAttack()
     {
-        if (isAttacking) {
-            return;
-        }
         print("attack " + comboStep);
         // Остановка движения
         isAttacking = true;
