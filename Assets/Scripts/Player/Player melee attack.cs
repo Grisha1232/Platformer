@@ -24,7 +24,7 @@ public class PlayerMeleeAttack : MonoBehaviour
     void Update()
     {
         // Запуск мощной атаки
-        if (Input.GetKeyDown(KeyCode.LeftShift)) {
+        if (Input.GetKey(KeyCode.LeftShift)) {
             if (Input.GetKeyDown(KeyCode.Mouse0)) {
                 PowerfulAttack();
             }
