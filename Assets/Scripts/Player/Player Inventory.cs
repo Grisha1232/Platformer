@@ -1,29 +1,19 @@
 using System;
+using UnityEditorInternal;
 
 public class PlayerInventory {
 
-    // private Weapon _equipedWeapon;
-    // public Weapon EquipedWeapon {
-    //     get {
-    //         return _equipedWeapon;
-    //     }
-    //     private set {
-    //         _equipedWeapon = value;
-    //     }
-    // }
-    private Item[] holdsItems;
-
-    private static PlayerInventory instance;
-
-    private PlayerInventory()
-    {
-        // EquipedWeapon = new MeleeWeapon();
+    private PlayerInventory() {
     }
-
-    public static PlayerInventory getInstance() {
-        if (instance == null) {
-            instance = new PlayerInventory();
+    private static PlayerInventory _instance;
+    public static PlayerInventory GetInstance() {
+        if (_instance == null) {
+            _instance = new PlayerInventory();
         }
-        return instance;
+        return _instance;
     }
+    public Item[] Items { get; protected set; }
+    public Weapon EquippedWeapon { get; set; }
+
+
 }
