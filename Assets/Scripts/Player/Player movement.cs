@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 5f;
-    public float jumpForce = 10f;
+    public float jumpForce = 15f;
     public float dashSpeed = 15f;
     public float dashTime = 0.2f;
     public LayerMask groundLayer;
