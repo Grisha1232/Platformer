@@ -1,111 +1,83 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
 
-public class ShadowCatMovement : MonoBehaviour
+public class ShadowCatMovement : DefaultMovement
 {
+    /// <summary>
+    /// Маска земли
+    /// </summary>
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private float moveSpeed;
-    [SerializeField] private float chaseSpeed;
-    [SerializeField] private float patrolRange;
+    /// <summary>
+    /// Скорость передвижения в патрулированиии
+    /// </summary>
     [SerializeField] private float aggroRange;
     [SerializeField] private float exitChaseRange;
 
     [SerializeField] private float teleportDistance;
     [SerializeField] private float teleportCooldown;
 
-    private bool isTeleporting = false;
+    [SerializeField] private GameObject indicatorShadow;
+    [SerializeField] private GameObject indicatorAttack;
+    [SerializeField] private GameObject indicatorPatrol;
+    [SerializeField] private GameObject indicatorChase;
+
+    /// <summary>
+    /// Находится ли Теневой кот в тени
+    /// </summary>
+    private bool isInShadow = false;
+
+    /// <summary>
+    /// Повернут ли Теневой кот вправо
+    /// </summary>
     private bool isFacingRight = true;
-    private bool isChasingPlayer = false;
 
-    [SerializeField] private Vector3 startingPosition;
-    private Transform player;
-    private Rigidbody2D body;
-    private Animator animator;
-
-/// <summary>
-/// This methods calls every time game is start
-/// </summary>
+    /// <summary>
+    /// This methods calls every time game is start
+    /// </summary>
     private void Awake() {
-        body = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
+        base.Start();
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
-    private void Update() {
-
-       if (PlayerInAggroRange() && !isTeleporting)
-        {
-            // Если игрок в зоне агро — начинаем преследование
-            ChasePlayer();
-        }
-        else if (PlayerOutOfChaseRange() && isChasingPlayer)
-        {
-            // Если игрок вышел за пределы зоны преследования — возвращаемся к патрулированию
-            StopChasingPlayer();
-        }
-        else if (!isChasingPlayer)
-        {
-            // Если не преследуем игрока — патрулируем
-            Patrol();
-        }
-
-        // Если не происходит телепортация — инициируем ее
-        if (!isTeleporting)
-        {
-            StartCoroutine(Teleport());
-        }
-       
-    }
-
-    void Patrol()
+    
+    protected override void Update()
     {
-        // Движение в пределах патрулирования
-        float moveDirection = isFacingRight ? 1 : -1;
-        body.velocity = new Vector2(moveDirection * moveSpeed, body.velocity.y);
-
-        // Поворот в пределах патрулирования
-        if (Vector2.Distance(transform.position, startingPosition) >= patrolRange)
-        {
-            Flip();
+        // Проверка на погоню
+        if ( PlayerInAggroRange() && !isChasing ) {
+            isChasing = true; // Начинаем преследование
+        }
+        else if ( PlayerOutOfChaseRange() ) {
+            isChasing = false; // Возвращаемся к патрулированию
         }
 
-        // Запуск анимации патрулирования
-        animator.SetBool("isMoving", true);
-    }
+        print(isChasing);
 
-    void ChasePlayer()
-    {
-        isChasingPlayer = true;
-        // Движение в сторону игрока
-        Vector2 direction = (player.position - transform.position).normalized;
-        body.velocity = new Vector2(direction.x * chaseSpeed, body.velocity.y);
-
-        // Запуск анимации преследования
-        animator.SetBool("isMoving", true);
-
-        // Поворот в сторону игрока
-        if ((direction.x > 0 && !isFacingRight) || (direction.x < 0 && isFacingRight))
-        {
-            Flip();
+        if ( isChasing ) {
+            ChasePlayer(); // Преследование игрока
+        }
+        else {
+            Patrol(); // Патрулирование
         }
     }
 
      void StopChasingPlayer()
     {
-        isChasingPlayer = false;
+        print("stop chase");
+        isChasing = false;
         body.velocity = Vector2.zero;
 
         // Возвращение к патрулированию
-        transform.position = Vector2.MoveTowards(transform.position, startingPosition, moveSpeed * Time.deltaTime);
+        transform.position = Vector2.MoveTowards(transform.position, initialPosition, patrolSpeed * Time.deltaTime);
 
         // Запуск анимации возвращения
-        animator.SetBool("isMoving", true);
+        // animator.SetBool("isMoving", true);
 
         // Поворот в сторону начальной позиции
-        if ((startingPosition.x > transform.position.x && !isFacingRight) || (startingPosition.x < transform.position.x && isFacingRight))
+        if ((initialPosition.x > transform.position.x && !isFacingRight) || (initialPosition.x < transform.position.x && isFacingRight))
         {
             Flip();
         }
@@ -120,28 +92,7 @@ public class ShadowCatMovement : MonoBehaviour
     bool PlayerOutOfChaseRange()
     {
         // Проверка, находится ли игрок за пределами зоны преследования
-        return Vector2.Distance(transform.position, player.position) > exitChaseRange;
-    }
-
-     IEnumerator Teleport()
-    {
-        isTeleporting = true;
-
-        // Случайное время до телепортации
-        yield return new WaitForSeconds(Random.Range(3f, teleportCooldown));
-
-        // Телепортируемся на случайное расстояние
-        Vector3 teleportTarget = transform.position + new Vector3(teleportDistance * (isFacingRight ? 1 : -1), 0, 0);
-        transform.position = teleportTarget;
-
-        // Запуск анимации телепортации
-        animator.SetTrigger("Teleport");
-
-        // Изменение направления после телепортации
-        Flip();
-
-        yield return new WaitForSeconds(teleportCooldown);
-        isTeleporting = false;
+        return Vector2.Distance(transform.position, initialPosition) > exitChaseRange;
     }
 
     void Flip() {
@@ -150,4 +101,56 @@ public class ShadowCatMovement : MonoBehaviour
         scale.x *= -1;
         transform.localScale = scale;
     }
+
+    protected override void Patrol()
+    {
+        {
+            indicatorChase.SetActive(isChasing);
+            indicatorPatrol.SetActive(true);
+            indicatorAttack.SetActive(false);
+            indicatorShadow.SetActive(isInShadow);
+        }
+        // Поворот в пределах патрулирования
+        if (Math.Abs(transform.position.x - initialPosition.x ) >= patrolRange && Math.Sign(transform.localScale.x) != Math.Sign(initialPosition.x - transform.position.x))
+        {
+            Flip();
+        }
+        // Движение в пределах патрулирования
+        float moveDirection = isFacingRight ? 1 : -1;
+        body.velocity = new Vector2(moveDirection * patrolSpeed, body.velocity.y);
+        
+        // Запуск анимации патрулирования
+        // animator.SetBool("isMoving", true);
+    }
+
+    protected override void ChasePlayer()
+    {
+        
+        {
+            indicatorChase.SetActive(isChasing);
+            indicatorPatrol.SetActive(false);
+            indicatorAttack.SetActive(false);
+            indicatorShadow.SetActive(isInShadow);
+        }
+
+        if (PlayerOutOfChaseRange()) {
+            StopChasingPlayer();
+            return;
+        }
+        isChasing = true;
+        // Движение в сторону игрока
+        Vector2 direction = (player.position - transform.position).normalized;
+        
+        // Поворот в сторону игрока
+        if ((direction.x > 0 && !isFacingRight) || (direction.x < 0 && isFacingRight))
+        {
+            Flip();
+        }
+        body.velocity = new Vector2(direction.x * chaseSpeed, body.velocity.y);
+
+        // Запуск анимации преследования
+        // animator.SetBool("isMoving", true);
+
+    }
+
 }
