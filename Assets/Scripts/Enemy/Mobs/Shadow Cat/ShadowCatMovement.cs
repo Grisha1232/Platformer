@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
@@ -11,18 +12,13 @@ public class ShadowCatMovement : DefaultMovement
     /// Маска земли
     /// </summary>
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private float exitChaseRange = 20f;
-
 
     /// <summary>
     /// Находится ли Теневой кот в тени
     /// </summary>
     [HideInInspector] public bool isInShadow {get; private set;}= false;
 
-    /// <summary>
-    /// Повернут ли Теневой кот вправо
-    /// </summary>
-    private bool isFacingRight = true;
+    
 
     /// <summary>
     /// This methods calls every time game is start
@@ -58,8 +54,10 @@ public class ShadowCatMovement : DefaultMovement
         {
             Flip();
         }
+        
+        animator.SetFloat("Speed", patrolSpeed);
         // Движение в пределах патрулирования
-        float moveDirection = isFacingRight ? 1 : -1;
+        float moveDirection = Math.Sign(transform.localScale.x);
         body.velocity = new Vector2(moveDirection * patrolSpeed, body.velocity.y);
         
         // Запуск анимации патрулирования
@@ -71,10 +69,15 @@ public class ShadowCatMovement : DefaultMovement
     #region Help functions
     
     void Flip() {
-        isFacingRight = !isFacingRight;
         Vector3 scale = transform.localScale;
         scale.x *= -1;
         transform.localScale = scale;
+    }
+
+     private void OnDrawGizmosSelected() {
+        Vector3 from = new Vector3(initialPosition.x - patrolRange, initialPosition.y + 1, initialPosition.z);
+        Vector3 to = new Vector3(initialPosition.x + patrolRange, initialPosition.y + 1, initialPosition.z);     
+        Gizmos.DrawLine(from, to);
     }
 
     #endregion

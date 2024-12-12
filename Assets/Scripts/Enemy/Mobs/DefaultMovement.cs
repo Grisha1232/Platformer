@@ -13,7 +13,6 @@ public abstract class DefaultMovement : MonoBehaviour
     /// </summary>
     [SerializeField] protected float patrolRange = 4f;
 
-    
     [SerializeField] protected GameObject indicatorShadow;
     [SerializeField] protected GameObject indicatorAttack;
     [SerializeField] protected GameObject indicatorPatrol;

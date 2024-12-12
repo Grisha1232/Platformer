@@ -14,6 +14,7 @@ abstract class Health : MonoBehaviour {
         HasTakenDamage = true;
 
         CurrentHealth -= damage;
+        print("Taken damage");
         if (CurrentHealth == 0) {
             Die();
         }

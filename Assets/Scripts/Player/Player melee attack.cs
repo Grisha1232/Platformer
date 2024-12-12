@@ -44,7 +44,6 @@ public class PlayerMeleeAttack : MonoBehaviour
 
             for (int i = 0; i < hits.Length; i++) {
                 EnemyHealth enemyHealth = hits[i].collider.gameObject.GetComponent<EnemyHealth>();
-                print(enemyHealth);
                 if (enemyHealth != null && !enemyHealth.HasTakenDamage) {
                     enemyHealth.TakeDamage( damage );
                     listDamaged.Add(enemyHealth);

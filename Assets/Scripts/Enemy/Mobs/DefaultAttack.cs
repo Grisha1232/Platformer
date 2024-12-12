@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public abstract class DefaultAttack : MonoBehaviour {
@@ -15,7 +16,7 @@ public abstract class DefaultAttack : MonoBehaviour {
     /// <summary>
     /// Количество урона
     /// </summary>
-    [SerializeField] protected float attackDamage = 1.0f;
+    [SerializeField] protected float damage = 1.0f;
 
     /// <summary>
     /// Дальность атаки
@@ -45,6 +46,10 @@ public abstract class DefaultAttack : MonoBehaviour {
     protected Rigidbody2D body;
     protected Animator animator;
     protected Transform player;
+    protected float attackTimeCounter = 9f;
+
+    
+    protected bool shouldBeDamaging {get; set;}= true; 
 
     protected void Start()
     {
@@ -53,12 +58,16 @@ public abstract class DefaultAttack : MonoBehaviour {
         player = GameObject.FindGameObjectWithTag("Player").transform;  
     }
 
-    abstract protected void Attack();
+    abstract protected IEnumerator Attack();
     abstract protected void ChaseToAttack();
 
     public virtual bool PlayerInAggroRange() {
         isAttackMode = Vector2.Distance(transform.position, player.position) <= aggroRange;
         return isAttackMode;
+    }
+
+    public virtual bool PlayerInAttackRange() {
+        return Vector2.Distance(transform.position, player.position) <= attackRange;
     }
     
 
