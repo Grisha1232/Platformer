@@ -90,13 +90,12 @@ public class ShadowCatAttack : DefaultAttack
     }
 
     private void OnDrawGizmosSelected() {
-        Gizmos.DrawWireSphere(attackTransform.position, attackRange);
+        // Gizmos.DrawWireSphere(attackTransform.position, attackRange);
         
         
         Vector3 from = new Vector3(transform.position.x - aggroRange, transform.position.y, transform.position.z);
         Vector3 to = new Vector3(transform.position.x + aggroRange, transform.position.y, transform.position.z);     
         Gizmos.DrawLine(from, to);
-        // Gizmos.DrawWireSphere(transform.position, aggroRange);
     }
 
     private void endOfAttack() {

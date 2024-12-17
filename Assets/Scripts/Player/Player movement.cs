@@ -76,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
     void Jump()
     {
         if (UserInput.instance.controls.Jumping.Jump.WasPressedThisFrame() && isGrounded()) {
+            print("start position:" + transform.position.y +"   " + jumpForce);
             isJumping = true;
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumpTimeCounter = jumpTime;
@@ -92,6 +93,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if (UserInput.instance.controls.Jumping.Jump.WasReleasedThisFrame()) {
+            print("end position:" + transform.position.y +"   " + jumpForce);
             isJumping = false;
         }
     }

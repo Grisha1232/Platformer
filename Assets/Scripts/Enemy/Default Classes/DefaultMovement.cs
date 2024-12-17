@@ -1,7 +1,8 @@
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public abstract class DefaultMovement : MonoBehaviour
+public abstract class DefaultMovement : Pathfinding
 {
     /// <summary>
     /// Скорость патрулирования
@@ -12,6 +13,8 @@ public abstract class DefaultMovement : MonoBehaviour
     /// Дальность патрулирования
     /// </summary>
     [SerializeField] protected float patrolRange = 4f;
+
+    [SerializeField] protected float jumpForce = 10f;
 
     [SerializeField] protected GameObject indicatorShadow;
     [SerializeField] protected GameObject indicatorAttack;
@@ -42,11 +45,13 @@ public abstract class DefaultMovement : MonoBehaviour
     
     protected void Start()
     {
+        grid = FindObjectOfType<NavigationGrid>(); // Получаем ссылку на сетку
         animator = GetComponent<Animator>();
         body = GetComponent<Rigidbody2D>();
         attackScript = GetComponent<DefaultAttack>();
         initialPosition = body.position; // Сохранение начальной позиции
         player = GameObject.FindGameObjectWithTag("Player").transform; // Поиск игрока по тегу
+        seeker = transform;
     }
 
     abstract protected void Update();
