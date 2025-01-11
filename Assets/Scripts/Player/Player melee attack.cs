@@ -1,97 +1,75 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerMeleeAttack : MonoBehaviour
 {
-    public Transform attackPoint;
-    public float attackRange = 0.5f;
-    public LayerMask enemyLayers;
-    public int[] attackDamage = {10, 15, 25};  // Урон для каждой атаки в серии
-    public float chargedAttackDamage = 50;      // Урон для мощной атаки
-    public float comboResetTime = 1f;         // Время сброса комбо
-
+    [SerializeField] private Transform attackTransform;
+    [SerializeField] private float attackRange = 1f;
+    [SerializeField] private LayerMask attackableLayer;
+    [SerializeField] private float damage = 1f;
+    private RaycastHit2D[] hits;
     private Animator anim;
-    private int comboStep = 0;
-    private float lastAttackTime;
-    private bool isAttacking = false;
 
+    public bool shouldBeDamaging {get; private set;}
     void Start()
     {
-
         anim = GetComponent<Animator>();
     }
 
     void Update()
     {
-        // Запуск мощной атаки
-        if (Input.GetKey(KeyCode.LeftShift)) {
-            if (Input.GetKeyDown(KeyCode.Mouse0)) {
-                PowerfulAttack();
+        if (PlayerMovement.isMovementBlocked) {
+            return;
+        }
+        if (UserInput.instance.controls.Attacking.LightAttack.WasPressedThisFrame()) {
+            StartCoroutine(Attack());
+            anim.SetTrigger("MeleeAttack0");
+        }
+
+        // if (UserInput.instance.controls.Attacking.StrongAttack.WasReleasedThisFrame()) {
+        //     print("Strong attack");
+        // }
+    }
+
+    #region Attack functions
+
+    public IEnumerator Attack()  {   
+        List<EnemyHealth> listDamaged = new();
+        shouldBeDamaging = true; 
+        while(shouldBeDamaging) {            
+            hits = Physics2D.CircleCastAll(attackTransform.position, attackRange, transform.right, 0f, attackableLayer);
+
+            for (int i = 0; i < hits.Length; i++) {
+                EnemyHealth enemyHealth = hits[i].collider.gameObject.GetComponent<EnemyHealth>();
+                if (enemyHealth != null && !enemyHealth.HasTakenDamage) {
+                    enemyHealth.TakeDamage( damage );
+                    listDamaged.Add(enemyHealth);
+                }
             }
-        }
-        // Выполнить обычную атаку (комбо)
-        else if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            if (comboStep < 3) {
-                MeleeComboAttack();
-            } else {
-                comboStep = 0;
-            }
+
+            yield return null;
         }
 
-        // Сброс комбо, если прошло слишком много времени с последней атаки
-        if (comboStep >= 0 && Time.time - lastAttackTime > comboResetTime)
-        {
-            comboStep = 0;
+        foreach( EnemyHealth enemyHealth in listDamaged ) {
+            enemyHealth.HasTakenDamage = false;
         }
     }
 
-    void MeleeComboAttack()
-    {
-        print("attack " + comboStep);
-        // Остановка движения
-        isAttacking = true;
-        GetComponent<PlayerMovement>().enabled = false;
+    #endregion
 
-        // Запуск атаки в зависимости от текущего шага комбо
-        anim.SetTrigger("MeleeAttack" + comboStep); // Используем разные анимации для каждой атаки в серии
-        DealDamage(attackDamage[comboStep]);
-        comboStep++;
-        lastAttackTime = Time.time;
+
+    private void OnDrawGizmosSelected() {
+        Gizmos.DrawWireSphere(attackTransform.position, attackRange);
     }
 
-    void PowerfulAttack()
-    {
-        if (isAttacking) return;
 
-        // Остановка движения
-        isAttacking = true;
-        GetComponent<PlayerMovement>().enabled = false;
+    #region Animation Triggers
 
-        anim.SetTrigger("PowerfulAttack"); // Анимация мощной атаки
-        DealDamage(chargedAttackDamage);
+    private void endOfAttack() {
+        shouldBeDamaging = false;
     }
-
-    void DealDamage(float damage)
-    {
-        // Определение врагов в зоне удара
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-        foreach (Collider2D enemy in hitEnemies)
-        {
-            enemy.GetComponent<IEnemy>().TakeDamage(damage);
-        }
-    }
-
-    // Вызов из анимации, чтобы разблокировать движения после окончания атаки
-    public void EndAttack()
-    {
-        isAttacking = false;
-        GetComponent<PlayerMovement>().enabled = true;
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        if (attackPoint == null) return;
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-    }
+    #endregion
 }

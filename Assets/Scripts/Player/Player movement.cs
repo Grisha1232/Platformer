@@ -1,24 +1,46 @@
+using System;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-    public float jumpForce = 15f;
-    public float dashSpeed = 15f;
-    public float dashTime = 0.2f;
-    public LayerMask groundLayer;
+    [Header("Movement")]
+    [SerializeField] private float moveSpeed = 5f;
 
+    [Header("Jump")]
+    [SerializeField] private float jumpForce = 15f;
+    [SerializeField] private float jumpTime = 0.5f;
+
+    [Header("Dash")]
+    [SerializeField] private float dashSpeed = 15f;
+    [SerializeField] private float dashTime = 0.2f;
+    [SerializeField] private float dashCooldown = 0.1f;
+
+    [Header("Envirement")]
+    [SerializeField] private float  extraHeight = 0.25f;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask enemyLayer;
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
     private Animator anim;
-    private bool isDashing = false;
-    private float dashTimer;
-    private bool isMovementBlocked = false;
+
+    private bool isJumping;
+    private bool isDashing;
+    private float jumpTimeCounter;
+    private float dashTimeCounter;
+    private float dashCooldownTimer;
+
+    private RaycastHit2D groundHit;
+    private RaycastHit2D enemyHit;
+
+    static public bool isMovementBlocked {get; private set;}
 
     void Start()
     {
+        isJumping = false;
+        jumpTimeCounter = 0f;
+        dashCooldownTimer = 99;
         boxCollider = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
@@ -26,29 +48,23 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (isDashing) {
-            Dash();
+        dashCooldownTimer += Time.deltaTime;
+        dashTimeCounter -= Time.deltaTime;
+        if (isMovementBlocked) {
+            return;
         }
-        if (isDashing || isMovementBlocked)
-        {
-            return;  // Пока движение заблокировано атакой или рывком, игнорируем управление
-        }
-
         Move();
         Jump();
-
-        if (Input.GetKeyDown(KeyCode.LeftAlt) && !isDashing)
-        {
-            StartDash();
-        }
+        Dash();
     }
 
+    #region Movement Functions
     void Move()
     {
-        float moveInput = Input.GetAxis("Horizontal");
+        float moveInput = UserInput.instance.moveInput.x;
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
 
-        anim.SetFloat("Speed", Mathf.Abs(moveInput));
+        anim.SetFloat("Speed", Math.Abs(moveInput));
 
         // Поворот спрайта в зависимости от направления
         if (moveInput != 0)
@@ -59,47 +75,89 @@ public class PlayerMovement : MonoBehaviour
 
     void Jump()
     {
-        if (Input.GetButtonDown("Jump") && Mathf.Abs(rb.velocity.y) < 0.1f)
-        {
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        if (UserInput.instance.controls.Jumping.Jump.WasPressedThisFrame() && isGrounded()) {
+            print("start position:" + transform.position.y +"   " + jumpForce);
+            isJumping = true;
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            jumpTimeCounter = jumpTime;
             anim.SetTrigger("Jump");
         }
-    }
 
-    void StartDash()
-    {
-        isDashing = true;
-        dashTimer = dashTime;
-        anim.SetTrigger("Dash");
+        if (UserInput.instance.controls.Jumping.Jump.IsPressed()) {
+            if (jumpTimeCounter > 0 && isJumping) {
+                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+                jumpTimeCounter -= Time.deltaTime;
+            } else {
+                isJumping = false;
+            }
+        }
+
+        if (UserInput.instance.controls.Jumping.Jump.WasReleasedThisFrame()) {
+            print("end position:" + transform.position.y +"   " + jumpForce);
+            isJumping = false;
+        }
     }
 
     void Dash()
     {
-        float dashDirection = Mathf.Sign(transform.localScale.x);
-        rb.velocity = new Vector2(dashDirection * dashSpeed, 0f);
-        dashTimer -= Time.deltaTime;
-
-        if (dashTimer <= 0)
-        {
-            isDashing = false;
+        if (UserInput.instance.controls.Dashing.Dash.WasPressedThisFrame() && !isDashing && dashCooldownTimer > dashCooldown) {
+            isMovementBlocked = true;
+            isDashing = true;
+            anim.SetTrigger("Dash");
+            rb.velocity = new Vector2(dashSpeed * Math.Sign(transform.localScale.x), 0);
+            rb.gravityScale = 0;
+            dashTimeCounter = dashTime;
         }
     }
 
-    // Остановка движения для блокировки его во время атак
-    public void BlockMovement()
-    {
-        isMovementBlocked = true;
+    private void Dashing() {
+        if (dashTimeCounter > 0 && isDashing) {
+            isMovementBlocked = true;
+            rb.velocity = new Vector2(dashSpeed * Math.Sign(transform.localScale.x), 0);
+            rb.gravityScale = 0;
+        }
+
+        if (dashTimeCounter <= 0 && isDashing) {
+            isMovementBlocked = false;
+            isDashing = false;
+            rb.velocity = new Vector2(0, 0);
+            rb.gravityScale = 6;
+            dashCooldownTimer = 0;
+            anim.SetTrigger("StopDash");
+        }
     }
 
-    public void UnblockMovement()
-    {
-        isMovementBlocked = false;
+    #endregion
+
+    #region GroundCheck
+
+    private bool isGrounded() {
+        groundHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, groundLayer);
+        enemyHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, enemyLayer);
+        
+        return groundHit.collider != null || enemyHit.collider != null;
     }
 
-    public void isGrounded() {
-        RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.down, 0.1f, groundLayer);
-        if (raycastHit.collider != null) {
+    private void isGroundedForAnim() {
+        groundHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, groundLayer);
+        enemyHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, enemyLayer);
+        
+        if (groundHit.collider != null || enemyHit.collider != null) {
             anim.SetTrigger("isGrounded");
         }
     }
+
+    #endregion
+
+    #region Animation Triggers
+
+    private void BlockMovement() {
+        isMovementBlocked = true;
+    }
+
+    private void UnblockMovement() {
+        isMovementBlocked = false;
+    }
+
+    #endregion
 }
