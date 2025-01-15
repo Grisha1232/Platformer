@@ -72,5 +72,8 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 /.plastic/wkcorruption.*.*.*.*.*.*.*.log
-Assets/Sprites/
+Assets/Sprites/Warrior free set
+Assets/Sprites/Monsters Creatures Fantasy/Sprites/Flying eye
+Assets/Sprites/Monsters Creatures Fantasy/Sprites/Goblin
+Assets/Sprites/Monsters Creatures Fantasy/Sprites/Skeleton
 .DS_Store
