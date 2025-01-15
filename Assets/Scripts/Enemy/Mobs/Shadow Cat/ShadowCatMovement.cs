@@ -18,8 +18,6 @@ public class ShadowCatMovement : DefaultMovement
     /// </summary>
     [HideInInspector] public bool isInShadow {get; private set;}= false;
 
-    private float findPathCooldownCounter = 99f;
-
     /// <summary>
     /// This methods calls every time game is start
     /// </summary>
@@ -27,20 +25,12 @@ public class ShadowCatMovement : DefaultMovement
         base.Start();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         attackScript = GetComponent<ShadowCatAttack>();
-        SetTarget(player.transform);
         
     }
     
     protected override void Update()
     {
         Patrol();
-        if (findPathCooldownCounter > 1f) {
-            findPathCooldownCounter = 0;
-            SetSeeker(transform);
-            SetTarget(player.transform);
-            FindPath(jumpForce);
-        }
-        findPathCooldownCounter += Time.deltaTime;
     }
 
 
@@ -67,7 +57,6 @@ public class ShadowCatMovement : DefaultMovement
         // Движение в пределах патрулирования
         float moveDirection = Math.Sign(transform.localScale.x);
         body.velocity = new Vector2(moveDirection * patrolSpeed, body.velocity.y);
-        
         // Запуск анимации патрулирования
         // animator.SetBool("isMoving", true);
     }
@@ -87,14 +76,6 @@ public class ShadowCatMovement : DefaultMovement
         Vector3 to = new Vector3(initialPosition.x + patrolRange, initialPosition.y + 1, initialPosition.z);     
         Gizmos.DrawLine(from, to);
 
-        
-        List<Node> foundPath = GetPath();
-        if (foundPath != null) {
-            Gizmos.color = Color.green;
-            foreach (Node node in foundPath) {
-                Gizmos.DrawCube(node.worldPosition, Vector3.one * (NavigationGrid.instance.GetNodeSize() - 0.1f));
-            }
-        }
     }
 
     #endregion

@@ -83,16 +83,17 @@ public class PlayerMovement : MonoBehaviour
             anim.SetTrigger("Jump");
         }
 
-        if (UserInput.instance.controls.Jumping.Jump.IsPressed()) {
+        if (UserInput.instance.controls.Jumping.Jump.IsPressed() && isJumping) {
             if (jumpTimeCounter > 0 && isJumping) {
                 rb.velocity = new Vector2(rb.velocity.x, jumpForce);
                 jumpTimeCounter -= Time.deltaTime;
             } else {
+                print("end position:" + transform.position.y +"   " + jumpForce);
                 isJumping = false;
             }
         }
 
-        if (UserInput.instance.controls.Jumping.Jump.WasReleasedThisFrame()) {
+        if (UserInput.instance.controls.Jumping.Jump.WasReleasedThisFrame() && isJumping) {
             print("end position:" + transform.position.y +"   " + jumpForce);
             isJumping = false;
         }
