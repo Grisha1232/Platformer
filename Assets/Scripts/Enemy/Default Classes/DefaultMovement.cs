@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static Pathfinder;
 
 public abstract class DefaultMovement : MonoBehaviour
 {
@@ -42,6 +43,10 @@ public abstract class DefaultMovement : MonoBehaviour
     protected Animator animator;
 
     protected DefaultAttack attackScript;
+
+    protected List<Vector3Int> pathToFollow;
+    protected int currentPointToFollow;
+
     
     protected void Start()
     {
@@ -55,5 +60,18 @@ public abstract class DefaultMovement : MonoBehaviour
     abstract protected void Update();
 
     abstract protected void Patrol();
+
+    abstract protected void followPath();
+
+    
+    protected class Pair {
+        public Vector3 vect;
+        public Direction dir;
+
+        public Pair(Vector3 vect, Direction dir) {
+            this.vect = vect;
+            this.dir = dir;
+        }
+    }
 
 }
