@@ -352,6 +352,45 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""UI interactive"",
+            ""id"": ""2ebf00d9-797a-47e0-8fc5-8848b31fbcd9"",
+            ""actions"": [
+                {
+                    ""name"": ""PauseMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""6ef962ca-a6d7-4ee8-a9ad-32f762f1e8eb"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""c80c078a-ab40-4716-9acd-63ea8be46418"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard"",
+                    ""action"": ""PauseMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1c1b7f46-5f3e-429d-8d98-d5e10bb59327"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""PauseMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -380,6 +419,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Attacking = asset.FindActionMap("Attacking", throwIfNotFound: true);
         m_Attacking_LightAttack = m_Attacking.FindAction("LightAttack", throwIfNotFound: true);
         m_Attacking_StrongAttack = m_Attacking.FindAction("StrongAttack", throwIfNotFound: true);
+        // UI interactive
+        m_UIinteractive = asset.FindActionMap("UI interactive", throwIfNotFound: true);
+        m_UIinteractive_PauseMenu = m_UIinteractive.FindAction("PauseMenu", throwIfNotFound: true);
     }
 
     ~@Controls()
@@ -388,6 +430,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_Jumping.enabled, "This will cause a leak and performance issues, Controls.Jumping.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Dashing.enabled, "This will cause a leak and performance issues, Controls.Dashing.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Attacking.enabled, "This will cause a leak and performance issues, Controls.Attacking.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_UIinteractive.enabled, "This will cause a leak and performance issues, Controls.UIinteractive.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -637,6 +680,52 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         }
     }
     public AttackingActions @Attacking => new AttackingActions(this);
+
+    // UI interactive
+    private readonly InputActionMap m_UIinteractive;
+    private List<IUIinteractiveActions> m_UIinteractiveActionsCallbackInterfaces = new List<IUIinteractiveActions>();
+    private readonly InputAction m_UIinteractive_PauseMenu;
+    public struct UIinteractiveActions
+    {
+        private @Controls m_Wrapper;
+        public UIinteractiveActions(@Controls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @PauseMenu => m_Wrapper.m_UIinteractive_PauseMenu;
+        public InputActionMap Get() { return m_Wrapper.m_UIinteractive; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(UIinteractiveActions set) { return set.Get(); }
+        public void AddCallbacks(IUIinteractiveActions instance)
+        {
+            if (instance == null || m_Wrapper.m_UIinteractiveActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UIinteractiveActionsCallbackInterfaces.Add(instance);
+            @PauseMenu.started += instance.OnPauseMenu;
+            @PauseMenu.performed += instance.OnPauseMenu;
+            @PauseMenu.canceled += instance.OnPauseMenu;
+        }
+
+        private void UnregisterCallbacks(IUIinteractiveActions instance)
+        {
+            @PauseMenu.started -= instance.OnPauseMenu;
+            @PauseMenu.performed -= instance.OnPauseMenu;
+            @PauseMenu.canceled -= instance.OnPauseMenu;
+        }
+
+        public void RemoveCallbacks(IUIinteractiveActions instance)
+        {
+            if (m_Wrapper.m_UIinteractiveActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IUIinteractiveActions instance)
+        {
+            foreach (var item in m_Wrapper.m_UIinteractiveActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_UIinteractiveActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public UIinteractiveActions @UIinteractive => new UIinteractiveActions(this);
     private int m_keyboardSchemeIndex = -1;
     public InputControlScheme keyboardScheme
     {
@@ -671,5 +760,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     {
         void OnLightAttack(InputAction.CallbackContext context);
         void OnStrongAttack(InputAction.CallbackContext context);
+    }
+    public interface IUIinteractiveActions
+    {
+        void OnPauseMenu(InputAction.CallbackContext context);
     }
 }
