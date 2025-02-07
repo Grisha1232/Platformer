@@ -44,8 +44,6 @@ public abstract class DefaultMovement : MonoBehaviour
 
     protected DefaultAttack attackScript;
 
-    protected List<Vector3Int> pathToFollow;
-    protected int currentPointToFollow;
 
     
     protected void Start()
@@ -60,18 +58,5 @@ public abstract class DefaultMovement : MonoBehaviour
     abstract protected void Update();
 
     abstract protected void Patrol();
-
-    abstract protected void followPath();
-
-    
-    protected class Pair {
-        public Vector3 vect;
-        public Direction dir;
-
-        public Pair(Vector3 vect, Direction dir) {
-            this.vect = vect;
-            this.dir = dir;
-        }
-    }
 
 }

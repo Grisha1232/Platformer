@@ -295,6 +295,7 @@ public class Pathfinder : MonoBehaviour
         //         Gizmos.DrawWireCube(tile + bias, map.cellSize);
         //     }
         // }
+
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(map.WorldToCell(target.position) + bias, map.cellSize);
 

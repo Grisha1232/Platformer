@@ -21,15 +21,13 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 2127461698910248042, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+      value: {fileID: 21300000, guid: 854028cf83618ad44804520b11f03f83, type: 3}
     - time: 0.1
-      value: {fileID: 8874842850510428824, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+      value: {fileID: 21300000, guid: 2cf06255169c20f428461affcd96c6e3, type: 3}
     - time: 0.2
-      value: {fileID: -1175057978942713942, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+      value: {fileID: 21300000, guid: 5744f4dbe6e7fc349bd0595848af84c8, type: 3}
     - time: 0.3
-      value: {fileID: -1175057978942713942, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
-    - time: 0.4
-      value: {fileID: 8396084745013482390, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+      value: {fileID: 21300000, guid: a5c6fd38eb4a34c4ea1422f1aafea9e3, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -52,17 +50,16 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 2127461698910248042, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
-    - {fileID: 8874842850510428824, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
-    - {fileID: -1175057978942713942, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
-    - {fileID: -1175057978942713942, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
-    - {fileID: 8396084745013482390, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+    - {fileID: 21300000, guid: 854028cf83618ad44804520b11f03f83, type: 3}
+    - {fileID: 21300000, guid: 2cf06255169c20f428461affcd96c6e3, type: 3}
+    - {fileID: 21300000, guid: 5744f4dbe6e7fc349bd0595848af84c8, type: 3}
+    - {fileID: 21300000, guid: a5c6fd38eb4a34c4ea1422f1aafea9e3, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.5
+    m_StopTime: 0.4
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -104,13 +101,6 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.3
-    functionName: Dashing
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.4
     functionName: Dashing
     data: 
     objectReferenceParameter: {fileID: 0}

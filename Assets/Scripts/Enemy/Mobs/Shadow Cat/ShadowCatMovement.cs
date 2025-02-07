@@ -16,12 +16,6 @@ public class ShadowCatMovement : DefaultMovement
     private BoxCollider2D boxCollider;
     [SerializeField] private float  extraHeight = 0.25f;
     private RaycastHit2D groundHit;
-    private bool isJumping = false;
-    private bool jumpingPhase1 = false;
-    private bool jumpingPhase2 = false;
-    private bool isStopped = false;
-
-    private float counterAfterBug = 0;
 
     /// <summary>
     /// Находится ли Теневой кот в тени
@@ -41,20 +35,8 @@ public class ShadowCatMovement : DefaultMovement
     
     protected override void Update()
     {
-        // Patrol();
+        Patrol();
         
-        if (counterAfterBug >= 0.6f) {
-            counterAfterBug = 0;
-            body.gravityScale = 9.8f;
-            isJumping = false;
-            jumpingPhase1= false;
-            jumpingPhase2 = false;
-        }
-        if (body.gravityScale == 0) {
-            counterAfterBug += Time.deltaTime;
-        }
-        UpdatePath();
-        followPath();
         // print("----------");
 
         // print("++++++++++");
@@ -72,10 +54,9 @@ public class ShadowCatMovement : DefaultMovement
         if (attackScript.PlayerInAggroRange()) {
             return;
         }
-
         {
             indicatorPatrol.SetActive(true);
-            indicatorAttack.SetActive(attackScript.PlayerInAggroRange());
+            indicatorAttack.SetActive(false);
             indicatorShadow.SetActive(isInShadow);
         }
         // Поворот в пределах патрулирования
@@ -92,75 +73,10 @@ public class ShadowCatMovement : DefaultMovement
         // animator.SetBool("isMoving", true);
     }
 
-    
-    protected override void followPath() 
-    {
-        if (pathToFollow.Count == 0) {
-            return;
-        }
-
-        if (Pathfinder.instance.getPathLength(transform.position) <= 1) {
-            animator.SetFloat("Speed", 0);
-            return;
-        }
-
-        animator.SetFloat("Speed", patrolSpeed);
-
-        // Получаем текущую и следующую точку пути
-        Vector3 currentPoint = pathToFollow[0] + new Vector3(0.5f, 0.8f);
-        Vector3 nextPoint = pathToFollow[1] + new Vector3(0.5f, 0.8f);
-        Vector3 afterNextPoint = pathToFollow[2] + new Vector3(0.5f, 0.8f);
-       
-        if (Math.Abs(currentPoint.x - nextPoint.x) > 0) {
-            // Двигаемся к следующей точке
-            // Debug.Log("moving from " + transform.position + " towards " + nextPoint + " currentPoint " + currentPoint);
-            transform.position = Vector2.MoveTowards(transform.position, nextPoint, patrolSpeed * Time.deltaTime);
-        } else {
-            Jump(currentPoint, nextPoint, afterNextPoint);
-        }
-
-    }
-
-    protected void Jump(Vector2 from, Vector2 to, Vector2 after) {
-        isJumping = true;
-        if (Math.Abs(transform.position.x - from.x) > 0.1f && !jumpingPhase1){        
-            // Debug.Log("prepare for jump " + transform.position + " towards " + from);
-            transform.position = Vector2.MoveTowards(transform.position, from, patrolSpeed * Time.deltaTime);
-            return;
-        } 
-        if ( Math.Abs(transform.position.y - to.y) > 0.1f && !jumpingPhase2) {
-            jumpingPhase1 = true;
-            body.gravityScale = 0;
-            // Debug.Log("levitating from " + transform.position + " to " + to);
-            transform.position = Vector2.MoveTowards(transform.position, to, jumpForce * Time.deltaTime);
-        } else {
-            jumpingPhase2 = true;
-            // Debug.Log("ending the jump from" + transform.position + " to " + after);
-            transform.position = Vector2.MoveTowards(transform.position, after, patrolSpeed * Time.deltaTime);
-            if (Vector2.Distance(transform.position, after) < 0.1f) {
-                isJumping = false;
-                jumpingPhase1 = false;
-                jumpingPhase2 = false;
-                body.gravityScale = 9.8f;
-            }
-            counterAfterBug += Time.deltaTime;
-        }
-    }
 
     #endregion
 
     #region Help functions
-
-    private void UpdatePath() {
-        if (isJumping) {
-            return;
-        }
-        var path = Pathfinder.instance.getNextThreeTiles(transform.position);
-        if (path == null || path.Count == 0) {
-            return;
-        }
-        pathToFollow = path;
-    }
 
     void Flip() {
         Vector3 scale = transform.localScale;
