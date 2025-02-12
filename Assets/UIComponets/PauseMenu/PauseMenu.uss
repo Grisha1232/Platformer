@@ -1,0 +1,109 @@
+.panel {
+    background-color: rgba(0, 0, 0, 0.47);
+}
+
+.container {
+    max-width: none;
+    max-height: 20%;
+    background-color: rgba(224, 163, 0, 0);
+    flex-direction: row;
+    align-items: stretch;
+    flex-grow: 0;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    justify-content: flex-start;
+}
+
+.button {
+    width: auto;
+    height: auto;
+    background-color: rgba(120, 120, 120, 0.89);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    -unity-font-style: bold;
+    font-size: 200%;
+    max-width: none;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    max-height: none;
+    align-items: stretch;
+    min-height: 90%;
+}
+
+.button:hover {
+    width: auto;
+    height: auto;
+    background-color: rgb(255, 131, 131);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    -unity-font-style: bold;
+    font-size: 200%;
+    max-width: none;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    max-height: none;
+    align-items: stretch;
+    min-height: 90%;
+}
+
+.button:focus {
+    width: auto;
+    height: auto;
+    background-color: rgb(255, 131, 131);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    -unity-font-style: bold;
+    font-size: 200%;
+    max-width: none;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    max-height: none;
+    align-items: stretch;
+    min-height: 90%;
+}
+
+.button-container {
+    background-color: rgba(255, 138, 138, 0);
+    align-items: stretch;
+    justify-content: space-between;
+    min-width: 8%;
+    flex-grow: 1;
+    flex-basis: auto;
+    flex-shrink: 0;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    min-height: 100%;
+}
+
+.unity-label {
+    display: none;
+    font-size: 150%;
+    background-color: rgb(255, 131, 131);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+}

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -7,7 +6,6 @@ using UnityEngine.Tilemaps;
 public class Pathfinder : MonoBehaviour
 {
 
-    
     public enum Direction {
         Up,
         Down,
@@ -18,9 +16,9 @@ public class Pathfinder : MonoBehaviour
 
     [HideInInspector]
     public static Pathfinder instance;
-    public Tilemap map;
+    private Tilemap map;
 
-    public Transform target;
+    private Transform target;
 
     private Vector3Int targetPosition;
     private HashSet<Vector3Int> availableTilesPosition;
@@ -30,13 +28,16 @@ public class Pathfinder : MonoBehaviour
 
     private Vector3Int targetTilePosition;
 
-    void Awake() {
+    private void Awake() {
         if ( instance == null ) {
             instance = this;
             DontDestroyOnLoad(gameObject);
         } else {
             Destroy(gameObject);
+            return;
         }
+        target = GameObject.FindGameObjectWithTag("Player").transform;
+        map = FindTilemapByTag("Map");
         path = new Dictionary<Vector3Int, Direction>();
         availableForGizmos = new Dictionary<Vector3Int, Color>();
         availableTilesPosition = new HashSet<Vector3Int>();
@@ -89,14 +90,35 @@ public class Pathfinder : MonoBehaviour
         availableTilesPosition = availableTilesPosition.Concat(toAdd).ToHashSet();
         
     }
-    // Start is called before the first frame update
-    void Start()
+
+    private static Tilemap FindTilemapByTag(string tag)
     {
+        Tilemap[] allTilemaps = GameObject.FindObjectsOfType<Tilemap>();
+
+        foreach (Tilemap tilemap in allTilemaps)
+        {
+            if (tilemap.tag == tag)
+            {
+                return tilemap;
+            }
+        }
+
+        return null;
     }
+   
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
+        if (GameManager.instance.sceneName == "Main Menu") {
+            return;
+        }
+        if (map == null) {
+            map = FindTilemapByTag("Map");
+        }
+        if (target == null) {
+            target = GameObject.FindGameObjectWithTag("Player").transform;
+        }
         targetPosition = map.WorldToCell(target.position);
         if (targetTilePosition == null || availableTilesPosition.Contains(targetPosition) && targetTilePosition != targetPosition) {
             findPathForAllTiles();
@@ -196,18 +218,6 @@ public class Pathfinder : MonoBehaviour
                 rv.Add(current);
             }
         }
-        // for (int i = 0; i < 4; i++) {
-        //     if (path[current] == Direction.Up) {
-        //         current += biasY;
-        //     } else if (path[current] == Direction.Down) {
-        //         current -= biasY;
-        //     } else if (path[current] == Direction.Right) {
-        //         current += biasX;
-        //     } else if (path[current] == Direction.Left) {
-        //         current -= biasX;
-        //     }
-        //     rv.Add(current);
-        // }
         return rv;
     }
 
@@ -269,6 +279,9 @@ public class Pathfinder : MonoBehaviour
 
 #region GIZMOS
     void OnDrawGizmos() {
+        if (map == null) {
+            return;
+        }
         BoundsInt.PositionEnumerator positions = map.cellBounds.allPositionsWithin;
 
         Vector3 bias = new Vector3(map.cellSize.x / 2, map.cellSize.y / 2);

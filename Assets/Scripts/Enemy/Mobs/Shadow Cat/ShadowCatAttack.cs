@@ -170,6 +170,14 @@ public class ShadowCatAttack : DefaultAttack
         if (isJumping) {
             return;
         }
+        if (Pathfinder.instance == null) {
+            Debug.LogError("Pathfinder.instance = null");
+            return;
+        }
+
+        if (Pathfinder.instance.getPathLength(transform.position) >= 30) {
+            return;
+        }
         var path = Pathfinder.instance.getNextThreeTiles(transform.position);
         if (path == null || path.Count == 0) {
             return;

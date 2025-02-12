@@ -10,8 +10,6 @@ public class UserInput : MonoBehaviour
     [HideInInspector] public Controls controls;
     [HideInInspector] public Vector2 moveInput;
 
-    [HideInInspector] public Vector3 initialPosition {get; private set;}
-
     private void Awake() {
         if ( instance == null ) {
             instance = this;
@@ -19,8 +17,6 @@ public class UserInput : MonoBehaviour
         } else {
             Destroy(gameObject);
         }
-
-        initialPosition = GameObject.FindGameObjectWithTag("Player").transform.position; // Поиск игрока по тегу
 
         controls = new Controls();
         controls.Movement.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
@@ -31,6 +27,8 @@ public class UserInput : MonoBehaviour
     }
 
     private void OnDisable() {
-        controls.Disable();
+        if ( controls != null ) {
+            controls.Disable();
+        }
     }
 }

@@ -28,7 +28,5 @@ abstract class Health : MonoBehaviour {
 
     protected virtual void Die() {
         Destroy(gameObject);
-        healthBar.value = 1;
-        staminaManaBar.value = 1;
     }
 }

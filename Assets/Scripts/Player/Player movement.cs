@@ -153,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
         isMovementBlocked = true;
     }
 
-    private void UnblockMovement() {
+    public void UnblockMovement() {
         isMovementBlocked = false;
     }
 

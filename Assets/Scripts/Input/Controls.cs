@@ -365,6 +365,42 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MenuLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""0cae3b66-4fd3-48ea-a80b-43bffd4ac07f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MenuRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""b78199ce-d27f-4d20-89c7-c3098f61a00c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MenuUp"",
+                    ""type"": ""Button"",
+                    ""id"": ""1148b56b-e336-487a-9f10-0996cea8edc5"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MenuDown"",
+                    ""type"": ""Button"",
+                    ""id"": ""7f2d8ce7-e394-4ccf-a4ed-2adcfedfc72d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -387,6 +423,50 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""PauseMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""41355de6-f2da-4347-a254-8ea5676a0d93"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""MenuLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d0c41829-2a4d-4677-9a30-f475ecfa09c9"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""MenuRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6dcfa1d4-5f2f-40fb-a154-9d92c009f673"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""MenuUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cc87ee3e-e939-4c60-9a71-dc66e075a7fd"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""MenuDown"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -422,6 +502,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         // UI interactive
         m_UIinteractive = asset.FindActionMap("UI interactive", throwIfNotFound: true);
         m_UIinteractive_PauseMenu = m_UIinteractive.FindAction("PauseMenu", throwIfNotFound: true);
+        m_UIinteractive_MenuLeft = m_UIinteractive.FindAction("MenuLeft", throwIfNotFound: true);
+        m_UIinteractive_MenuRight = m_UIinteractive.FindAction("MenuRight", throwIfNotFound: true);
+        m_UIinteractive_MenuUp = m_UIinteractive.FindAction("MenuUp", throwIfNotFound: true);
+        m_UIinteractive_MenuDown = m_UIinteractive.FindAction("MenuDown", throwIfNotFound: true);
     }
 
     ~@Controls()
@@ -685,11 +769,19 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_UIinteractive;
     private List<IUIinteractiveActions> m_UIinteractiveActionsCallbackInterfaces = new List<IUIinteractiveActions>();
     private readonly InputAction m_UIinteractive_PauseMenu;
+    private readonly InputAction m_UIinteractive_MenuLeft;
+    private readonly InputAction m_UIinteractive_MenuRight;
+    private readonly InputAction m_UIinteractive_MenuUp;
+    private readonly InputAction m_UIinteractive_MenuDown;
     public struct UIinteractiveActions
     {
         private @Controls m_Wrapper;
         public UIinteractiveActions(@Controls wrapper) { m_Wrapper = wrapper; }
         public InputAction @PauseMenu => m_Wrapper.m_UIinteractive_PauseMenu;
+        public InputAction @MenuLeft => m_Wrapper.m_UIinteractive_MenuLeft;
+        public InputAction @MenuRight => m_Wrapper.m_UIinteractive_MenuRight;
+        public InputAction @MenuUp => m_Wrapper.m_UIinteractive_MenuUp;
+        public InputAction @MenuDown => m_Wrapper.m_UIinteractive_MenuDown;
         public InputActionMap Get() { return m_Wrapper.m_UIinteractive; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -702,6 +794,18 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @PauseMenu.started += instance.OnPauseMenu;
             @PauseMenu.performed += instance.OnPauseMenu;
             @PauseMenu.canceled += instance.OnPauseMenu;
+            @MenuLeft.started += instance.OnMenuLeft;
+            @MenuLeft.performed += instance.OnMenuLeft;
+            @MenuLeft.canceled += instance.OnMenuLeft;
+            @MenuRight.started += instance.OnMenuRight;
+            @MenuRight.performed += instance.OnMenuRight;
+            @MenuRight.canceled += instance.OnMenuRight;
+            @MenuUp.started += instance.OnMenuUp;
+            @MenuUp.performed += instance.OnMenuUp;
+            @MenuUp.canceled += instance.OnMenuUp;
+            @MenuDown.started += instance.OnMenuDown;
+            @MenuDown.performed += instance.OnMenuDown;
+            @MenuDown.canceled += instance.OnMenuDown;
         }
 
         private void UnregisterCallbacks(IUIinteractiveActions instance)
@@ -709,6 +813,18 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @PauseMenu.started -= instance.OnPauseMenu;
             @PauseMenu.performed -= instance.OnPauseMenu;
             @PauseMenu.canceled -= instance.OnPauseMenu;
+            @MenuLeft.started -= instance.OnMenuLeft;
+            @MenuLeft.performed -= instance.OnMenuLeft;
+            @MenuLeft.canceled -= instance.OnMenuLeft;
+            @MenuRight.started -= instance.OnMenuRight;
+            @MenuRight.performed -= instance.OnMenuRight;
+            @MenuRight.canceled -= instance.OnMenuRight;
+            @MenuUp.started -= instance.OnMenuUp;
+            @MenuUp.performed -= instance.OnMenuUp;
+            @MenuUp.canceled -= instance.OnMenuUp;
+            @MenuDown.started -= instance.OnMenuDown;
+            @MenuDown.performed -= instance.OnMenuDown;
+            @MenuDown.canceled -= instance.OnMenuDown;
         }
 
         public void RemoveCallbacks(IUIinteractiveActions instance)
@@ -764,5 +880,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     public interface IUIinteractiveActions
     {
         void OnPauseMenu(InputAction.CallbackContext context);
+        void OnMenuLeft(InputAction.CallbackContext context);
+        void OnMenuRight(InputAction.CallbackContext context);
+        void OnMenuUp(InputAction.CallbackContext context);
+        void OnMenuDown(InputAction.CallbackContext context);
     }
 }
