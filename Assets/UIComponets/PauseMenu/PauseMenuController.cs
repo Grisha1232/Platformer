@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class PauseMenuController : MonoBehaviour
 {
     public VisualElement root;
     public Button inventoryBtn;
+    public GameObject inventory;
     private Label invetoryLabel;
     public Button statusBtn;
     private Label statusLabel;
@@ -77,6 +79,7 @@ public class PauseMenuController : MonoBehaviour
 
     private void openInventory() {
         Debug.Log("Inventory");
+        inventory.SetActive(true);
     }
 
     private void openStatus() {
@@ -85,6 +88,8 @@ public class PauseMenuController : MonoBehaviour
 
     private void openMainMenu() {
         Debug.Log("Main Menu");
+        GameManager.instance.SaveGame();
+        SceneManager.LoadScene("Main Menu");
     }
 
     private void interactWithMenu() {

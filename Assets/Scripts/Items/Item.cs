@@ -1,3 +1,6 @@
+using System;
+
+[Serializable]
 public abstract class Item {
     /// <summary>
     /// Name of this item

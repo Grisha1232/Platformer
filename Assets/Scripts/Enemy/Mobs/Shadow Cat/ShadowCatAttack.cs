@@ -47,8 +47,8 @@ public class ShadowCatAttack : DefaultAttack
             followPath();
             if (PlayerInAttackRange() && attackTimeCounter >= attackCooldown) {
                 print("attack");
+                attackTimeCounter = 0;
                 animator.SetTrigger("Attack");
-                StartCoroutine(Attack());
             }
         }
     }
@@ -79,7 +79,7 @@ public class ShadowCatAttack : DefaultAttack
         Vector3 afterNextPoint = pathToFollow[2] + new Vector3(0.5f, 0.8f);
 
         int dir = Math.Sign(currentPoint.x - nextPoint.x);
-        if (Math.Abs(currentPoint.y - nextPoint.y) == 0 && dir == transform.localScale.x) {
+        if (Math.Abs(currentPoint.y - nextPoint.y) == 0 && dir == Math.Sign(transform.localScale.x)) {
             Flip();
         } 
        
@@ -199,6 +199,10 @@ public class ShadowCatAttack : DefaultAttack
         Vector3 from = new Vector3(transform.position.x - aggroRange, transform.position.y, transform.position.z);
         Vector3 to = new Vector3(transform.position.x + aggroRange, transform.position.y, transform.position.z);     
         Gizmos.DrawLine(from, to);
+    }
+
+    private void startDamage() {
+        StartCoroutine(Attack());
     }
 
     private void endOfAttack() {

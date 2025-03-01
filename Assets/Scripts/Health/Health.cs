@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-abstract class Health : MonoBehaviour {
+public abstract class Health : MonoBehaviour {
     [SerializeField] protected float maxHealth = 3f;
     [SerializeField] public Slider healthBar;
     [SerializeField] public Slider staminaManaBar;
@@ -11,6 +11,7 @@ abstract class Health : MonoBehaviour {
 
     protected virtual void Start() {
         CurrentHealth = maxHealth;
+        healthBar.value = 1;
     }
 
     public virtual void TakeDamage( float damage ) {
@@ -28,5 +29,9 @@ abstract class Health : MonoBehaviour {
 
     protected virtual void Die() {
         Destroy(gameObject);
+    }
+
+    public virtual void Heal( float amount ) {
+        return;
     }
 }

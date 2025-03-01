@@ -68,21 +68,23 @@ public class Pathfinder : MonoBehaviour
             }
 
             if (availableForGizmos.ContainsKey(position - bias2) && availableForGizmos[position - bias2] == Color.magenta) {
-
+                int count = 0;
                 Vector3Int position1 = position - bias2 - bias3;
-                while (map.GetTile(position1) == null || availableForGizmos.ContainsKey(position1) && availableForGizmos[position1] != Color.green) {
+                while (map.GetTile(position1) == null && count < 10) {
                     availableForGizmos[position1] = Color.blue;
                     toAdd.Add(position1);
                     position1 -= bias3;
+                    count++;
                 }
             }
             if (availableForGizmos.ContainsKey(position + bias2) && availableForGizmos[position + bias2] == Color.magenta) {
-
+                int count = 0;
                 Vector3Int position1 = position + bias2 - bias3;
-                while (map.GetTile(position1) == null || availableForGizmos.ContainsKey(position1) && availableForGizmos[position1] != Color.green) {
+                while (map.GetTile(position1) == null && count < 10) {
                     availableForGizmos[position1] = Color.blue;
                     toAdd.Add(position1);
                     position1 -= bias3;
+                    count++;
                 }
             }
                 
@@ -168,13 +170,24 @@ public class Pathfinder : MonoBehaviour
     public List<Vector3Int> getPath2(Vector3 from) {
         Vector3Int start = map.WorldToCell(from);
 
-        if (!availableTilesPosition.Contains(start)) {
-            // Debug.LogWarning("Cannot get path from this position " + start);
+        Vector3Int biasX = new Vector3Int((int)map.cellSize.x, 0);
+        Vector3Int biasY = new Vector3Int(0, (int)map.cellSize.y);
+
+        if ( !availableTilesPosition.Contains(start) ) {
+            if (availableTilesPosition.Contains(start - biasX)) {
+                start -= biasX;
+            } else if (availableTilesPosition.Contains(start + biasX)) {
+                start += biasX;
+            } else if  (availableTilesPosition.Contains(start - biasY)) {
+                start -= biasY;
+            } else if  (availableTilesPosition.Contains(start + biasY)) {
+                start += biasY;
+            }
+        }
+        if ( !availableTilesPosition.Contains(start) ) {
             return new();
         }
 
-        Vector3Int biasX = new Vector3Int((int)map.cellSize.x, 0);
-        Vector3Int biasY = new Vector3Int(0, (int)map.cellSize.y);
 
         List<Vector3Int> rv = new();
         var current = start;
@@ -199,6 +212,7 @@ public class Pathfinder : MonoBehaviour
         if (!availableTilesPosition.Contains(start)) {
             return new();
         }
+        
         Vector3Int biasX = new Vector3Int((int)map.cellSize.x, 0);
         Vector3Int biasY = new Vector3Int(0, (int)map.cellSize.y);
         
@@ -285,29 +299,29 @@ public class Pathfinder : MonoBehaviour
         BoundsInt.PositionEnumerator positions = map.cellBounds.allPositionsWithin;
 
         Vector3 bias = new Vector3(map.cellSize.x / 2, map.cellSize.y / 2);
-        foreach (var position in positions) {
+        // foreach (var position in positions) {
 
-            if (map.GetTile(position) != null){
-                Gizmos.color = Color.red;
-            } else {
-                continue;
-            }
+        //     if (map.GetTile(position) != null){
+        //         Gizmos.color = Color.red;
+        //     } else {
+        //         continue;
+        //     }
             
-            Gizmos.DrawWireCube(position + bias, map.cellSize);
-        }
+        //     Gizmos.DrawWireCube(position + bias, map.cellSize);
+        // }
 
-        // if (availableForGizmos != null) {
-        //     foreach (KeyValuePair<Vector3Int, Color> value in availableForGizmos) {
-        //         Gizmos.color = value.Value;
-        //         Gizmos.DrawWireCube(value.Key + bias, map.cellSize);
-        //     }
-        // }
-        // if (availableTilesPosition != null) {
-        //     foreach(var tile in availableTilesPosition) {
-        //         Gizmos.color = Color.blue;
-        //         Gizmos.DrawWireCube(tile + bias, map.cellSize);
-        //     }
-        // }
+        if (availableForGizmos != null) {
+            foreach (KeyValuePair<Vector3Int, Color> value in availableForGizmos) {
+                Gizmos.color = value.Value;
+                Gizmos.DrawWireCube(value.Key + bias, map.cellSize);
+            }
+        }
+        if (availableTilesPosition != null) {
+            foreach(var tile in availableTilesPosition) {
+                Gizmos.color = Color.blue;
+                Gizmos.DrawWireCube(tile + bias, map.cellSize);
+            }
+        }
 
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(map.WorldToCell(target.position) + bias, map.cellSize);

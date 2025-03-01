@@ -4,59 +4,139 @@ using UnityEngine;
 
 public class TrainningBossMovement : MonoBehaviour
 {
-    public float MovementSpeed = 2.0f;
-    public float MovementSpeedBackwards = 1.0f;
-    public float JumpCooldown = 3;
+    public Transform[] platforms; // Массив платформ, на которые может прыгать босс
+    public float jumpForce = 10f; // Сила прыжка
+    public float groundPoundRadius = 4f; // Радиус урона при ударе по земле
+    public int groundPoundDamage = 10; // Урон от удара по земле
+    public GameObject projectilePrefab; // Префаб стрелы
+    public float projectileSpeed = 10f; // Скорость стрелы
+    public float attackCooldown = 2f; // Время между атаками
+    public float meleeRange = 1.5f; // Дистанция для ближней атаки
+    public int meleeDamage = 5; // Урон от ближней атаки
 
-    private PlayerMovement playerMovement;
-    private TrainningBossAttack attackScript;
-    private Rigidbody2D body;
-    private Transform player;
-    private bool isAttacking;
-    private float JumpCooldownTimer = 99f;
+    private Transform player; // Ссылка на игрока
+    private Rigidbody2D rb;
+    private Animator animator;
+    private float lastAttackTime;
 
-    // Start is called before the first frame update
     void Start()
     {
-        attackScript = GetComponent<TrainningBossAttack>();
-        playerMovement = GetComponent<PlayerMovement>();
-        player = GameObject.FindGameObjectWithTag("Player").transform; // Поиск игрока по тегу
-        body = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        lastAttackTime = -attackCooldown; // Чтобы босс мог атаковать сразу
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (!isAttacking) {
-            if (player.position.y > body.position.y && JumpCooldownTimer > JumpCooldown) {
-                jumpTowardsPlayerPlatform();
-            } else if (attackScript.canAttack()){
-                moveTowardsPlayer();
-            } else {
-                moveBackwardsFromPlayer();
-            }
+        if (Time.time - lastAttackTime >= attackCooldown)
+        {
+            DecideAttack();
+            lastAttackTime = Time.time;
         }
-        JumpCooldownTimer += Time.deltaTime;
     }
 
-    public void setIsAttacking(bool isAttacking) {
-        this.isAttacking = isAttacking;
+    void DecideAttack()
+    {
+        int attackType = Random.Range(0, 4); // Выбираем случайную атаку
+
+        switch (attackType)
+        {
+            case 0:
+                JumpToPlatform();
+                break;
+            case 1:
+                ShootProjectile();
+                break;
+            case 2:
+                GroundPound();
+                break;
+            case 3:
+                MeleeAttack();
+                break;
+        }
     }
 
-    void moveTowardsPlayer() {
-        float direction = Mathf.Sign(player.position.x - transform.position.x);
-        body.velocity = new Vector3(direction * MovementSpeed, body.velocity.y);
-        transform.localScale = new Vector3(direction * transform.localScale.x, transform.localScale.y, transform.localScale.z);
+    void JumpToPlatform()
+    {
+        Transform targetPlatform = platforms[Random.Range(0, platforms.Length)];
+        Vector2 direction = (targetPlatform.position - transform.position).normalized;
+        rb.velocity = new Vector2(direction.x * jumpForce, jumpForce);
+
+        // Анимация прыжка
+        // animator.SetTrigger("Jump");
     }
 
-    void moveBackwardsFromPlayer() {
-        float direction = Mathf.Sign(player.position.x - transform.position.x);
-        body.velocity = new Vector3( -direction * MovementSpeedBackwards, body.velocity.y);
-        transform.localScale = new Vector3(direction * transform.localScale.x, transform.localScale.y, transform.localScale.z);
+    void ShootProjectile()
+    {
+        GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+        Vector2 direction = (player.position - transform.position).normalized;
+        projectile.GetComponent<Rigidbody2D>().velocity = direction * projectileSpeed;
+
+        // Анимация стрельбы
+        // animator.SetTrigger("Shoot");
     }
 
-    void jumpTowardsPlayerPlatform() {
-        JumpCooldownTimer = 0;
-        print("jumping to player's platform");
+    void GroundPound()
+    {
+        // Анимация удара по земле
+        // animator.SetTrigger("GroundPound");
+
+        // Определяем область под боссом
+        Vector2 raycastOrigin = transform.position; // Начальная точка для Raycast
+        float raycastDistance = groundPoundRadius; // Дистанция для проверки
+        Vector2 directionL = Vector2.left; // Направление влево
+        Vector2 directionR = Vector2.right; // Направление вправо
+
+        // Используем Raycast для проверки попадания
+        // RaycastHit2D[] hits = Physics2D.RaycastAll(raycastOrigin, direction, raycastDistance);
+
+        // // Перебираем все объекты, которые попали под луч
+        // foreach (RaycastHit2D hit in hits)
+        // {
+        //     if (hit.collider.CompareTag("Player"))
+        //     {
+        //         // Наносим урон игроку
+        //         hit.collider.GetComponent<PlayerHealth>().TakeDamage(groundPoundDamage);
+        //     }
+        // }
+
+        // Альтернативно, можно использовать BoxCast для более точной проверки области
+        
+        Vector2 boxSize = new Vector2(groundPoundRadius * 2, 1f); // Размер области проверки
+        // RaycastHit2D[] boxHits = Physics2D.BoxCastAll(raycastOrigin, boxSize, 0f, direction, raycastDistance);
+
+        // foreach (RaycastHit2D hit in boxHits)
+        // {
+        //     if (hit.collider.CompareTag("Player"))
+        //     {
+        //         hit.collider.GetComponent<PlayerHealth>().TakeDamage(groundPoundDamage);
+        //     }
+        // }
+    }
+
+    void MeleeAttack()
+    {
+        // Анимация ближней атаки
+        // animator.SetTrigger("MeleeAttack");
+
+        // Проверяем, находится ли игрок в радиусе атаки
+        if (Vector2.Distance(transform.position, player.position) <= meleeRange)
+        {
+            player.GetComponent<PlayerHealth>().TakeDamage(meleeDamage);
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        // Отображаем луч для удара по земле
+        Gizmos.color = Color.red;
+        // Gizmos.DrawLine(transform.position, transform.position + Vector3.down * groundPoundRadius);
+
+        // Если используете BoxCast, отобразите область
+       
+        Vector2 boxSize = new Vector2(groundPoundRadius * 2, 1f);
+        Gizmos.DrawWireCube(transform.position + Vector3.down, boxSize);
+        
     }
 }

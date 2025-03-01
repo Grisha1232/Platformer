@@ -31,10 +31,13 @@ public class PlayerMovement : MonoBehaviour
     private float dashTimeCounter;
     private float dashCooldownTimer;
 
+    private float scaleFactor;
+
     private RaycastHit2D groundHit;
     private RaycastHit2D enemyHit;
 
     static public bool isMovementBlocked {get; private set;}
+    private PlayerHealth health;
 
     void Start()
     {
@@ -44,6 +47,11 @@ public class PlayerMovement : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        health = GetComponent<PlayerHealth>();
+        scaleFactor = transform.localScale.x;
+        GameManager.instance.currentGameState.checkpoint = (rb.position.x, rb.position.y);
+        GameManager.instance.currentGameState.items = GetComponent<PlayerInventory>().Items;
+        GameManager.instance.currentGameState.currency = 0;
     }
 
     void Update()
@@ -58,6 +66,12 @@ public class PlayerMovement : MonoBehaviour
         Dash();
     }
 
+    public void setGameState(GameState state) {
+        state.checkpoint = (rb.position.x, rb.position.y);
+        state.items = GetComponent<PlayerInventory>().Items;
+        state.currency = 0;
+    }
+
     #region Movement Functions
     void Move()
     {
@@ -69,7 +83,7 @@ public class PlayerMovement : MonoBehaviour
         // Поворот спрайта в зависимости от направления
         if (moveInput != 0)
         {
-            transform.localScale = new Vector3(Mathf.Sign(moveInput) * 4, 4f, 4f);
+            transform.localScale = new Vector3(Mathf.Sign(moveInput) * scaleFactor, scaleFactor, scaleFactor);
         }
     }
 
@@ -105,6 +119,7 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(dashSpeed * Math.Sign(transform.localScale.x), 0);
             rb.gravityScale = 0;
             dashTimeCounter = dashTime;
+            health.framInvincable = true;
         }
     }
 
@@ -121,6 +136,7 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(0, 0);
             rb.gravityScale = 6;
             dashCooldownTimer = 0;
+            health.framInvincable = false;
             anim.SetTrigger("StopDash");
         }
     }
@@ -150,6 +166,7 @@ public class PlayerMovement : MonoBehaviour
     #region Animation Triggers
 
     private void BlockMovement() {
+        rb.velocity = Vector3.zero;
         isMovementBlocked = true;
     }
 

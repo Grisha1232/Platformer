@@ -1,3 +1,7 @@
+
+using System;
+
+[Serializable]
 public class Bow : Weapon {
     
     public Bow() {

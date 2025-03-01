@@ -1,3 +1,7 @@
+
+using System;
+
+[Serializable]
 public abstract class Weapon : Item {
 
     /// <summary>

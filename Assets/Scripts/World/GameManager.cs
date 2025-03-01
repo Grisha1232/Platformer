@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using System.Linq;
-using UnityEngine.UIElements;
-
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 public class GameManager : MonoBehaviour
 {
 
@@ -21,6 +16,8 @@ public class GameManager : MonoBehaviour
 
     [HideInInspector] public string sceneName;
 
+    [HideInInspector] public GameState currentGameState;
+
     private void Awake() {
         if ( instance == null ) {
             instance = this;
@@ -28,12 +25,14 @@ public class GameManager : MonoBehaviour
         } else {
             Destroy(gameObject);
         }
+        currentGameState = new GameState();
         sceneName = SceneManager.GetActiveScene().name;
     }
 
     void Update() {
         if (sceneName != SceneManager.GetActiveScene().name) {
             sceneName = SceneManager.GetActiveScene().name;
+            LoadGame();
         }
         openPauseMenu();
     }
@@ -51,8 +50,11 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
+    private void OnEnable() {
+        LoadGame();
+    }
 
-#region Pause Menu
+    #region Pause Menu
 
     private void openPauseMenu() {
         if (sceneName == "Main Menu") {
@@ -63,18 +65,46 @@ public class GameManager : MonoBehaviour
         }
         if (UserInput.instance.controls.UIinteractive.PauseMenu.WasPressedThisFrame()) {
             pauseMenu.SetActive(!pauseMenu.activeInHierarchy);
-            if (pauseMenu.activeInHierarchy) {
-                UserInput.instance.controls.Jumping.Disable();
-            } else {
-                UserInput.instance.controls.Jumping.Enable();
-            }
+        }
+        
+        if (pauseMenu.activeInHierarchy) {
+            UserInput.instance.controls.Jumping.Disable();
+        } else {
+            UserInput.instance.controls.Jumping.Enable();
         }
     }
 
     public void LoadMainMenu() {
+        SaveGame();
         SceneManager.LoadScene("Main Menu");
     }
 
+
+#endregion
+
+#region GameManagment
+
+    public void ReturnToCheckpoint() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        GetComponent<PlayerMovement>().UnblockMovement();
+    }
+
+    public void SaveGame() {
+        BinaryFormatter formatter = new BinaryFormatter();
+        
+        using (FileStream stream = new FileStream("save.dat", FileMode.Create)) {
+            formatter.Serialize(stream, currentGameState);
+        }
+        print("Game saved in file");
+    }
+
+    public void LoadGame() {
+        BinaryFormatter formatter = new BinaryFormatter();
+        using (FileStream stream = new FileStream("save.dat", FileMode.Open)) {
+            currentGameState = (GameState)formatter.Deserialize(stream);
+        }
+        print(currentGameState);
+    }
 
 #endregion
 }
