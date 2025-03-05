@@ -448,6 +448,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""9520287d-a81e-4618-98e2-d87ba4aac082"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard"",
+                    ""action"": ""Back"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""41355de6-f2da-4347-a254-8ea5676a0d93"",
                     ""path"": ""<Gamepad>/dpad/left"",
                     ""interactions"": """",

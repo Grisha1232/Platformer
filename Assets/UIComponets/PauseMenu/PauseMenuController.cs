@@ -88,8 +88,7 @@ public class PauseMenuController : MonoBehaviour
 
     private void openMainMenu() {
         Debug.Log("Main Menu");
-        GameManager.instance.SaveGame();
-        SceneManager.LoadScene("Main Menu");
+        GameManager.instance.LoadScene("Main Menu");
     }
 
     private void interactWithMenu() {

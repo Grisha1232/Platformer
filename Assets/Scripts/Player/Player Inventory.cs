@@ -6,16 +6,24 @@ using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour {
 
-    public List<Item> Items { get; protected set; }
+    public List<Item> Items { get; set; }
+    public List<Item> quickItems { get; set; }
     public Weapon EquippedWeapon { get; set; }
-    public Item   CurrentItem {get; set;}
+    public Item   CurrentItem { get; set; }
+    public int    Currency { get; set; }
     private HealPotion healPotion;
 
+    public static PlayerInventory instance;
+
     void Awake() {
+        if (instance == null) {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        } else {
+            Destroy(gameObject);
+        }
         healPotion = new HealPotion(GetComponent<PlayerHealth>());
         Items = new();
-        Items.Append(healPotion);
-
     }
 
     void Update() {

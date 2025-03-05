@@ -8,7 +8,6 @@ public class GameManager : MonoBehaviour
 #region Variables for Pause Menu
 
     private GameObject pauseMenu;
-    private int currentElementMenu = 0;
 
 #endregion
 
@@ -18,21 +17,27 @@ public class GameManager : MonoBehaviour
 
     [HideInInspector] public GameState currentGameState;
 
+    public GameObject player;
+
     private void Awake() {
         if ( instance == null ) {
             instance = this;
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            DontDestroyOnLoad(player);
             DontDestroyOnLoad(gameObject);
         } else {
             Destroy(gameObject);
         }
         currentGameState = new GameState();
+        for (int i = 0; i < 10; i++) {
+            currentGameState.Items.Add(new Item(i.ToString()));
+        }
         sceneName = SceneManager.GetActiveScene().name;
     }
 
     void Update() {
         if (sceneName != SceneManager.GetActiveScene().name) {
             sceneName = SceneManager.GetActiveScene().name;
-            LoadGame();
         }
         openPauseMenu();
     }
@@ -51,7 +56,6 @@ public class GameManager : MonoBehaviour
     }
 
     private void OnEnable() {
-        LoadGame();
     }
 
     #region Pause Menu
@@ -75,8 +79,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void LoadMainMenu() {
-        SaveGame();
-        SceneManager.LoadScene("Main Menu");
+        LoadScene("Main Menu");
     }
 
 
@@ -84,12 +87,41 @@ public class GameManager : MonoBehaviour
 
 #region GameManagment
 
-    public void ReturnToCheckpoint() {
+    public void LoadScene(string name) {
+        if (name == "Main Menu") {
+            SaveGame();
+            player.SetActive(false);
+            SceneManager.LoadScene(name);
+        } else {
+            player.SetActive(true);
+            SceneManager.LoadScene(name);
+        }
+        
+    }
+
+    // called second
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("OnSceneLoaded: " + scene.name);
+        if (scene.name != "Main Menu") {
+            Pathfinder.instance.setMap();
+            LoadGame(false);
+        } else {
+            player.SetActive(false);
+        }
+    }
+
+    public void ReturnToCheckpoint(bool isDeath = false) {
+        LoadGame(isDeath);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         GetComponent<PlayerMovement>().UnblockMovement();
     }
 
     public void SaveGame() {
+        currentGameState.currency = PlayerInventory.instance.Currency;
+        currentGameState.Items = PlayerInventory.instance.Items;
+        currentGameState.QuickItems = PlayerInventory.instance.quickItems;
+        currentGameState.playerPositions[sceneName] = (player.transform.position.x, player.transform.position.y);
         BinaryFormatter formatter = new BinaryFormatter();
         
         using (FileStream stream = new FileStream("save.dat", FileMode.Create)) {
@@ -98,12 +130,40 @@ public class GameManager : MonoBehaviour
         print("Game saved in file");
     }
 
-    public void LoadGame() {
+    public void LoadGame(bool useCheckpoint) {
         BinaryFormatter formatter = new BinaryFormatter();
-        using (FileStream stream = new FileStream("save.dat", FileMode.Open)) {
-            currentGameState = (GameState)formatter.Deserialize(stream);
+        if (File.Exists("save.dat")) {
+            using (FileStream stream = new FileStream("save.dat", FileMode.Open)) {
+                currentGameState = (GameState)formatter.Deserialize(stream);
+            }
         }
-        print(currentGameState);
+        if (currentGameState == null) {
+            currentGameState = new();
+        }
+        if (useCheckpoint) {
+            currentGameState.countDeath++;
+            if (currentGameState.checkpoints.ContainsKey(SceneManager.GetActiveScene().name)) {
+                player.GetComponent<Rigidbody2D>().position = new Vector3(currentGameState.checkpoints[SceneManager.GetActiveScene().name].x, currentGameState.checkpoints[SceneManager.GetActiveScene().name].y); 
+                currentGameState.playerPositions[SceneManager.GetActiveScene().name] = currentGameState.checkpoints[SceneManager.GetActiveScene().name];
+            } else {
+                player.GetComponent<Rigidbody2D>().position = new Vector3(0, 10);
+                currentGameState.checkpoints[SceneManager.GetActiveScene().name] = (0, 10);
+                currentGameState.playerPositions[SceneManager.GetActiveScene().name] = currentGameState.checkpoints[SceneManager.GetActiveScene().name];
+            }
+        } else {
+            if (currentGameState.playerPositions.ContainsKey(SceneManager.GetActiveScene().name)) {
+                player.GetComponent<Rigidbody2D>().position = new Vector3(currentGameState.playerPositions[SceneManager.GetActiveScene().name].x, currentGameState.playerPositions[SceneManager.GetActiveScene().name].y); 
+                currentGameState.checkpoints[SceneManager.GetActiveScene().name] = currentGameState.playerPositions[SceneManager.GetActiveScene().name];
+            } else {
+                player.GetComponent<Rigidbody2D>().position = new Vector3(0, 10);
+                currentGameState.checkpoints[SceneManager.GetActiveScene().name] = (0, 10);
+                currentGameState.playerPositions[SceneManager.GetActiveScene().name] = currentGameState.checkpoints[SceneManager.GetActiveScene().name];
+            }
+        }
+        PlayerMovement.isMovementBlocked = false;
+        PlayerInventory.instance.Currency = currentGameState.currency;
+        PlayerInventory.instance.Items = currentGameState.Items;
+        PlayerInventory.instance.quickItems = currentGameState.QuickItems;
     }
 
 #endregion

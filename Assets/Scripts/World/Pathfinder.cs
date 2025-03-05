@@ -17,9 +17,9 @@ public class Pathfinder : MonoBehaviour
     [HideInInspector]
     public static Pathfinder instance;
     private Tilemap map;
+    private Tilemap platforms;
 
-    private Transform target;
-
+    public GameObject playerTarget;
     private Vector3Int targetPosition;
     private HashSet<Vector3Int> availableTilesPosition;
     private Dictionary<Vector3Int, Color> availableForGizmos;
@@ -36,14 +36,35 @@ public class Pathfinder : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        target = GameObject.FindGameObjectWithTag("Player").transform;
+        // setMap();
+    }
+
+    private static Tilemap FindTilemapByTag(string tag)
+    {
+        Tilemap[] allTilemaps = GameObject.FindObjectsOfType<Tilemap>();
+
+        foreach (Tilemap tilemap in allTilemaps)
+        {
+            if (tilemap.tag == tag)
+            {
+                return tilemap;
+            }
+        }
+
+        return null;
+    }
+   
+    public void setMap() {
         map = FindTilemapByTag("Map");
+        platforms = FindTilemapByTag("Platforms");
         path = new Dictionary<Vector3Int, Direction>();
         availableForGizmos = new Dictionary<Vector3Int, Color>();
         availableTilesPosition = new HashSet<Vector3Int>();
         BoundsInt.PositionEnumerator positions = map.cellBounds.allPositionsWithin;
         foreach (var position in positions) {
             if (map.GetTile(position) == null && map.GetTile(position - new Vector3Int(0, (int)map.cellSize.y)) != null) {
+                availableTilesPosition.Add(position); 
+            } else if (platforms != null && map.GetTile(position) == null && platforms.GetTile(position - new Vector3Int(0, (int)platforms.cellSize.y)) != null) {
                 availableTilesPosition.Add(position); 
             } else {
                 continue;
@@ -57,12 +78,14 @@ public class Pathfinder : MonoBehaviour
             availableForGizmos[position] = Color.green;
             if ( availableTilesPosition.Contains(position + bias2) && availableTilesPosition.Contains(position - bias2) ) {
                 continue;
-            } else if ( availableTilesPosition.Contains(position + bias2) && !availableTilesPosition.Contains(position - bias2) 
-            && map.GetTile(position - bias2) == null ) {
+            } 
+            if ( availableTilesPosition.Contains(position + bias2) && !availableTilesPosition.Contains(position - bias2) 
+            && map.GetTile(position - bias2) == null) {
                 availableForGizmos[position - bias2] = Color.magenta;
                 toAdd.Add(position - bias2);
-            } else if ( availableTilesPosition.Contains(position - bias2) && !availableTilesPosition.Contains(position + bias2) 
-            && map.GetTile(position + bias2) == null ) {
+            }
+            if ( availableTilesPosition.Contains(position - bias2) && !availableTilesPosition.Contains(position + bias2) 
+            && map.GetTile(position + bias2) == null) {
                 availableForGizmos[position + bias2] = Color.magenta;
                 toAdd.Add(position + bias2);
             }
@@ -90,24 +113,7 @@ public class Pathfinder : MonoBehaviour
                 
         }
         availableTilesPosition = availableTilesPosition.Concat(toAdd).ToHashSet();
-        
     }
-
-    private static Tilemap FindTilemapByTag(string tag)
-    {
-        Tilemap[] allTilemaps = GameObject.FindObjectsOfType<Tilemap>();
-
-        foreach (Tilemap tilemap in allTilemaps)
-        {
-            if (tilemap.tag == tag)
-            {
-                return tilemap;
-            }
-        }
-
-        return null;
-    }
-   
 
     // Update is called once per frame
     private void Update()
@@ -118,10 +124,10 @@ public class Pathfinder : MonoBehaviour
         if (map == null) {
             map = FindTilemapByTag("Map");
         }
-        if (target == null) {
-            target = GameObject.FindGameObjectWithTag("Player").transform;
+        if (playerTarget.transform == null) {
+            Debug.LogWarning("playerTarget.transform is null");
         }
-        targetPosition = map.WorldToCell(target.position);
+        targetPosition = map.WorldToCell(playerTarget.transform.position);
         if (targetTilePosition == null || availableTilesPosition.Contains(targetPosition) && targetTilePosition != targetPosition) {
             findPathForAllTiles();
         }
@@ -310,6 +316,20 @@ public class Pathfinder : MonoBehaviour
         //     Gizmos.DrawWireCube(position + bias, map.cellSize);
         // }
 
+        // if (platforms != null) {
+        //     BoundsInt.PositionEnumerator positions1 = platforms.cellBounds.allPositionsWithin;
+        //     foreach (var position in positions1) {
+
+        //         if (platforms.GetTile(position) != null){
+        //             Gizmos.color = Color.red;
+        //         } else {
+        //             continue;
+        //         }
+                
+        //         Gizmos.DrawWireCube(position + bias, map.cellSize);
+        //     }
+        // }
+
         if (availableForGizmos != null) {
             foreach (KeyValuePair<Vector3Int, Color> value in availableForGizmos) {
                 Gizmos.color = value.Value;
@@ -324,7 +344,7 @@ public class Pathfinder : MonoBehaviour
         }
 
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(map.WorldToCell(target.position) + bias, map.cellSize);
+        Gizmos.DrawWireCube(map.WorldToCell(playerTarget.transform.position) + bias, map.cellSize);
 
         Gizmos.color = Color.blue;
         if (path != null) {

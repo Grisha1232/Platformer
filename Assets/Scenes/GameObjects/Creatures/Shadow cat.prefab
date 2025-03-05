@@ -185,10 +185,10 @@ MonoBehaviour:
   indicatorShadow: {fileID: 4555628775012574767}
   indicatorAttack: {fileID: 2292327885203529738}
   indicatorPatrol: {fileID: 1997715830222366175}
+  player: {fileID: 5645446865618908720, guid: d7fef8b25e5f5904db148d4a053c12d8, type: 3}
   groundLayer:
     serializedVersion: 2
     m_Bits: 512
-  extraHeight: 0.25
 --- !u!114 &6311208154895479653
 MonoBehaviour:
   m_ObjectHideFlags: 0

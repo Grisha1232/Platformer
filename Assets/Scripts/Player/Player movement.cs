@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -19,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Envirement")]
     [SerializeField] private float  extraHeight = 0.25f;
+    [SerializeField] private LayerMask platformLayer;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask enemyLayer;
     private Rigidbody2D rb;
@@ -36,11 +38,12 @@ public class PlayerMovement : MonoBehaviour
     private RaycastHit2D groundHit;
     private RaycastHit2D enemyHit;
 
-    static public bool isMovementBlocked {get; private set;}
+    static public bool isMovementBlocked {get; set;}
     private PlayerHealth health;
 
     void Start()
     {
+        isMovementBlocked = false;
         isJumping = false;
         jumpTimeCounter = 0f;
         dashCooldownTimer = 99;
@@ -49,8 +52,7 @@ public class PlayerMovement : MonoBehaviour
         anim = GetComponent<Animator>();
         health = GetComponent<PlayerHealth>();
         scaleFactor = transform.localScale.x;
-        GameManager.instance.currentGameState.checkpoint = (rb.position.x, rb.position.y);
-        GameManager.instance.currentGameState.items = GetComponent<PlayerInventory>().Items;
+        GameManager.instance.currentGameState.Items = GetComponent<PlayerInventory>().Items;
         GameManager.instance.currentGameState.currency = 0;
     }
 
@@ -66,15 +68,9 @@ public class PlayerMovement : MonoBehaviour
         Dash();
     }
 
-    public void setGameState(GameState state) {
-        state.checkpoint = (rb.position.x, rb.position.y);
-        state.items = GetComponent<PlayerInventory>().Items;
-        state.currency = 0;
-    }
-
     #region Movement Functions
-    void Move()
-    {
+
+    void Move() {
         float moveInput = UserInput.instance.moveInput.x;
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
 
@@ -146,19 +142,25 @@ public class PlayerMovement : MonoBehaviour
     #region GroundCheck
 
     private bool isGrounded() {
-        groundHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, groundLayer);
+        groundHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, groundLayer | platformLayer);
         enemyHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, enemyLayer);
         
         return groundHit.collider != null || enemyHit.collider != null;
     }
 
     private void isGroundedForAnim() {
-        groundHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, groundLayer);
+        groundHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, groundLayer | platformLayer);
         enemyHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, enemyLayer);
         
         if (groundHit.collider != null || enemyHit.collider != null) {
             anim.SetTrigger("isGrounded");
         }
+    }
+
+    private void OnDrawGizmos() {
+        int modifier = 1;
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position - Vector3.down * modifier, transform.position - Vector3.up * modifier);
     }
 
     #endregion

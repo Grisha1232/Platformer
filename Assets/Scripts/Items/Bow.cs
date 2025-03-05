@@ -4,8 +4,7 @@ using System;
 [Serializable]
 public class Bow : Weapon {
     
-    public Bow() {
-        Name = "Bow";
+    public Bow(string name = "Bow"): base(name) {
         IsRemoveble = false;
         IsRanged = true;
         Damage = 50f;

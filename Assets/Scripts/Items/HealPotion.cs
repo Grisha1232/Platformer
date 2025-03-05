@@ -9,7 +9,7 @@ public class HealPotion : Item
     private float rateOfHeal = 0.2f;
     private float amountOfHeal;
 
-    public HealPotion(Health health) {
+    public HealPotion(Health health, string name = "HealthPotion"): base(name) {
         this.health = health;
         amountOfHeal = health.CurrentHealth * rateOfHeal;
     }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1727891708240730310}
   - component: {fileID: 3488438503517312532}
   - component: {fileID: 6695702507428840583}
-  - component: {fileID: 9155188653370964753}
+  - component: {fileID: 7210782891822693009}
   - component: {fileID: 7816854048682734435}
   m_Layer: 0
   m_Name: Trainning boss
@@ -101,8 +101,8 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_AngularDrag: 0
+  m_GravityScale: 10
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -112,10 +112,10 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
---- !u!70 &9155188653370964753
-CapsuleCollider2D:
+--- !u!61 &7210782891822693009
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -146,9 +146,19 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.004286289, y: 0}
-  m_Size: {x: 0.8913851, y: 1}
-  m_Direction: 0
+  m_Offset: {x: 0.00000011920929, y: -0.0031000376}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.8828125, y: 1}
+    newSize: {x: 0.8828125, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.90761304, y: 1.043401}
+  m_EdgeRadius: 0
 --- !u!114 &7816854048682734435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,7 +171,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b6b329aedd0e4b7bb9e7ef2442f1dee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platforms: []
+  platforms:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  platformRigid: {fileID: 0}
   jumpForce: 10
   groundPoundRadius: 5
   groundPoundDamage: 10
@@ -170,3 +190,16 @@ MonoBehaviour:
   attackCooldown: 2
   meleeRange: 1.5
   meleeDamage: 5
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  platformLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  resolution: 20

@@ -17,6 +17,7 @@ public class MainMenuController : MonoBehaviour
     private int currentSelected = 0;
 
     public GameObject levelSelector;
+    public GameObject settings;
 
     private void OnEnable() {
         root = GetComponent<UIDocument>().rootVisualElement;
@@ -55,6 +56,8 @@ public class MainMenuController : MonoBehaviour
     }
 
     private void OpenSettings() {
+        settings.SetActive(true);
+        gameObject.SetActive(false);
         Debug.Log("open settings");
     }
 

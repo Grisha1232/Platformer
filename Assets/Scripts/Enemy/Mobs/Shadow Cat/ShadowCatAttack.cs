@@ -14,7 +14,6 @@ public class ShadowCatAttack : DefaultAttack
     private bool isJumping = false;
     private bool jumpingPhase1 = false;
     private bool jumpingPhase2 = false;
-    private bool isStopped = false;
     [SerializeField] protected float jumpForce = 10f;
 
     private float counterAfterBug = 0;

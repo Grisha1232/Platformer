@@ -14,8 +14,6 @@ public class ShadowCatMovement : DefaultMovement
     /// </summary>
     [SerializeField] private LayerMask groundLayer;
     private BoxCollider2D boxCollider;
-    [SerializeField] private float  extraHeight = 0.25f;
-    private RaycastHit2D groundHit;
 
     /// <summary>
     /// Находится ли Теневой кот в тени
@@ -28,7 +26,6 @@ public class ShadowCatMovement : DefaultMovement
     /// </summary>
     private void Awake() {
         base.Start();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
         attackScript = GetComponent<ShadowCatAttack>();
         boxCollider = GetComponent<BoxCollider2D>();
     }

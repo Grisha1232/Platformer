@@ -1,7 +1,3 @@
-using JetBrains.Annotations;
-using Unity.VisualScripting;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 class PlayerHealth : Health {
     public bool framInvincable {get; set;}
@@ -16,7 +12,6 @@ class PlayerHealth : Health {
     {
         print("Died");
         CurrentHealth = maxHealth;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        GetComponent<PlayerMovement>().UnblockMovement();
+        GameManager.instance.ReturnToCheckpoint(true);
     }
 }

@@ -60,8 +60,7 @@ public class LevelSelectorController : MonoBehaviour
 
     
     private void onButtonClicked(Button button) {
-        print(button.text);
-        SceneManager.LoadScene(button.text);
+        GameManager.instance.LoadScene(button.text);
     }
 
     private void Back() {

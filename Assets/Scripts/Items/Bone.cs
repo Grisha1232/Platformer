@@ -4,7 +4,7 @@ using System;
 [Serializable]
 public class Bone : Item
 {
-    public Bone() {
+    public Bone(string name = "Bone"): base(name) {
 
     }
     public override void Use()
