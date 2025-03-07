@@ -33,6 +33,7 @@ public class TrainningBossMovement : MonoBehaviour
     private Animator animator;
     private float lastAttackTime;
     private bool isJumpingAttack = false;
+    [HideInInspector] public static bool isLocked = true;
 
     void Start()
     {
@@ -41,28 +42,48 @@ public class TrainningBossMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         lastAttackTime = -attackCooldown; // Чтобы босс мог атаковать сразу
-        
     }
 
     void Update()
     {
+        if (isLocked) {
+            Debug.Log("locked");
+            return;
+        }
         if (Time.time - lastAttackTime >= attackCooldown)
         {
+            DecideAttack();
             lastAttackTime = Time.time;
         }
-        DecideAttack();
         TurnToPlayer();
     }
 
     private void DecideAttack() {
-        // if (UserInput.instance.controls.Jumping.Jump.WasPressedThisFrame()) {
-        //     var random = new System.Random();
-        //     currentPlatform = random.Next(platforms.Count);
-        //     JumpToPlatform();
-        // }
-        // if (UserInput.instance.controls.GameInteraction.Interact.WasPressedThisFrame()) {
-        //     GroundPound();
-        // }
+        var random = new System.Random();
+        switch (random.Next(0, 2)) {
+            case 0:
+                Debug.Log("melee attack");
+                currentPlatform = random.Next(platforms.Count);
+                JumpToPlatform();
+                break;
+            case 1:
+                Debug.Log("melee attack");
+                MeleeAttack();
+                break;
+            case 2:
+                Debug.Log("Ground pound");
+                GroundPound();
+                break;
+            case 3:
+                Debug.Log("3");
+                break;
+            case 4:
+                Debug.Log("4");
+                break;
+            default:
+                break;
+            
+        }
     }
 
     #region Movement methods

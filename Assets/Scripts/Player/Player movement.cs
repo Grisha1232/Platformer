@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
@@ -37,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
 
     private RaycastHit2D groundHit;
     private RaycastHit2D enemyHit;
+    private Collider2D platformCollider;
 
     static public bool isMovementBlocked {get; set;}
     private PlayerHealth health;
@@ -81,6 +83,22 @@ public class PlayerMovement : MonoBehaviour
         {
             transform.localScale = new Vector3(Mathf.Sign(moveInput) * scaleFactor, scaleFactor, scaleFactor);
         }
+
+        if (UserInput.instance.moveInput.y < 0 && isGrounded()) {
+            Debug.Log("move down");
+            DisableCollisionWithPlatforms();
+            StartCoroutine(MoveDownPlatform());
+        }
+    }
+
+    private IEnumerator MoveDownPlatform() {
+        yield return new WaitUntil( () => {
+            var collider = Physics2D.OverlapBox(boxCollider.bounds.center, boxCollider.bounds.size * 1.1f, 0f, layerMask: platformLayer);
+            return collider == null;
+        });
+
+        EnableCollisionWithPlatforms();
+
     }
 
     void Jump()
@@ -139,6 +157,36 @@ public class PlayerMovement : MonoBehaviour
 
     #endregion
 
+    #region Help methods
+
+    private void DisableCollisionWithPlatforms() {
+        if (platformCollider == null) {
+            return;
+        }
+
+        Physics2D.IgnoreCollision(platformCollider, boxCollider, true);
+    }
+
+    private void EnableCollisionWithPlatforms() {
+
+        Physics2D.IgnoreCollision(platformCollider, boxCollider, false);
+    }
+
+    // Метод для преобразования LayerMask в номер слоя
+    private int LayerMaskToLayerIndex(LayerMask layerMask)
+    {
+        int layerIndex = (int)Mathf.Log(layerMask.value, 2);
+        return layerIndex;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if (collision.gameObject.layer == LayerMaskToLayerIndex(platformLayer)) {
+            platformCollider = collision.collider;
+        }
+    }
+
+    #endregion
+
     #region GroundCheck
 
     private bool isGrounded() {
@@ -158,9 +206,8 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void OnDrawGizmos() {
-        int modifier = 1;
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(transform.position - Vector3.down * modifier, transform.position - Vector3.up * modifier);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(boxCollider.bounds.center, boxCollider.bounds.size * 1.1f);
     }
 
     #endregion

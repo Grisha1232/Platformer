@@ -11,6 +11,7 @@ public class GroundProjectiles : MonoBehaviour
     public Transform initialPosition;
 
     private CircleCollider2D circleCollider;
+    private BoxCollider2D playerCollider;
     private Rigidbody2D rb;
     private float extraHeight = 0.25f;
     private float velocityConst = 20f;
@@ -21,6 +22,9 @@ public class GroundProjectiles : MonoBehaviour
         }
         if (rb == null) {
             rb = GetComponent<Rigidbody2D>();
+        }
+        if (playerCollider == null) {
+            playerCollider = GameObject.FindGameObjectWithTag("Player").GetComponent<BoxCollider2D>();
         }
         rb.transform.position = initialPosition.position;
         gameObject.SetActive(true);
@@ -50,6 +54,13 @@ public class GroundProjectiles : MonoBehaviour
         var downHits =  Physics2D.CircleCast(circleCollider.bounds.center, circleCollider.bounds.size.x / 2, Vector2.down, extraHeight, groundLayer);
 
        return downHits.collider != null;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision) {
+        Debug.Log("collision");
+        if (collision == playerCollider) {
+            playerCollider.gameObject.GetComponent<PlayerHealth>().TakeDamage(0.5f);
+        }
     }
 
     private void OnDrawGizmos() {
