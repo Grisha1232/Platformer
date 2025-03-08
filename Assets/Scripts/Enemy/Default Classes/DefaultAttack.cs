@@ -70,6 +70,7 @@ public abstract class DefaultAttack : MonoBehaviour {
 
     public virtual bool PlayerInAttackRange() {
         var hits = Physics2D.CircleCast(attackTransform.position, attackRange, transform.right, 0f, attackableLayer);
+        print(hits);
         return hits.collider != null;
     }
     

@@ -365,51 +365,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Back"",
-                    ""type"": ""Button"",
-                    ""id"": ""232daaf7-7424-4f4f-ba04-b7de1b2c1068"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""MenuLeft"",
-                    ""type"": ""Button"",
-                    ""id"": ""0cae3b66-4fd3-48ea-a80b-43bffd4ac07f"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""MenuRight"",
-                    ""type"": ""Button"",
-                    ""id"": ""b78199ce-d27f-4d20-89c7-c3098f61a00c"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""MenuUp"",
-                    ""type"": ""Button"",
-                    ""id"": ""1148b56b-e336-487a-9f10-0996cea8edc5"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""MenuDown"",
-                    ""type"": ""Button"",
-                    ""id"": ""7f2d8ce7-e394-4ccf-a4ed-2adcfedfc72d"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -432,235 +387,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""PauseMenu"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""3ae4275b-6864-4b18-9994-bea37d3f1dc4"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""Back"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""9520287d-a81e-4618-98e2-d87ba4aac082"",
-                    ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";keyboard"",
-                    ""action"": ""Back"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""41355de6-f2da-4347-a254-8ea5676a0d93"",
-                    ""path"": ""<Gamepad>/dpad/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""MenuLeft"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""d0c41829-2a4d-4677-9a30-f475ecfa09c9"",
-                    ""path"": ""<Gamepad>/dpad/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""MenuRight"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""6dcfa1d4-5f2f-40fb-a154-9d92c009f673"",
-                    ""path"": ""<Gamepad>/dpad/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""MenuUp"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""cc87ee3e-e939-4c60-9a71-dc66e075a7fd"",
-                    ""path"": ""<Gamepad>/dpad/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""MenuDown"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                }
-            ]
-        },
-        {
-            ""name"": ""GameInteraction"",
-            ""id"": ""b693ebfb-f0c9-4495-b480-c806bea54d51"",
-            ""actions"": [
-                {
-                    ""name"": ""UseItem"",
-                    ""type"": ""Button"",
-                    ""id"": ""43b43f5d-e5ca-4d41-bc2f-caf023d0b89e"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""UseHeal"",
-                    ""type"": ""Button"",
-                    ""id"": ""d0c74121-686a-40ea-95e1-c093a7c3f8bb"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""SwitchWeapon"",
-                    ""type"": ""Button"",
-                    ""id"": ""8fed9da3-0b43-410e-9f6b-8919d91a5b2a"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""SwitchItem"",
-                    ""type"": ""Button"",
-                    ""id"": ""9093a083-4c3d-430c-a7fd-6e918acb77f2"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Interact"",
-                    ""type"": ""Button"",
-                    ""id"": ""32a9a570-e4a1-425b-aca4-e7ce274d97fa"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                }
-            ],
-            ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""23e44869-e002-485a-b10c-70a90cf6d89d"",
-                    ""path"": ""<Keyboard>/f"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";keyboard"",
-                    ""action"": ""UseItem"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""e0ebbcf8-a56e-454c-a455-4a36ee2b0c6a"",
-                    ""path"": ""<Gamepad>/buttonWest"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""UseItem"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""2a0061f1-7420-441c-9204-129613d5ef06"",
-                    ""path"": ""<Keyboard>/r"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";keyboard"",
-                    ""action"": ""UseHeal"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""e0a59f90-c8ce-4ee4-a223-b5b4f0d9eef3"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""UseHeal"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""8667ba21-1acb-4249-a1c1-ff69330e8c30"",
-                    ""path"": ""<Keyboard>/leftCtrl"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";keyboard"",
-                    ""action"": ""SwitchWeapon"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""6dfcdf23-505e-4bbb-a113-a9126faded7f"",
-                    ""path"": ""<Gamepad>/dpad/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""SwitchWeapon"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""aef7388c-ba21-47f4-86cd-e7ce26152389"",
-                    ""path"": ""<Keyboard>/leftAlt"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";keyboard"",
-                    ""action"": ""SwitchItem"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""94c6d644-a9c0-412b-8043-432b7a59a9ae"",
-                    ""path"": ""<Gamepad>/dpad/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""SwitchItem"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""3adae613-a0a5-483d-ab8f-1066a182dc3c"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";keyboard"",
-                    ""action"": ""Interact"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""ee33075c-b3c7-40db-8956-7c4d13bfd2e5"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -696,18 +422,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         // UI interactive
         m_UIinteractive = asset.FindActionMap("UI interactive", throwIfNotFound: true);
         m_UIinteractive_PauseMenu = m_UIinteractive.FindAction("PauseMenu", throwIfNotFound: true);
-        m_UIinteractive_Back = m_UIinteractive.FindAction("Back", throwIfNotFound: true);
-        m_UIinteractive_MenuLeft = m_UIinteractive.FindAction("MenuLeft", throwIfNotFound: true);
-        m_UIinteractive_MenuRight = m_UIinteractive.FindAction("MenuRight", throwIfNotFound: true);
-        m_UIinteractive_MenuUp = m_UIinteractive.FindAction("MenuUp", throwIfNotFound: true);
-        m_UIinteractive_MenuDown = m_UIinteractive.FindAction("MenuDown", throwIfNotFound: true);
-        // GameInteraction
-        m_GameInteraction = asset.FindActionMap("GameInteraction", throwIfNotFound: true);
-        m_GameInteraction_UseItem = m_GameInteraction.FindAction("UseItem", throwIfNotFound: true);
-        m_GameInteraction_UseHeal = m_GameInteraction.FindAction("UseHeal", throwIfNotFound: true);
-        m_GameInteraction_SwitchWeapon = m_GameInteraction.FindAction("SwitchWeapon", throwIfNotFound: true);
-        m_GameInteraction_SwitchItem = m_GameInteraction.FindAction("SwitchItem", throwIfNotFound: true);
-        m_GameInteraction_Interact = m_GameInteraction.FindAction("Interact", throwIfNotFound: true);
     }
 
     ~@Controls()
@@ -717,7 +431,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_Dashing.enabled, "This will cause a leak and performance issues, Controls.Dashing.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Attacking.enabled, "This will cause a leak and performance issues, Controls.Attacking.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UIinteractive.enabled, "This will cause a leak and performance issues, Controls.UIinteractive.Disable() has not been called.");
-        UnityEngine.Debug.Assert(!m_GameInteraction.enabled, "This will cause a leak and performance issues, Controls.GameInteraction.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -972,21 +685,11 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_UIinteractive;
     private List<IUIinteractiveActions> m_UIinteractiveActionsCallbackInterfaces = new List<IUIinteractiveActions>();
     private readonly InputAction m_UIinteractive_PauseMenu;
-    private readonly InputAction m_UIinteractive_Back;
-    private readonly InputAction m_UIinteractive_MenuLeft;
-    private readonly InputAction m_UIinteractive_MenuRight;
-    private readonly InputAction m_UIinteractive_MenuUp;
-    private readonly InputAction m_UIinteractive_MenuDown;
     public struct UIinteractiveActions
     {
         private @Controls m_Wrapper;
         public UIinteractiveActions(@Controls wrapper) { m_Wrapper = wrapper; }
         public InputAction @PauseMenu => m_Wrapper.m_UIinteractive_PauseMenu;
-        public InputAction @Back => m_Wrapper.m_UIinteractive_Back;
-        public InputAction @MenuLeft => m_Wrapper.m_UIinteractive_MenuLeft;
-        public InputAction @MenuRight => m_Wrapper.m_UIinteractive_MenuRight;
-        public InputAction @MenuUp => m_Wrapper.m_UIinteractive_MenuUp;
-        public InputAction @MenuDown => m_Wrapper.m_UIinteractive_MenuDown;
         public InputActionMap Get() { return m_Wrapper.m_UIinteractive; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -999,21 +702,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @PauseMenu.started += instance.OnPauseMenu;
             @PauseMenu.performed += instance.OnPauseMenu;
             @PauseMenu.canceled += instance.OnPauseMenu;
-            @Back.started += instance.OnBack;
-            @Back.performed += instance.OnBack;
-            @Back.canceled += instance.OnBack;
-            @MenuLeft.started += instance.OnMenuLeft;
-            @MenuLeft.performed += instance.OnMenuLeft;
-            @MenuLeft.canceled += instance.OnMenuLeft;
-            @MenuRight.started += instance.OnMenuRight;
-            @MenuRight.performed += instance.OnMenuRight;
-            @MenuRight.canceled += instance.OnMenuRight;
-            @MenuUp.started += instance.OnMenuUp;
-            @MenuUp.performed += instance.OnMenuUp;
-            @MenuUp.canceled += instance.OnMenuUp;
-            @MenuDown.started += instance.OnMenuDown;
-            @MenuDown.performed += instance.OnMenuDown;
-            @MenuDown.canceled += instance.OnMenuDown;
         }
 
         private void UnregisterCallbacks(IUIinteractiveActions instance)
@@ -1021,21 +709,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @PauseMenu.started -= instance.OnPauseMenu;
             @PauseMenu.performed -= instance.OnPauseMenu;
             @PauseMenu.canceled -= instance.OnPauseMenu;
-            @Back.started -= instance.OnBack;
-            @Back.performed -= instance.OnBack;
-            @Back.canceled -= instance.OnBack;
-            @MenuLeft.started -= instance.OnMenuLeft;
-            @MenuLeft.performed -= instance.OnMenuLeft;
-            @MenuLeft.canceled -= instance.OnMenuLeft;
-            @MenuRight.started -= instance.OnMenuRight;
-            @MenuRight.performed -= instance.OnMenuRight;
-            @MenuRight.canceled -= instance.OnMenuRight;
-            @MenuUp.started -= instance.OnMenuUp;
-            @MenuUp.performed -= instance.OnMenuUp;
-            @MenuUp.canceled -= instance.OnMenuUp;
-            @MenuDown.started -= instance.OnMenuDown;
-            @MenuDown.performed -= instance.OnMenuDown;
-            @MenuDown.canceled -= instance.OnMenuDown;
         }
 
         public void RemoveCallbacks(IUIinteractiveActions instance)
@@ -1053,84 +726,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         }
     }
     public UIinteractiveActions @UIinteractive => new UIinteractiveActions(this);
-
-    // GameInteraction
-    private readonly InputActionMap m_GameInteraction;
-    private List<IGameInteractionActions> m_GameInteractionActionsCallbackInterfaces = new List<IGameInteractionActions>();
-    private readonly InputAction m_GameInteraction_UseItem;
-    private readonly InputAction m_GameInteraction_UseHeal;
-    private readonly InputAction m_GameInteraction_SwitchWeapon;
-    private readonly InputAction m_GameInteraction_SwitchItem;
-    private readonly InputAction m_GameInteraction_Interact;
-    public struct GameInteractionActions
-    {
-        private @Controls m_Wrapper;
-        public GameInteractionActions(@Controls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @UseItem => m_Wrapper.m_GameInteraction_UseItem;
-        public InputAction @UseHeal => m_Wrapper.m_GameInteraction_UseHeal;
-        public InputAction @SwitchWeapon => m_Wrapper.m_GameInteraction_SwitchWeapon;
-        public InputAction @SwitchItem => m_Wrapper.m_GameInteraction_SwitchItem;
-        public InputAction @Interact => m_Wrapper.m_GameInteraction_Interact;
-        public InputActionMap Get() { return m_Wrapper.m_GameInteraction; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
-        public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(GameInteractionActions set) { return set.Get(); }
-        public void AddCallbacks(IGameInteractionActions instance)
-        {
-            if (instance == null || m_Wrapper.m_GameInteractionActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_GameInteractionActionsCallbackInterfaces.Add(instance);
-            @UseItem.started += instance.OnUseItem;
-            @UseItem.performed += instance.OnUseItem;
-            @UseItem.canceled += instance.OnUseItem;
-            @UseHeal.started += instance.OnUseHeal;
-            @UseHeal.performed += instance.OnUseHeal;
-            @UseHeal.canceled += instance.OnUseHeal;
-            @SwitchWeapon.started += instance.OnSwitchWeapon;
-            @SwitchWeapon.performed += instance.OnSwitchWeapon;
-            @SwitchWeapon.canceled += instance.OnSwitchWeapon;
-            @SwitchItem.started += instance.OnSwitchItem;
-            @SwitchItem.performed += instance.OnSwitchItem;
-            @SwitchItem.canceled += instance.OnSwitchItem;
-            @Interact.started += instance.OnInteract;
-            @Interact.performed += instance.OnInteract;
-            @Interact.canceled += instance.OnInteract;
-        }
-
-        private void UnregisterCallbacks(IGameInteractionActions instance)
-        {
-            @UseItem.started -= instance.OnUseItem;
-            @UseItem.performed -= instance.OnUseItem;
-            @UseItem.canceled -= instance.OnUseItem;
-            @UseHeal.started -= instance.OnUseHeal;
-            @UseHeal.performed -= instance.OnUseHeal;
-            @UseHeal.canceled -= instance.OnUseHeal;
-            @SwitchWeapon.started -= instance.OnSwitchWeapon;
-            @SwitchWeapon.performed -= instance.OnSwitchWeapon;
-            @SwitchWeapon.canceled -= instance.OnSwitchWeapon;
-            @SwitchItem.started -= instance.OnSwitchItem;
-            @SwitchItem.performed -= instance.OnSwitchItem;
-            @SwitchItem.canceled -= instance.OnSwitchItem;
-            @Interact.started -= instance.OnInteract;
-            @Interact.performed -= instance.OnInteract;
-            @Interact.canceled -= instance.OnInteract;
-        }
-
-        public void RemoveCallbacks(IGameInteractionActions instance)
-        {
-            if (m_Wrapper.m_GameInteractionActionsCallbackInterfaces.Remove(instance))
-                UnregisterCallbacks(instance);
-        }
-
-        public void SetCallbacks(IGameInteractionActions instance)
-        {
-            foreach (var item in m_Wrapper.m_GameInteractionActionsCallbackInterfaces)
-                UnregisterCallbacks(item);
-            m_Wrapper.m_GameInteractionActionsCallbackInterfaces.Clear();
-            AddCallbacks(instance);
-        }
-    }
-    public GameInteractionActions @GameInteraction => new GameInteractionActions(this);
     private int m_keyboardSchemeIndex = -1;
     public InputControlScheme keyboardScheme
     {
@@ -1169,18 +764,5 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     public interface IUIinteractiveActions
     {
         void OnPauseMenu(InputAction.CallbackContext context);
-        void OnBack(InputAction.CallbackContext context);
-        void OnMenuLeft(InputAction.CallbackContext context);
-        void OnMenuRight(InputAction.CallbackContext context);
-        void OnMenuUp(InputAction.CallbackContext context);
-        void OnMenuDown(InputAction.CallbackContext context);
-    }
-    public interface IGameInteractionActions
-    {
-        void OnUseItem(InputAction.CallbackContext context);
-        void OnUseHeal(InputAction.CallbackContext context);
-        void OnSwitchWeapon(InputAction.CallbackContext context);
-        void OnSwitchItem(InputAction.CallbackContext context);
-        void OnInteract(InputAction.CallbackContext context);
     }
 }

@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -21,7 +19,6 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Envirement")]
     [SerializeField] private float  extraHeight = 0.25f;
-    [SerializeField] private LayerMask platformLayer;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask enemyLayer;
     private Rigidbody2D rb;
@@ -34,28 +31,19 @@ public class PlayerMovement : MonoBehaviour
     private float dashTimeCounter;
     private float dashCooldownTimer;
 
-    private float scaleFactor;
-
     private RaycastHit2D groundHit;
     private RaycastHit2D enemyHit;
-    private Collider2D platformCollider;
 
-    static public bool isMovementBlocked {get; set;}
-    private PlayerHealth health;
+    static public bool isMovementBlocked {get; private set;}
 
     void Start()
     {
-        isMovementBlocked = false;
         isJumping = false;
         jumpTimeCounter = 0f;
         dashCooldownTimer = 99;
         boxCollider = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        health = GetComponent<PlayerHealth>();
-        scaleFactor = transform.localScale.x;
-        GameManager.instance.currentGameState.Items = GetComponent<PlayerInventory>().Items;
-        GameManager.instance.currentGameState.currency = 0;
     }
 
     void Update()
@@ -71,8 +59,8 @@ public class PlayerMovement : MonoBehaviour
     }
 
     #region Movement Functions
-
-    void Move() {
+    void Move()
+    {
         float moveInput = UserInput.instance.moveInput.x;
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
 
@@ -81,24 +69,8 @@ public class PlayerMovement : MonoBehaviour
         // Поворот спрайта в зависимости от направления
         if (moveInput != 0)
         {
-            transform.localScale = new Vector3(Mathf.Sign(moveInput) * scaleFactor, scaleFactor, scaleFactor);
+            transform.localScale = new Vector3(Mathf.Sign(moveInput) * 4, 4f, 4f);
         }
-
-        if (UserInput.instance.moveInput.y < 0 && isGrounded()) {
-            Debug.Log("move down");
-            DisableCollisionWithPlatforms();
-            StartCoroutine(MoveDownPlatform());
-        }
-    }
-
-    private IEnumerator MoveDownPlatform() {
-        yield return new WaitUntil( () => {
-            var collider = Physics2D.OverlapBox(boxCollider.bounds.center, boxCollider.bounds.size * 1.1f, 0f, layerMask: platformLayer);
-            return collider == null;
-        });
-
-        EnableCollisionWithPlatforms();
-
     }
 
     void Jump()
@@ -133,7 +105,6 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(dashSpeed * Math.Sign(transform.localScale.x), 0);
             rb.gravityScale = 0;
             dashTimeCounter = dashTime;
-            health.framInvincable = true;
         }
     }
 
@@ -150,38 +121,7 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(0, 0);
             rb.gravityScale = 6;
             dashCooldownTimer = 0;
-            health.framInvincable = false;
             anim.SetTrigger("StopDash");
-        }
-    }
-
-    #endregion
-
-    #region Help methods
-
-    private void DisableCollisionWithPlatforms() {
-        if (platformCollider == null) {
-            return;
-        }
-
-        Physics2D.IgnoreCollision(platformCollider, boxCollider, true);
-    }
-
-    private void EnableCollisionWithPlatforms() {
-
-        Physics2D.IgnoreCollision(platformCollider, boxCollider, false);
-    }
-
-    // Метод для преобразования LayerMask в номер слоя
-    private int LayerMaskToLayerIndex(LayerMask layerMask)
-    {
-        int layerIndex = (int)Mathf.Log(layerMask.value, 2);
-        return layerIndex;
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision) {
-        if (collision.gameObject.layer == LayerMaskToLayerIndex(platformLayer)) {
-            platformCollider = collision.collider;
         }
     }
 
@@ -190,14 +130,14 @@ public class PlayerMovement : MonoBehaviour
     #region GroundCheck
 
     private bool isGrounded() {
-        groundHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, groundLayer | platformLayer);
+        groundHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, groundLayer);
         enemyHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, enemyLayer);
         
         return groundHit.collider != null || enemyHit.collider != null;
     }
 
     private void isGroundedForAnim() {
-        groundHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, groundLayer | platformLayer);
+        groundHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, groundLayer);
         enemyHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraHeight, enemyLayer);
         
         if (groundHit.collider != null || enemyHit.collider != null) {
@@ -205,21 +145,15 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos() {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(boxCollider.bounds.center, boxCollider.bounds.size * 1.1f);
-    }
-
     #endregion
 
     #region Animation Triggers
 
     private void BlockMovement() {
-        rb.velocity = Vector3.zero;
         isMovementBlocked = true;
     }
 
-    public void UnblockMovement() {
+    private void UnblockMovement() {
         isMovementBlocked = false;
     }
 

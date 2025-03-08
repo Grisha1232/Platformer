@@ -1,10 +1,7 @@
-
-using System;
-
-[Serializable]
 public class Bow : Weapon {
     
-    public Bow(string name = "Bow"): base(name) {
+    public Bow() {
+        Name = "Bow";
         IsRemoveble = false;
         IsRanged = true;
         Damage = 50f;

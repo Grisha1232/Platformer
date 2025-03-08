@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class ShadowCatAttack : DefaultAttack
+public class FlyingMobAttack : DefaultAttack
 {
-    
-    private ShadowCatMovement movementScript;
+    private FlyingMobMovement movementScript;
     private RaycastHit2D[] hits;
 
 
@@ -23,93 +22,108 @@ public class ShadowCatAttack : DefaultAttack
     void Awake()
     {
         Start();
-        movementScript = GetComponent<ShadowCatMovement>();
+        movementScript = GetComponent<FlyingMobMovement>();
     }
 
     void Update()
     {
-        
-        if (counterAfterBug >= 0.6f) {
+
+        if (counterAfterBug >= 0.6f)
+        {
             counterAfterBug = 0;
             body.gravityScale = 9.8f;
             isJumping = false;
-            jumpingPhase1= false;
+            jumpingPhase1 = false;
             jumpingPhase2 = false;
         }
-        if (body.gravityScale == 0) {
+        if (body.gravityScale == 0)
+        {
             counterAfterBug += Time.deltaTime;
         }
 
         attackTimeCounter += Time.deltaTime;
-        if (PlayerInAggroRange()) {
+        if (PlayerInAggroRange())
+        {
             UpdatePath();
             followPath();
-            if (PlayerInAttackRange() && attackTimeCounter >= attackCooldown) {
+            if (PlayerInAttackRange() && attackTimeCounter >= attackCooldown)
+            {
                 print("attack");
                 animator.SetTrigger("Attack");
                 StartCoroutine(Attack());
             }
         }
     }
-    
-    protected void followPath() 
+
+    protected void followPath()
     {
-        
+
         {
             indicatorPatrol.SetActive(false);
             indicatorAttack.SetActive(true);
-            indicatorShadow.SetActive(movementScript.isInShadow);
         }
 
-        if (pathToFollow.Count == 0) {
+        if (pathToFollow.Count == 0)
+        {
             return;
         }
 
-        if (Pathfinder.instance.getPathLength(transform.position) <= 1) {
+        if (Pathfinder.instance.getPathLength(transform.position) <= 1)
+        {
             animator.SetFloat("Speed", 0);
             return;
         }
 
         animator.SetFloat("Speed", chaseSpeed);
 
-        // Получаем текущую и следующую точку пути
+        // �������� ������� � ��������� ����� ����
         Vector3 currentPoint = pathToFollow[0] + new Vector3(0.5f, 0.8f);
         Vector3 nextPoint = pathToFollow[1] + new Vector3(0.5f, 0.8f);
         Vector3 afterNextPoint = pathToFollow[2] + new Vector3(0.5f, 0.8f);
 
         int dir = Math.Sign(currentPoint.x - nextPoint.x);
-        if (Math.Abs(currentPoint.y - nextPoint.y) == 0 && dir == transform.localScale.x) {
+        if (Math.Abs(currentPoint.y - nextPoint.y) == 0 && dir == transform.localScale.x)
+        {
             Flip();
-        } 
-       
-        if (Math.Abs(currentPoint.x - nextPoint.x) > 0) {
-            // Двигаемся к следующей точке
+        }
+
+        if (Math.Abs(currentPoint.x - nextPoint.x) > 0)
+        {
+            // ��������� � ��������� �����
             // Debug.Log("moving from " + transform.position + " towards " + nextPoint + " currentPoint " + currentPoint);
             transform.position = Vector2.MoveTowards(transform.position, nextPoint, chaseSpeed * Time.deltaTime);
-        } else {
+        }
+        else
+        {
             Jump(currentPoint, nextPoint, afterNextPoint);
         }
 
     }
 
-    
-    protected void Jump(Vector2 from, Vector2 to, Vector2 after) {
+
+    protected void Jump(Vector2 from, Vector2 to, Vector2 after)
+    {
         isJumping = true;
-        if (Math.Abs(transform.position.x - from.x) > 0.1f && !jumpingPhase1){        
+        if (Math.Abs(transform.position.x - from.x) > 0.1f && !jumpingPhase1)
+        {
             // Debug.Log("prepare for jump " + transform.position + " towards " + from);
             transform.position = Vector2.MoveTowards(transform.position, from, chaseSpeed * Time.deltaTime);
             return;
-        } 
-        if ( Math.Abs(transform.position.y - to.y) > 0.1f && !jumpingPhase2) {
+        }
+        if (Math.Abs(transform.position.y - to.y) > 0.1f && !jumpingPhase2)
+        {
             jumpingPhase1 = true;
             body.gravityScale = 0;
             // Debug.Log("levitating from " + transform.position + " to " + to);
             transform.position = Vector2.MoveTowards(transform.position, to, jumpForce * Time.deltaTime);
-        } else {
+        }
+        else
+        {
             jumpingPhase2 = true;
             // Debug.Log("ending the jump from" + transform.position + " to " + after);
             transform.position = Vector2.MoveTowards(transform.position, after, chaseSpeed * Time.deltaTime);
-            if (Vector2.Distance(transform.position, after) < 0.1f) {
+            if (Vector2.Distance(transform.position, after) < 0.1f)
+            {
                 isJumping = false;
                 jumpingPhase1 = false;
                 jumpingPhase2 = false;
@@ -120,17 +134,21 @@ public class ShadowCatAttack : DefaultAttack
     }
 
 
-    protected override IEnumerator Attack()  { 
+    protected override IEnumerator Attack()
+    {
         attackTimeCounter = 0;
         List<PlayerHealth> listDamaged = new();
-        shouldBeDamaging = true; 
-        while(shouldBeDamaging) {            
+        shouldBeDamaging = true;
+        while (shouldBeDamaging)
+        {
             hits = Physics2D.CircleCastAll(attackTransform.position, attackRange, transform.right, 0f, attackableLayer);
-            
-            for (int i = 0; i < hits.Length; i++) {
+
+            for (int i = 0; i < hits.Length; i++)
+            {
                 PlayerHealth enemyHealth = hits[i].collider.gameObject.GetComponent<PlayerHealth>();
-                if (enemyHealth != null && !enemyHealth.HasTakenDamage) {
-                    enemyHealth.TakeDamage( damage );
+                if (enemyHealth != null && !enemyHealth.HasTakenDamage)
+                {
+                    enemyHealth.TakeDamage(damage);
                     listDamaged.Add(enemyHealth);
                 }
             }
@@ -138,62 +156,69 @@ public class ShadowCatAttack : DefaultAttack
             yield return null;
         }
 
-        foreach( PlayerHealth enemyHealth in listDamaged ) {
+        foreach (PlayerHealth enemyHealth in listDamaged)
+        {
             enemyHealth.HasTakenDamage = false;
         }
     }
 
     protected override void ChaseToAttack()
     {
-        if (!PlayerInAggroRange()) {
+        if (!PlayerInAggroRange())
+        {
             return;
         }
 
-        // Движение в сторону игрока
+        // �������� � ������� ������
         Vector2 direction = (player.position - transform.position).normalized;
-        
+
         animator.SetFloat("Speed", Math.Abs(direction.x));
-        // Поворот в сторону игрока
+        // ������� � ������� ������
         if ((direction.x > 0 && Math.Sign(transform.localScale.x) == -1) || (direction.x < 0 && Math.Sign(transform.localScale.x) == 1))
         {
             Flip();
         }
         body.velocity = new Vector2(direction.x * chaseSpeed, body.velocity.y);
 
-        // Запуск анимации преследования
+        // ������ �������� �������������
         // animator.SetBool("isMoving", true);
 
     }
-    
-    private void UpdatePath() {
-        if (isJumping) {
+
+    private void UpdatePath()
+    {
+        if (isJumping)
+        {
             return;
         }
         var path = Pathfinder.instance.getNextThreeTiles(transform.position);
-        if (path == null || path.Count == 0) {
+        if (path == null || path.Count == 0)
+        {
             return;
         }
         pathToFollow = path;
     }
 
-    
-    void Flip() {
+
+    void Flip()
+    {
         Vector3 scale = transform.localScale;
         scale.x *= -1;
         transform.localScale = scale;
     }
 
-    private void OnDrawGizmosSelected() {
+    private void OnDrawGizmosSelected()
+    {
         Gizmos.DrawWireSphere(attackTransform.position, attackRange);
-        
-        
+
+
         Vector3 from = new Vector3(transform.position.x - aggroRange, transform.position.y, transform.position.z);
-        Vector3 to = new Vector3(transform.position.x + aggroRange, transform.position.y, transform.position.z);     
+        Vector3 to = new Vector3(transform.position.x + aggroRange, transform.position.y, transform.position.z);
         Gizmos.DrawLine(from, to);
     }
 
-    private void endOfAttack() {
+    private void endOfAttack()
+    {
         shouldBeDamaging = false;
     }
-
 }
