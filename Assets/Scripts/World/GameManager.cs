@@ -113,8 +113,8 @@ public class GameManager : MonoBehaviour
 
     public void ReturnToCheckpoint(bool isDeath = false) {
         LoadGame(isDeath);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         GetComponent<PlayerMovement>().UnblockMovement();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void SaveGame() {

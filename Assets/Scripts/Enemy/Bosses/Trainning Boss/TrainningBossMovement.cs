@@ -6,37 +6,27 @@ using Unity.VisualScripting;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 
-public class TrainningBossMovement : MonoBehaviour
+public class TrainningBossMovement : DefaultBoss
 {
     public List<GameObject> platforms; // Массив платформ, на которые может прыгать босс
     public Rigidbody2D platformRigid;
     private int currentPlatform = -1;
     public int groundPoundDamage = 10; // Урон от удара по земле
     public Transform attackTransform;
-    public GameObject projectilePrefab; // Префаб стрелы
     public GroundProjectiles leftProj;
     public GroundProjectiles righttProj;
+    public GameObject[] projectiles;
     public float projectileSpeed = 30f; // Скорость стрелы
+    public float timeBetweenShots = 0.3f;
+    public float projectileLifeDistance = 30f;
     public float attackCooldown = 2f; // Время между атаками
     public float meleeRange = 1.5f; // Дистанция для ближней атаки
     public int meleeDamage = 5; // Урон от ближней атаки
-
-    public LayerMask enemyLayer;
-    public LayerMask platformLayer;
-    public LayerMask groundLayer;
-    public LayerMask playerLayer;
     private float extraHeight = 0.25f;
-
-    private Transform player; // Ссылка на игрока
-    private Rigidbody2D rb;
-    private BoxCollider2D boxCollider;
-    private Animator animator;
     private float lastAttackTime;
     private bool isJumpingAttack = false;
-    [HideInInspector] public static bool isLocked = true;
 
-    void Start()
-    {
+    void Start() {
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         animator = GetComponent<Animator>();
@@ -44,8 +34,7 @@ public class TrainningBossMovement : MonoBehaviour
         lastAttackTime = -attackCooldown; // Чтобы босс мог атаковать сразу
     }
 
-    void Update()
-    {
+    void Update() {
         if (isLocked) {
             Debug.Log("locked");
             return;
@@ -60,7 +49,7 @@ public class TrainningBossMovement : MonoBehaviour
 
     private void DecideAttack() {
         var random = new System.Random();
-        switch (random.Next(0, 2)) {
+        switch (random.Next(0, 3)) {
             case 0:
                 Debug.Log("melee attack");
                 currentPlatform = random.Next(platforms.Count);
@@ -75,10 +64,8 @@ public class TrainningBossMovement : MonoBehaviour
                 GroundPound();
                 break;
             case 3:
-                Debug.Log("3");
-                break;
-            case 4:
-                Debug.Log("4");
+                Debug.Log("Shoot Projectile");
+                ShootProjectile();
                 break;
             default:
                 break;
@@ -88,8 +75,7 @@ public class TrainningBossMovement : MonoBehaviour
 
     #region Movement methods
 
-    private void JumpToPlatform()
-    {
+    private void JumpToPlatform() {
         if (!isGrounded()) {
             return;
         }
@@ -151,13 +137,19 @@ public class TrainningBossMovement : MonoBehaviour
         // animator.SetTrigger("Jump");
     }
 
-    private void MeleeAttack()
-    {
+    private void MeleeAttack() {
         // Анимация ближней атаки
         // animator.SetTrigger("MeleeAttack");
 
         // TODO: Сделать анимацию на каждый фрейм анимации сделать метод который будет наносить урон если в радиусе атаки оказался игрок
+        var hits = Physics2D.CircleCastAll(attackTransform.position, meleeRange, transform.right, 0f, playerLayer);
         
+        for (int i = 0; i < hits.Length; i++) {
+            PlayerHealth enemyHealth = hits[i].collider.gameObject.GetComponent<PlayerHealth>();
+            if (enemyHealth != null && !enemyHealth.HasTakenDamage) {
+                enemyHealth.TakeDamage( meleeDamage );
+            }
+        }
     }
 
     private void GroundPound() {
@@ -169,14 +161,12 @@ public class TrainningBossMovement : MonoBehaviour
         EnableFroundProjectiles();
     }
 
-    private void ShootProjectile()
-    {
-        GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-        Vector2 direction = (player.position - transform.position).normalized;
-        projectile.GetComponent<Rigidbody2D>().velocity = direction * projectileSpeed;
-
-        // Анимация стрельбы
-        // animator.SetTrigger("Shoot");
+    private void ShootProjectile() {
+        if (projectiles.Count() >= 3 && player != null) {
+            StartCoroutine(ShootArrowWithDelay(0)); // Первая стрела
+            StartCoroutine(ShootArrowWithDelay(timeBetweenShots)); // Вторая стрела с задержкой
+            StartCoroutine(ShootArrowWithDelay(timeBetweenShots * 2)); // Третья стрела с задержкой
+        }
     }
 
     private void TurnToPlayer() {
@@ -194,8 +184,7 @@ public class TrainningBossMovement : MonoBehaviour
         transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
     }
 
-    private bool SolveSystem(float[,] matrix, float[] rhs, out float a, out float b, out float c)
-    {
+    private bool SolveSystem(float[,] matrix, float[] rhs, out float a, out float b, out float c) {
         a = b = c = 0;
 
         // Определитель матрицы
@@ -228,8 +217,7 @@ public class TrainningBossMovement : MonoBehaviour
         return true;
     }
 
-    private void CalculateFlightParameters(Vector2 startPoint, Vector2 endPoint, Vector2 dropPoint, out float flightTime, out Vector2 initialVelocity)
-    {
+    private void CalculateFlightParameters(Vector2 startPoint, Vector2 endPoint, Vector2 dropPoint, out float flightTime, out Vector2 initialVelocity) {
         float g = Mathf.Abs(Physics2D.gravity.y) * rb.gravityScale;
 
         // Время подъема до точки, где тело начало падать
@@ -270,9 +258,8 @@ public class TrainningBossMovement : MonoBehaviour
     }
 
      // when the GameObjects collider arrange for this GameObject to travel to the left of the screen
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col == platforms[currentPlatform].GetComponent<BoxCollider2D>()) {
+    void OnTriggerEnter2D(Collider2D col) {
+        if (currentPlatform != -1 && col == platforms[currentPlatform].GetComponent<BoxCollider2D>()) {
             if (isJumpingAttack) {
                 StartCoroutine(CoroutineBeforeJumpAttack());
             }
@@ -286,12 +273,56 @@ public class TrainningBossMovement : MonoBehaviour
         GroundPound();
     }
 
+    private IEnumerator ShootArrowWithDelay(float delay) {
+        yield return new WaitForSeconds(delay);
+
+        // Анимация стрельбы
+        // animator.SetTrigger("Shoot");
+
+        // Находим первую неактивную стрелу в массиве
+        GameObject arrow = System.Array.Find(projectiles, a => !a.activeInHierarchy);
+        if (arrow != null)
+        {
+            // Активируем стрелу и задаем её позицию
+            arrow.SetActive(true);
+            arrow.transform.position = transform.position;
+
+            // Направление стрельбы (в сторону игрока)
+            Vector2 direction = (player.transform.position - transform.position).normalized;
+            // Поворачиваем стрелу в сторону игрока
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg; // Вычисляем угол
+            arrow.transform.rotation = Quaternion.Euler(0, 0, angle); // Применяем поворот
+
+            // Запускаем стрелу
+            Rigidbody2D arrowRb = arrow.GetComponent<Rigidbody2D>();
+            if (arrowRb != null)
+            {
+                arrowRb.velocity = direction * projectileSpeed;
+            }
+
+            // Уничтожаем стрелу после прохождения расстояния
+            StartCoroutine(DestroyArrowAfterDistance(arrow));
+        }
+    }
+
+    private IEnumerator DestroyArrowAfterDistance(GameObject arrow) {
+        Vector2 startPosition = arrow.transform.position;
+
+        while (Vector2.Distance(startPosition, arrow.transform.position) < projectileLifeDistance)
+        {
+            yield return null; // Ждем каждый кадр
+        }
+
+        // Деактивируем стрелу
+        arrow.SetActive(false);
+    }
+
+
     #endregion
 
     #region Draw methods
 
-    private void OnDrawGizmosSelected()
-    {
+    private void OnDrawGizmosSelected() {
         Gizmos.color = Color.black;
         foreach (var platform in platforms) {
             Gizmos.DrawWireSphere(platform.transform.position, 0.5f);

@@ -13,7 +13,7 @@ public class StartBossScript : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision) {
         Debug.Log(collision + " " + playerCollider);
         if (collision == playerCollider) {
-            TrainningBossMovement.isLocked = false;
+            DefaultBoss.isLocked = false;
         }
     }
 }
