@@ -1,4 +1,11 @@
+
+using System;
+
+[Serializable]
 public abstract class Weapon : Item {
+    protected Weapon(string name) : base(name)
+    {
+    }
 
     /// <summary>
     /// Determines wether this weapon is ranged

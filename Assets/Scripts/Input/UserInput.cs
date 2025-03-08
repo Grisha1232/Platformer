@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class UserInput : MonoBehaviour
 {
@@ -10,8 +11,6 @@ public class UserInput : MonoBehaviour
     [HideInInspector] public Controls controls;
     [HideInInspector] public Vector2 moveInput;
 
-    [HideInInspector] public Vector3 initialPosition {get; private set;}
-
     private void Awake() {
         if ( instance == null ) {
             instance = this;
@@ -19,8 +18,6 @@ public class UserInput : MonoBehaviour
         } else {
             Destroy(gameObject);
         }
-
-        initialPosition = GameObject.FindGameObjectWithTag("Player").transform.position; // Поиск игрока по тегу
 
         controls = new Controls();
         controls.Movement.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
@@ -31,6 +28,38 @@ public class UserInput : MonoBehaviour
     }
 
     private void OnDisable() {
-        controls.Disable();
+        if ( controls != null ) {
+            controls.Disable();
+        }
+    }
+
+    public Dictionary<string, List<string>> GetAllBindings() {
+        var bindingMap = new Dictionary<string, List<string>>();
+
+        foreach (var actionMap in controls.asset.actionMaps) {
+            foreach (var action in actionMap.actions) {
+                List<string> bindings = new();
+                foreach(var binding in action.bindings) {
+                    bindings.Add(binding.effectivePath);
+                }
+                bindingMap[action.name] = bindings;
+            }
+        }
+
+        return bindingMap;
+    }
+
+    public void PrintAllBindings()
+    {
+        var allBindings = GetAllBindings();
+
+        foreach (var actionName in allBindings.Keys)
+        {
+            Debug.Log($"Action: {actionName}");
+            foreach (var binding in allBindings[actionName])
+            {
+                Debug.Log($"  Binding: {binding}");
+            }
+        }
     }
 }

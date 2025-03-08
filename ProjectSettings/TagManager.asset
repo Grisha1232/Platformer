@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
+  - PauseMenu
+  - Map
+  - Platforms
   layers:
   - Default
   - TransparentFX
@@ -15,10 +18,10 @@ TagManager:
   - Ground
   - Wall
   - Attackable
-  - 
-  - 
-  - 
-  - 
+  - Obstacle
+  - GameObject
+  - Platform
+  - Projectile
   - 
   - 
   - 

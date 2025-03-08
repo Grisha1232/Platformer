@@ -37,6 +37,8 @@ public abstract class DefaultAttack : MonoBehaviour {
     [SerializeField] protected GameObject indicatorShadow;
     [SerializeField] protected GameObject indicatorAttack;
     [SerializeField] protected GameObject indicatorPatrol;
+    [SerializeField] protected Transform attackTransform;
+    [SerializeField] protected LayerMask attackableLayer;
 
     /// <summary>
     /// Находится ли враг в атакующем режиме
@@ -67,7 +69,8 @@ public abstract class DefaultAttack : MonoBehaviour {
     }
 
     public virtual bool PlayerInAttackRange() {
-        return Vector2.Distance(transform.position, player.position) <= attackRange;
+        var hits = Physics2D.CircleCast(attackTransform.position, attackRange, transform.right, 0f, attackableLayer);
+        return hits.collider != null;
     }
     
 

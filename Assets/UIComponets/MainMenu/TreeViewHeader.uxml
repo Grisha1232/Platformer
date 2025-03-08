@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UIComponets/MainMenu/TreeViewLine.uss?fileID=7433441132597879392&amp;guid=2ee2a21a82800d44b95a5d57b1f6233a&amp;type=3#TreeViewLine" />
+    <ui:VisualElement class="panel" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); width: 100%; min-width: 100%; align-items: stretch; justify-content: flex-end; align-self: flex-start;">
+        <ui:Label tabindex="-1" text="Действие" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label" style="font-size: 50%; -unity-font-style: bold;" />
+        <ui:RectField label="Rect" name="RectField" style="display: flex; visibility: hidden; max-width: 10%; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px; max-height: 10px;" />
+        <ui:Label tabindex="-1" text="Клавиатура Мышь" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label" style="font-size: 50%; -unity-font-style: bold; min-width: 30%; max-width: 30%;" />
+        <ui:RectField label="Rect" name="RectField" style="display: flex; visibility: hidden; max-width: 10%; max-height: 10px;" />
+        <ui:Label tabindex="-1" text="Геймпад" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label" style="font-size: 50%; -unity-font-style: bold; min-width: 30%; max-width: 30%;" />
+    </ui:VisualElement>
+</ui:UXML>

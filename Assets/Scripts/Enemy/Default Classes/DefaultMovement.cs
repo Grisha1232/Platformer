@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static Pathfinder;
 
-public abstract class DefaultMovement : Pathfinding
+public abstract class DefaultMovement : MonoBehaviour
 {
     /// <summary>
     /// Скорость патрулирования
@@ -42,16 +43,16 @@ public abstract class DefaultMovement : Pathfinding
     protected Animator animator;
 
     protected DefaultAttack attackScript;
+
+
     
     protected void Start()
     {
-        grid = FindObjectOfType<NavigationGrid>(); // Получаем ссылку на сетку
         animator = GetComponent<Animator>();
         body = GetComponent<Rigidbody2D>();
         attackScript = GetComponent<DefaultAttack>();
         initialPosition = body.position; // Сохранение начальной позиции
         player = GameObject.FindGameObjectWithTag("Player").transform; // Поиск игрока по тегу
-        seeker = transform;
     }
 
     abstract protected void Update();
