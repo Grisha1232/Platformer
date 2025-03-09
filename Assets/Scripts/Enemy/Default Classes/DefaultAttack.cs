@@ -34,6 +34,7 @@ public abstract class DefaultAttack : MonoBehaviour {
     [SerializeField] protected float multiplayerDamage = 2.0f;
     [SerializeField] protected Transform attackTransform;
     [SerializeField] protected LayerMask attackableLayer;
+    [SerializeField] protected LayerMask obstacleLayer;
 
     /// <summary>
     /// Находится ли враг в атакующем режиме

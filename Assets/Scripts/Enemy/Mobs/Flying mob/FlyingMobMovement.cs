@@ -2,22 +2,27 @@ using UnityEngine;
  
  public class FlyingMobMovement : DefaultMovement
  {
-     [Header("Flying Settings")]
-     [SerializeField] private float chaseSpeed = 2f;
-     [SerializeField] private float chaseRange = 5f;
-     [SerializeField] private float verticalOffset = 2f;
-     [SerializeField] private float stoppingDistance = 1f;
-     // [SerializeField] protected float patrolSpeed = 5f; // изменить бы скороть патрулирования
-     
-     [HideInInspector] public bool isInShadow { get; private set; } = false;
+    [Header("Flying Settings")]
+    [SerializeField] private float chaseSpeed = 2f;
+    [SerializeField] private float chaseRange = 5f;
+    [SerializeField] private float verticalOffset = 2f;
+    [SerializeField] private float stoppingDistance = 1f;
+    // [SerializeField] protected float patrolSpeed = 5f; // изменить бы скороть патрулирования
+    
+    [HideInInspector] public bool isInShadow { get; private set; } = false;
  
+    private Collider2D platformCollider;
      private void Awake()
      {
          base.Start();
          attackScript = GetComponent<FlyingMobAttack>();
      }
- 
-     protected override void Update()
+
+    private new void Start() {
+        
+    }
+
+    protected override void Update()
      {
          if (attackScript.PlayerInAggroRange())
          {
@@ -80,6 +85,21 @@ using UnityEngine;
         //  indicatorAttack.SetActive(!isPatrolling);
         //  indicatorShadow.SetActive(isInShadow);
      }
+
+     private void OnCollisionEnter2D(Collision2D collision) {
+        Debug.Log(LayerMaskToLayerIndex(LayerMask.NameToLayer("Platform")) + " " + collision.gameObject);
+        if (collision.gameObject.name == "Platforms") {
+            platformCollider = collision.collider;
+            Debug.Log("disabling");
+            Physics2D.IgnoreCollision(boxCollider, collision.collider, true);
+        }
+    }
+
+    private int LayerMaskToLayerIndex(LayerMask layerMask)
+    {
+        int layerIndex = (int)Mathf.Log(layerMask.value, 2);
+        return layerIndex;
+    }
  
      void Flip()
      {

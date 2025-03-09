@@ -1,8 +1,7 @@
 using System;
- using System.Collections;
- using System.Collections.Generic;
- using Unity.VisualScripting;
- using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
  
  public class FlyingMobAttack : DefaultAttack
  {
@@ -18,6 +17,9 @@ using System;
      private float counterAfterBug = 0;
      protected List<Vector3Int> pathToFollow;
      protected int currentPointToFollow;
+
+     private Vector2 directionToPlayer;
+     private Vector2 avoidanceDirection;
  
      void Awake()
      {
@@ -32,20 +34,12 @@ using System;
          {
              counterAfterBug = 0;
              body.gravityScale = 9.8f;
-             isJumping = false;
-             jumpingPhase1 = false;
-             jumpingPhase2 = false;
-         }
-         if (body.gravityScale == 0)
-         {
-             counterAfterBug += Time.deltaTime;
          }
  
          attackTimeCounter += Time.deltaTime;
          if (PlayerInAggroRange())
          {
-             UpdatePath();
-             followPath();
+             FollowThePlayer();
              if (PlayerInAttackRange() && attackTimeCounter >= attackCooldown)
              {
                  print("attack");
@@ -55,82 +49,32 @@ using System;
          }
      }
  
-     protected void followPath()
-     {
- 
-         {
-            //  indicatorPatrol.SetActive(false);
-            //  indicatorAttack.SetActive(true);
-         }
- 
-         if (pathToFollow.Count == 0)
-         {
-             return;
-         }
- 
-         if (Pathfinder.instance.getPathLength(transform.position) <= 1)
-         {
-             animator.SetFloat("Speed", 0);
-             return;
-         }
- 
-         animator.SetFloat("Speed", chaseSpeed);
- 
-         // �������� ������� � ��������� ����� ����
-         Vector3 currentPoint = pathToFollow[0] + new Vector3(0.5f, 0.8f);
-         Vector3 nextPoint = pathToFollow[1] + new Vector3(0.5f, 0.8f);
-         Vector3 afterNextPoint = pathToFollow[2] + new Vector3(0.5f, 0.8f);
- 
-         int dir = Math.Sign(currentPoint.x - nextPoint.x);
-         if (Math.Abs(currentPoint.y - nextPoint.y) == 0 && dir == transform.localScale.x)
-         {
-             Flip();
-         }
- 
-         if (Math.Abs(currentPoint.x - nextPoint.x) > 0)
-         {
-             // ��������� � ��������� �����
-             // Debug.Log("moving from " + transform.position + " towards " + nextPoint + " currentPoint " + currentPoint);
-             transform.position = Vector2.MoveTowards(transform.position, nextPoint, chaseSpeed * Time.deltaTime);
-         }
-         else
-         {
-             Jump(currentPoint, nextPoint, afterNextPoint);
-         }
- 
-     }
- 
- 
-     protected void Jump(Vector2 from, Vector2 to, Vector2 after)
-     {
-         isJumping = true;
-         if (Math.Abs(transform.position.x - from.x) > 0.1f && !jumpingPhase1)
-         {
-             // Debug.Log("prepare for jump " + transform.position + " towards " + from);
-             transform.position = Vector2.MoveTowards(transform.position, from, chaseSpeed * Time.deltaTime);
-             return;
-         }
-         if (Math.Abs(transform.position.y - to.y) > 0.1f && !jumpingPhase2)
-         {
-             jumpingPhase1 = true;
-             body.gravityScale = 0;
-             // Debug.Log("levitating from " + transform.position + " to " + to);
-             transform.position = Vector2.MoveTowards(transform.position, to, jumpForce * Time.deltaTime);
-         }
-         else
-         {
-             jumpingPhase2 = true;
-             // Debug.Log("ending the jump from" + transform.position + " to " + after);
-             transform.position = Vector2.MoveTowards(transform.position, after, chaseSpeed * Time.deltaTime);
-             if (Vector2.Distance(transform.position, after) < 0.1f)
-             {
-                 isJumping = false;
-                 jumpingPhase1 = false;
-                 jumpingPhase2 = false;
-                 body.gravityScale = 9.8f;
-             }
-             counterAfterBug += Time.deltaTime;
-         }
+     protected void FollowThePlayer() {
+         if (player == null)
+        {
+            Debug.LogWarning("Игрок не назначен!");
+            return;
+        }
+
+        // Вычисляем направление к игроку
+        directionToPlayer = (player.position - transform.position).normalized;
+
+        // Проверяем, есть ли препятствие на пути к игроку
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, 2f, obstacleLayer);
+
+        if (hit.collider != null)
+        {
+            // Если препятствие обнаружено, вычисляем направление для обхода
+            avoidanceDirection = Vector2.Perpendicular(hit.normal).normalized;
+
+            // Двигаемся в сторону обхода
+            transform.position = Vector2.MoveTowards(transform.position, (Vector2)transform.position + avoidanceDirection, chaseSpeed * Time.deltaTime);
+        }
+        else
+        {
+            // Если препятствий нет, двигаемся прямо к игроку
+            transform.position = Vector2.MoveTowards(transform.position, player.position, chaseSpeed * Time.deltaTime);
+        }
      }
  
  
@@ -185,20 +129,6 @@ using System;
  
      }
  
-     private void UpdatePath()
-     {
-         if (isJumping)
-         {
-             return;
-         }
-         var path = Pathfinder.instance.getNextThreeTiles(transform.position);
-         if (path == null || path.Count == 0)
-         {
-             return;
-         }
-         pathToFollow = path;
-     }
- 
  
      void Flip()
      {
@@ -215,6 +145,13 @@ using System;
          Vector3 from = new Vector3(transform.position.x - aggroRange, transform.position.y, transform.position.z);
          Vector3 to = new Vector3(transform.position.x + aggroRange, transform.position.y, transform.position.z);
          Gizmos.DrawLine(from, to);
+
+         // Визуализация луча для обнаружения препятствий
+        if (player != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(transform.position, transform.position + (Vector3)directionToPlayer * 2f);
+        }
      }
  
      private void endOfAttack()
