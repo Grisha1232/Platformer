@@ -13,7 +13,6 @@ public class ShadowCatMovement : DefaultMovement
     /// Маска земли
     /// </summary>
     [SerializeField] private LayerMask groundLayer;
-    private BoxCollider2D boxCollider;
 
     /// <summary>
     /// Находится ли Теневой кот в тени

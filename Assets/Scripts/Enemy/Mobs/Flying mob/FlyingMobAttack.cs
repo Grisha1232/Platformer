@@ -8,10 +8,6 @@ using UnityEngine;
      private FlyingMobMovement movementScript;
      private RaycastHit2D[] hits;
  
- 
-     private bool isJumping = false;
-     private bool jumpingPhase1 = false;
-     private bool jumpingPhase2 = false;
      [SerializeField] protected float jumpForce = 10f;
  
      private float counterAfterBug = 0;

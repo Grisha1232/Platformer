@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public abstract class EnemyHealth : Health {
     public virtual void Reset() {
         CurrentHealth = maxHealth;

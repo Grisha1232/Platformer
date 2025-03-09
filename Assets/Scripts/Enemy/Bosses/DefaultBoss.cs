@@ -9,6 +9,7 @@ public class DefaultBoss : MonoBehaviour {
 
     protected float attackCooldown = 2f;
     protected float attackCooldownCounter;
+    protected float moveSpeed = 5f;
     protected Transform player; // Ссылка на игрока
     protected Rigidbody2D rb;
     protected BoxCollider2D boxCollider;

@@ -1,30 +1,38 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 
 public class TrainningBossMovement : DefaultBoss
 {
     public List<GameObject> platforms; // Массив платформ, на которые может прыгать босс
+
     public Rigidbody2D platformRigid;
+
     private int currentPlatform = -1;
+
     public int groundPoundDamage = 10; // Урон от удара по земле
+
     public Transform attackTransform;
+
     public GroundProjectiles leftProj;
     public GroundProjectiles righttProj;
+
     public GameObject[] projectiles;
     public float projectileSpeed = 30f; // Скорость стрелы
     public float timeBetweenShots = 0.3f;
     public float projectileLifeDistance = 30f;
+
     public float meleeRange = 1.5f; // Дистанция для ближней атаки
     public int meleeDamage = 5; // Урон от ближней атаки
+
     private float extraHeight = 0.25f;
-    private float lastAttackTime;
+
     private bool isJumpingAttack = false;
+
+    private float timePlayerAbove;
+    private bool isMovingToPlayer = false;
 
     private new void Start() {
         base.Start();
@@ -40,48 +48,89 @@ public class TrainningBossMovement : DefaultBoss
             Debug.Log("locked");
             return;
         }
+
+        TurnToPlayer();
+        // Если босс движется к игроку, обновляем его позицию
+        if (isMovingToPlayer)
+        {
+            MoveTowardsPlayer();
+            return;
+        }
+
         if (attackCooldownCounter >= attackCooldown)
         {
             DecideAttack();
             attackCooldownCounter = 0;
         }
         attackCooldownCounter += Time.deltaTime;
-        TurnToPlayer();
     }
 
     private void DecideAttack() {
-        var random = new System.Random();
+        // Получаем позиции босса и игрока
+        Vector3 bossPosition = transform.position;
+        Vector3 playerPosition = player.transform.position;
+
+        // Вычисляем расстояние до игрока
+        float distanceToPlayer = Vector3.Distance(bossPosition, playerPosition);
+
+        // 1. Атака в ближнем бою
+        if (distanceToPlayer <= 10f && playerPosition.y <= bossPosition.y + 1f) {
+            StartMeleeAttack();
+            return; // Прерываем выполнение, так как атака выбрана
+        }
+
+        // 2. Атака в дальнем бою
+        if (distanceToPlayer >= 10f && distanceToPlayer <= 25f) {
+            ShootProjectile();
+            return; // Прерываем выполнение, так как атака выбрана
+        }
+
+        // 3. Удар по земле
+        if (Mathf.Abs(bossPosition.y - playerPosition.y) <= 1f) {
+            GroundPound();
+            return; // Прерываем выполнение, так как атака выбрана
+        }
+
+
+        // 4. Прыжок на платформу
+        var checkPlatform = GetClosestPlatformOnSameLevel();
+        if (checkPlatform != -1) {
+            JumpToPlatform(checkPlatform);
+            return; // Прерываем выполнение, так как атака выбрана
+        }
+
+        // Если ни одна атака не подошла, босс не атакует
+        Debug.Log("Босс не нашел подходящей атаки. Рандом в деле");
+        System.Random random = new();
         switch (random.Next(0, 4)) {
-            case 0:
-                JumpToPlatform();
+            case 0: {
+                StartMeleeAttack();
                 break;
-            case 1:
-                MeleeAttack();
-                break;
-            case 2:
-                GroundPound();
-                break;
-            case 3:
+            }
+            case 1: {
                 ShootProjectile();
                 break;
+            }
+            case 2: {
+                GroundPound();
+                break;
+            }
+            case 3: {
+                JumpToPlatform(random.Next(platforms.Count()));
+                break;
+            }
             default:
                 break;
-            
         }
     }
 
     #region Movement methods
 
-    private void JumpToPlatform() {
+    private void JumpToPlatform(int choosenPlatform) {
         if (!isGrounded()) {
             return;
         }
-
-        currentPlatform = GetClosestObjectOnSameLevel();
-        if (currentPlatform == -1)  {
-            attackCooldownCounter = attackCooldown;
-            return;
-        }
+        currentPlatform = choosenPlatform;
 
         Vector2 startPos = transform.position;
         Vector2 endPos = platforms[currentPlatform].transform.position;
@@ -115,11 +164,6 @@ public class TrainningBossMovement : DefaultBoss
         float h = -b / (2 * a);
         float k = c - (b * b) / (4 * a);
 
-        // Рассчитываем время полета (предполагаем, что начальная и конечная точки — point1 и point3)
-        
-        float deltaX = point3.x - point1.x;
-        float deltaY = point3.y - point1.y;
-
         float flightTime;
         Vector2 initialVelocity;
 
@@ -140,6 +184,47 @@ public class TrainningBossMovement : DefaultBoss
         // animator.SetTrigger("Jump");
     }
 
+    // Метод для начала ближней атаки
+    private void StartMeleeAttack()
+    {
+        Debug.Log("Босс начинает ближнюю атаку.");
+        isMovingToPlayer = true; // Начинаем движение к игроку
+        timePlayerAbove = 0f; // Сбрасываем таймер
+    }
+    
+    private void MoveTowardsPlayer() {
+        Vector3 bossPosition = transform.position;
+        Vector3 playerPosition = player.transform.position;
+
+        // Двигаемся к игроку по оси X
+        Vector3 direction = (playerPosition - bossPosition).normalized;
+        direction.y = 0; // Игнорируем ось Y
+        transform.position += direction * moveSpeed * Time.deltaTime;
+
+        // Проверяем, находится ли игрок выше босса
+        if (playerPosition.y > bossPosition.y + 1f) {
+            timePlayerAbove += Time.deltaTime;
+
+            // Если игрок выше в течение jumpToPlatformTime, переключаемся на прыжок на платформу
+            if (timePlayerAbove >= 1f) {
+                var checkPlatform = GetClosestPlatformOnSameLevel();
+                if (checkPlatform != -1) {
+                    JumpToPlatform(checkPlatform);
+                    isMovingToPlayer = false; // Останавливаем движение
+                }
+            }
+        }
+        else {
+            timePlayerAbove = 0f; // Сбрасываем таймер, если игрок не выше
+        }
+
+        // Если босс достиг игрока, выполняем ближнюю атаку
+        if (Vector3.Distance(bossPosition, playerPosition) <= meleeRange) {
+            MeleeAttack();
+            isMovingToPlayer = false; // Останавливаем движение
+        }
+    }
+
     private void MeleeAttack() {
         // Анимация ближней атаки
         // animator.SetTrigger("MeleeAttack");
@@ -149,8 +234,9 @@ public class TrainningBossMovement : DefaultBoss
         
         for (int i = 0; i < hits.Length; i++) {
             PlayerHealth enemyHealth = hits[i].collider.gameObject.GetComponent<PlayerHealth>();
-            if (enemyHealth != null && !enemyHealth.HasTakenDamage) {
+            if (enemyHealth != null) {
                 enemyHealth.TakeDamage( meleeDamage );
+                enemyHealth.HasTakenDamage = false;
             }
         }
     }
@@ -321,7 +407,7 @@ public class TrainningBossMovement : DefaultBoss
     }
 
     // Метод для поиска ближайшего объекта на том же уровне по Y
-    private int GetClosestObjectOnSameLevel(float yThreshold = 1f) {
+    private int GetClosestPlatformOnSameLevel(float yThreshold = 1f) {
         int closestPlatform = -1;
         float closestDistance = Mathf.Infinity; // Начальное значение расстояния
         Vector3 playerPosition = player.transform.position;
