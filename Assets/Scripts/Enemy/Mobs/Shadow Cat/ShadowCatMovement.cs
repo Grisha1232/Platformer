@@ -9,6 +9,7 @@ using static Pathfinder;
 
 public class ShadowCatMovement : DefaultMovement
 {
+    public Canvas healthBar;
     /// <summary>
     /// Маска земли
     /// </summary>
@@ -17,7 +18,12 @@ public class ShadowCatMovement : DefaultMovement
     /// <summary>
     /// Находится ли Теневой кот в тени
     /// </summary>
-    [HideInInspector] public bool isInShadow {get; private set;}= false;
+    [HideInInspector] public bool isInShadow { get; private set; } = false;
+
+    private float shadowCooldown = 2f;
+    private float shadowDuration = 3f;
+    private float shadowDurationCounter = 0;
+    private float shadowCooldownCounter;
 
 
     /// <summary>
@@ -27,19 +33,24 @@ public class ShadowCatMovement : DefaultMovement
         base.Start();
         attackScript = GetComponent<ShadowCatAttack>();
         boxCollider = GetComponent<BoxCollider2D>();
+        shadowCooldownCounter = shadowCooldown;
     }
     
-    protected override void Update()
-    {
+    protected override void Update() {
         Patrol();
+        if (shadowCooldownCounter >= shadowCooldown && shadowDurationCounter == 0) {
+            UseShadow();
+        }
         
-        // print("----------");
+        if (shadowDurationCounter >= shadowDuration) {
+            UnuseShadow();
+        }
 
-        // print("++++++++++");
-        // foreach (var pair in compressedPath) {
-        //     Debug.Log(pair.vect + " Direction = " + pair.dir);
-        // }
-        // print("++++++++++");
+        if (isInShadow) {
+            shadowDurationCounter += Time.deltaTime;
+        } else {
+            shadowCooldownCounter += Time.deltaTime;
+        }
     }
 
 
@@ -69,6 +80,20 @@ public class ShadowCatMovement : DefaultMovement
         // animator.SetBool("isMoving", true);
     }
 
+    private void UseShadow() {
+        isInShadow = true;
+        body.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.05f);
+        Debug.Log("shadow " + body.GetComponent<SpriteRenderer>().color);
+        healthBar.gameObject.SetActive(false);
+        shadowCooldownCounter = 0;
+    }
+
+    private void UnuseShadow() {
+        isInShadow = false;
+        body.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+        healthBar.gameObject.SetActive(true);
+        shadowDurationCounter = 0;
+    }
 
     #endregion
 
@@ -113,7 +138,6 @@ public class ShadowCatMovement : DefaultMovement
         Pathfinder.instance.DrawPath(body.position);
     }
 
-    
     private void DrawArrow(Vector3 center, Vector2 size, Direction direction)
     {
         // Центр квадрата

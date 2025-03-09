@@ -182,9 +182,7 @@ MonoBehaviour:
   patrolSpeed: 3
   patrolRange: 5
   jumpForce: 20
-  indicatorShadow: {fileID: 4555628775012574767}
-  indicatorAttack: {fileID: 2292327885203529738}
-  indicatorPatrol: {fileID: 1997715830222366175}
+  healthBar: {fileID: 5374229477355240415}
   groundLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -206,13 +204,13 @@ MonoBehaviour:
   attackRange: 1
   attackCooldown: 2
   multiplayerDamage: 2
-  indicatorShadow: {fileID: 4555628775012574767}
-  indicatorAttack: {fileID: 2292327885203529738}
-  indicatorPatrol: {fileID: 1997715830222366175}
   attackTransform: {fileID: 6661441150964956355}
   attackableLayer:
     serializedVersion: 2
     m_Bits: 8
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 0
   jumpForce: 10
 --- !u!114 &779064695874661440
 MonoBehaviour:
