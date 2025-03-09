@@ -4,16 +4,17 @@ using UnityEngine;
 
 public class StartBossScript : MonoBehaviour
 {
-    public BoxCollider2D playerCollider;
+    public GameObject player;
+    public DefaultBoss boss;
 
     private void Start() {
-        playerCollider = GameObject.FindGameObjectWithTag("Player").GetComponent<BoxCollider2D>();
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
-        Debug.Log(collision + " " + playerCollider);
-        if (collision == playerCollider) {
-            DefaultBoss.isLocked = false;
+        if (collision == player.GetComponent<BoxCollider2D>()) {
+            boss.isLocked = false;
+            GameManager.instance.SetBossHealth(boss.GetComponent<EnemyHealth>(), "Training Boss");
         }
     }
 }

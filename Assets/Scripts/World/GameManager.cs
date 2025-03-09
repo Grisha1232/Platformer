@@ -2,6 +2,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine.UI;
+using TMPro;
 public class GameManager : MonoBehaviour
 {
 
@@ -16,6 +18,10 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public string sceneName;
 
     [HideInInspector] public GameState currentGameState;
+
+    public GameObject bossUI;
+    public Slider bossHealthBar;
+    public TMP_Text bossName;
 
     public GameObject player;
 
@@ -110,12 +116,19 @@ public class GameManager : MonoBehaviour
 
     public void ReturnToCheckpoint(bool isDeath = false) {
         LoadGame(isDeath);
-        GetComponent<PlayerMovement>().UnblockMovement();
+        player.GetComponent<PlayerMovement>().UnblockMovement();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (isDeath) {
+            bossUI.SetActive(false);
+            foreach (var boss in FindObjectsOfType<DefaultBoss>(true)) {
+                boss.Reset();
+            }
+        }
     }
 
     public void SetCheckpoint(Vector2 position) {
         currentGameState.checkpoints[sceneName] = (position.x, position.y);
+        SaveGame();
     }
 
     public void SaveGame() {
@@ -164,6 +177,16 @@ public class GameManager : MonoBehaviour
         PlayerInventory.instance.Currency = currentGameState.currency;
         PlayerInventory.instance.Items = currentGameState.Items;
         PlayerInventory.instance.quickItems = currentGameState.QuickItems;
+    }
+
+    public void SetBossHealth(EnemyHealth health, string name) {
+        bossUI.SetActive(true);
+        health.healthBar = bossHealthBar;
+        bossName.text = name;
+    }
+
+    public void BossDied() {
+        bossUI.SetActive(false);
     }
 
 #endregion

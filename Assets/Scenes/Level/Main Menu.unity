@@ -632,6 +632,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d7fef8b25e5f5904db148d4a053c12d8, type: 3}
+--- !u!114 &1601856738 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6860274746648660707, guid: d7fef8b25e5f5904db148d4a053c12d8, type: 3}
+  m_PrefabInstance: {fileID: 1601856737}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1601856739 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6975675645675000249, guid: d7fef8b25e5f5904db148d4a053c12d8, type: 3}
+  m_PrefabInstance: {fileID: 1601856737}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1655237363
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -641,9 +663,21 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3781846311356377527, guid: 8bf164cd0c26561498e9997656293899, type: 3}
+      propertyPath: bossUI
+      value: 
+      objectReference: {fileID: 2127845651}
+    - target: {fileID: 3781846311356377527, guid: 8bf164cd0c26561498e9997656293899, type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 507684882}
+    - target: {fileID: 3781846311356377527, guid: 8bf164cd0c26561498e9997656293899, type: 3}
+      propertyPath: bossName
+      value: 
+      objectReference: {fileID: 1601856738}
+    - target: {fileID: 3781846311356377527, guid: 8bf164cd0c26561498e9997656293899, type: 3}
+      propertyPath: bossHealthBar
+      value: 
+      objectReference: {fileID: 1601856739}
     - target: {fileID: 4823194307535209977, guid: 8bf164cd0c26561498e9997656293899, type: 3}
       propertyPath: m_Name
       value: GameManager
@@ -761,6 +795,11 @@ MonoBehaviour:
   MainMenu: {fileID: 1590902026}
   lineEdit: {fileID: 9197481963319205126, guid: 909c01116f622744896af33c3e4ae1b3, type: 3}
   header: {fileID: 9197481963319205126, guid: 0ae7b4ff2811ce649933ba09c81de4c0, type: 3}
+--- !u!1 &2127845651 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 518082540061285665, guid: d7fef8b25e5f5904db148d4a053c12d8, type: 3}
+  m_PrefabInstance: {fileID: 1601856737}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

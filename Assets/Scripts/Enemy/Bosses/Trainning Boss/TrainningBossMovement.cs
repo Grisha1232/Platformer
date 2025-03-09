@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor.Tilemaps;
@@ -19,19 +20,19 @@ public class TrainningBossMovement : DefaultBoss
     public float projectileSpeed = 30f; // Скорость стрелы
     public float timeBetweenShots = 0.3f;
     public float projectileLifeDistance = 30f;
-    public float attackCooldown = 2f; // Время между атаками
     public float meleeRange = 1.5f; // Дистанция для ближней атаки
     public int meleeDamage = 5; // Урон от ближней атаки
     private float extraHeight = 0.25f;
     private float lastAttackTime;
     private bool isJumpingAttack = false;
 
-    void Start() {
+    private new void Start() {
+        base.Start();
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
-        lastAttackTime = -attackCooldown; // Чтобы босс мог атаковать сразу
+        attackCooldownCounter = attackCooldown; // Чтобы босс мог атаковать сразу
     }
 
     void Update() {
@@ -39,11 +40,12 @@ public class TrainningBossMovement : DefaultBoss
             Debug.Log("locked");
             return;
         }
-        if (Time.time - lastAttackTime >= attackCooldown)
+        if (attackCooldownCounter >= attackCooldown)
         {
             DecideAttack();
-            lastAttackTime = Time.time;
+            attackCooldownCounter = 0;
         }
+        attackCooldownCounter += Time.deltaTime;
         TurnToPlayer();
     }
 
@@ -51,20 +53,15 @@ public class TrainningBossMovement : DefaultBoss
         var random = new System.Random();
         switch (random.Next(0, 4)) {
             case 0:
-                Debug.Log("melee attack");
-                currentPlatform = random.Next(platforms.Count);
                 JumpToPlatform();
                 break;
             case 1:
-                Debug.Log("melee attack");
                 MeleeAttack();
                 break;
             case 2:
-                Debug.Log("Ground pound");
                 GroundPound();
                 break;
             case 3:
-                Debug.Log("Shoot Projectile");
                 ShootProjectile();
                 break;
             default:
@@ -77,6 +74,12 @@ public class TrainningBossMovement : DefaultBoss
 
     private void JumpToPlatform() {
         if (!isGrounded()) {
+            return;
+        }
+
+        currentPlatform = GetClosestObjectOnSameLevel();
+        if (currentPlatform == -1)  {
+            attackCooldownCounter = attackCooldown;
             return;
         }
 
@@ -317,6 +320,30 @@ public class TrainningBossMovement : DefaultBoss
         arrow.SetActive(false);
     }
 
+    // Метод для поиска ближайшего объекта на том же уровне по Y
+    private int GetClosestObjectOnSameLevel(float yThreshold = 1f) {
+        int closestPlatform = -1;
+        float closestDistance = Mathf.Infinity; // Начальное значение расстояния
+        Vector3 playerPosition = player.transform.position;
+
+        for (int i = 0; i < platforms.Count(); i++) {
+            // Проверяем, находится ли объект примерно на том же уровне по Y
+            if (Mathf.Abs(platforms[i].transform.position.y - playerPosition.y) <= yThreshold)
+            {
+                // Вычисляем расстояние до объекта (по оси X или в 2D/3D пространстве)
+                float distance = Vector3.Distance(playerPosition, platforms[i].transform.position);
+
+                // Если объект ближе, обновляем ближайший объект
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestPlatform = i;
+                }
+            }
+        }
+
+        return closestPlatform;
+    }
 
     #endregion
 

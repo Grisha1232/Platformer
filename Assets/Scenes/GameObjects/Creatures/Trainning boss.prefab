@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 6695702507428840583}
   - component: {fileID: 7210782891822693009}
   - component: {fileID: 7816854048682734435}
+  - component: {fileID: 1931447622357612970}
   m_Layer: 0
   m_Name: Trainning boss
   m_TagString: Untagged
@@ -215,6 +216,8 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 8
+  isLocked: 1
+  isDead: 0
   platforms:
   - {fileID: 0}
   - {fileID: 0}
@@ -244,6 +247,20 @@ MonoBehaviour:
   projectileSpeed: 10
   timeBetweenShots: 0.1
   projectileLifeDistance: 30
-  attackCooldown: 2
   meleeRange: 1.5
   meleeDamage: 5
+--- !u!114 &1931447622357612970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5691660147863073493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d33901487f1fd24db6e850afcf48ce4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 20
+  healthBar: {fileID: 0}
+  staminaManaBar: {fileID: 0}
