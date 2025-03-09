@@ -8,9 +8,10 @@ public class CheckPointController : MonoBehaviour
     public GameObject canvasTip;
     public TMP_Text text;
 
-    private InputAction interactAction = UserInput.instance.controls.GameInteraction.Interact;
+    private InputAction interactAction;
 
     void Awake() {
+        interactAction = UserInput.instance.controls.GameInteraction.Interact;
     }
 
     private void Update() {

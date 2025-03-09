@@ -8,7 +8,7 @@ class PlayerHealth : Health {
         }
     }
 
-    protected override void Die()
+    public override void Die()
     {
         print("Died");
         CurrentHealth = maxHealth;

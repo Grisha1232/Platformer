@@ -196,10 +196,19 @@ public class TrainningBossMovement : DefaultBoss
         Vector3 bossPosition = transform.position;
         Vector3 playerPosition = player.transform.position;
 
+        // Если игрок ниже босса, спускаемся вниз
+        if (playerPosition.y < bossPosition.y - 1f)
+        {
+            DisableCollisionWithPlatforms();
+            StartCoroutine(DropDown());
+            return;
+        }
+
         // Двигаемся к игроку по оси X
         Vector3 direction = (playerPosition - bossPosition).normalized;
         direction.y = 0; // Игнорируем ось Y
-        transform.position += direction * moveSpeed * Time.deltaTime;
+        rb.
+        transform.position += moveSpeed * Time.deltaTime * direction;
 
         // Проверяем, находится ли игрок выше босса
         if (playerPosition.y > bossPosition.y + 1f) {
@@ -263,6 +272,15 @@ public class TrainningBossMovement : DefaultBoss
         if ( direction != Mathf.Sign(transform.localScale.x) ) {
             Flip();
         }
+    }
+
+    private IEnumerator DropDown() {
+        yield return new WaitUntil( () => {
+            var collider = Physics2D.OverlapBox(boxCollider.bounds.center, boxCollider.bounds.size * 1.1f, 0f, layerMask: platformLayer);
+            return collider == null;
+        });
+
+        EnableCollisionWithPlatforms();
     }
 
     #endregion

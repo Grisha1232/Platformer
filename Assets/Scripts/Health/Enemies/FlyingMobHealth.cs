@@ -13,7 +13,7 @@ using UnityEngine;
          base.TakeDamage(damage);
      }
  
-     protected override void Die()
+     public override void Die()
      {
          base.Die();
      }

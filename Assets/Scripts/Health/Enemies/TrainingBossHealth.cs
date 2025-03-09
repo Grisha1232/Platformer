@@ -9,7 +9,7 @@ class TrainningBossHealth : EnemyHealth {
         base.TakeDamage(damage);
     }
 
-    protected override void Die() {
+    public override void Die() {
         GetComponent<DefaultBoss>().isDead = true;
         GameManager.instance.BossDied();
         base.Die();
