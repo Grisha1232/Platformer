@@ -59,8 +59,8 @@ using System;
      {
  
          {
-             indicatorPatrol.SetActive(false);
-             indicatorAttack.SetActive(true);
+            //  indicatorPatrol.SetActive(false);
+            //  indicatorAttack.SetActive(true);
          }
  
          if (pathToFollow.Count == 0)

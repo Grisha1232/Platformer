@@ -56,9 +56,9 @@ public class ShadowCatAttack : DefaultAttack
     {
         
         {
-            indicatorPatrol.SetActive(false);
-            indicatorAttack.SetActive(true);
-            indicatorShadow.SetActive(movementScript.isInShadow);
+            // indicatorPatrol.SetActive(false);
+            // indicatorAttack.SetActive(true);
+            // indicatorShadow.SetActive(movementScript.isInShadow);
         }
 
         if (pathToFollow.Count == 0) {

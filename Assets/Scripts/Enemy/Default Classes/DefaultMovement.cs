@@ -17,10 +17,6 @@ public abstract class DefaultMovement : MonoBehaviour
 
     [SerializeField] protected float jumpForce = 10f;
 
-    [SerializeField] protected GameObject indicatorShadow;
-    [SerializeField] protected GameObject indicatorAttack;
-    [SerializeField] protected GameObject indicatorPatrol;
-
 
     /// <summary>
     /// Ссылка на игрока

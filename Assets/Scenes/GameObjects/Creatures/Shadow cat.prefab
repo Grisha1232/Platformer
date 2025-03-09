@@ -185,7 +185,6 @@ MonoBehaviour:
   indicatorShadow: {fileID: 4555628775012574767}
   indicatorAttack: {fileID: 2292327885203529738}
   indicatorPatrol: {fileID: 1997715830222366175}
-  player: {fileID: 5645446865618908720, guid: d7fef8b25e5f5904db148d4a053c12d8, type: 3}
   groundLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -303,7 +302,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &115232101637771294
 Transform:
   m_ObjectHideFlags: 0
@@ -387,7 +386,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7059040391494660503
 Transform:
   m_ObjectHideFlags: 0
@@ -635,7 +634,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2492887413567617553
 Transform:
   m_ObjectHideFlags: 0

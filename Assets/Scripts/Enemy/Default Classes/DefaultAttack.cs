@@ -32,11 +32,6 @@ public abstract class DefaultAttack : MonoBehaviour {
     /// Множитель урона при спец приемах
     /// </summary>
     [SerializeField] protected float multiplayerDamage = 2.0f;
-
-    
-    [SerializeField] protected GameObject indicatorShadow;
-    [SerializeField] protected GameObject indicatorAttack;
-    [SerializeField] protected GameObject indicatorPatrol;
     [SerializeField] protected Transform attackTransform;
     [SerializeField] protected LayerMask attackableLayer;
 

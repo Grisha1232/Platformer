@@ -52,9 +52,9 @@ public class ShadowCatMovement : DefaultMovement
             return;
         }
         {
-            indicatorPatrol.SetActive(true);
-            indicatorAttack.SetActive(false);
-            indicatorShadow.SetActive(isInShadow);
+            // indicatorPatrol.SetActive(true);
+            // indicatorAttack.SetActive(false);
+            // indicatorShadow.SetActive(isInShadow);
         }
         // Поворот в пределах патрулирования
         if (Math.Abs(transform.position.x - initialPosition.x ) >= patrolRange && Math.Sign(transform.localScale.x) != Math.Sign(initialPosition.x - transform.position.x))

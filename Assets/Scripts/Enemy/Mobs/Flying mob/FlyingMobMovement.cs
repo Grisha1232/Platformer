@@ -76,9 +76,9 @@ using UnityEngine;
  
      private void ToggleIndicators(bool isPatrolling)
      {
-         indicatorPatrol.SetActive(isPatrolling);
-         indicatorAttack.SetActive(!isPatrolling);
-         indicatorShadow.SetActive(isInShadow);
+        //  indicatorPatrol.SetActive(isPatrolling);
+        //  indicatorAttack.SetActive(!isPatrolling);
+        //  indicatorShadow.SetActive(isInShadow);
      }
  
      void Flip()
