@@ -22,7 +22,7 @@ public abstract class Health : MonoBehaviour {
             healthBar.value = CurrentHealth / maxHealth;
         }
         print("Taken damage");
-        if (CurrentHealth == 0) {
+        if (CurrentHealth <= 0) {
             Die();
         }
     }

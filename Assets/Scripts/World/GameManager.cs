@@ -55,9 +55,6 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    private void OnEnable() {
-    }
-
     #region Pause Menu
 
     private void openPauseMenu() {
@@ -117,6 +114,10 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    public void SetCheckpoint(Vector2 position) {
+        currentGameState.checkpoints[sceneName] = (position.x, position.y);
+    }
+
     public void SaveGame() {
         currentGameState.currency = PlayerInventory.instance.Currency;
         currentGameState.Items = PlayerInventory.instance.Items;
@@ -153,7 +154,6 @@ public class GameManager : MonoBehaviour
         } else {
             if (currentGameState.playerPositions.ContainsKey(SceneManager.GetActiveScene().name)) {
                 player.GetComponent<Rigidbody2D>().position = new Vector3(currentGameState.playerPositions[SceneManager.GetActiveScene().name].x, currentGameState.playerPositions[SceneManager.GetActiveScene().name].y); 
-                currentGameState.checkpoints[SceneManager.GetActiveScene().name] = currentGameState.playerPositions[SceneManager.GetActiveScene().name];
             } else {
                 player.GetComponent<Rigidbody2D>().position = new Vector3(0, 10);
                 currentGameState.checkpoints[SceneManager.GetActiveScene().name] = (0, 10);

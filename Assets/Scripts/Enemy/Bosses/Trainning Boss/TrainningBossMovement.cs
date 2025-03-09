@@ -49,7 +49,7 @@ public class TrainningBossMovement : DefaultBoss
 
     private void DecideAttack() {
         var random = new System.Random();
-        switch (random.Next(0, 3)) {
+        switch (random.Next(0, 4)) {
             case 0:
                 Debug.Log("melee attack");
                 currentPlatform = random.Next(platforms.Count);
