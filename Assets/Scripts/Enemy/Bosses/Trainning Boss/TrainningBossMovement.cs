@@ -45,7 +45,6 @@ public class TrainningBossMovement : DefaultBoss
 
     void Update() {
         if (isLocked) {
-            Debug.Log("locked");
             return;
         }
 

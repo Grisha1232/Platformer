@@ -99,12 +99,6 @@ public class ShadowCatMovement : DefaultMovement
 
     #region Help functions
 
-    void Flip() {
-        Vector3 scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
-    }
-
      private void OnDrawGizmosSelected() {
         Vector3 from = new Vector3(initialPosition.x - patrolRange, initialPosition.y + 1, initialPosition.z);
         Vector3 to = new Vector3(initialPosition.x + patrolRange, initialPosition.y + 1, initialPosition.z);     

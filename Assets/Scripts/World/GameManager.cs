@@ -160,16 +160,16 @@ public class GameManager : MonoBehaviour
                 player.GetComponent<Rigidbody2D>().position = new Vector3(currentGameState.checkpoints[SceneManager.GetActiveScene().name].x, currentGameState.checkpoints[SceneManager.GetActiveScene().name].y); 
                 currentGameState.playerPositions[SceneManager.GetActiveScene().name] = currentGameState.checkpoints[SceneManager.GetActiveScene().name];
             } else {
-                player.GetComponent<Rigidbody2D>().position = new Vector3(0, 10);
-                currentGameState.checkpoints[SceneManager.GetActiveScene().name] = (0, 10);
+                player.GetComponent<Rigidbody2D>().position = new Vector3(0, 0);
+                currentGameState.checkpoints[SceneManager.GetActiveScene().name] = (0, 0);
                 currentGameState.playerPositions[SceneManager.GetActiveScene().name] = currentGameState.checkpoints[SceneManager.GetActiveScene().name];
             }
         } else {
             if (currentGameState.playerPositions.ContainsKey(SceneManager.GetActiveScene().name)) {
                 player.GetComponent<Rigidbody2D>().position = new Vector3(currentGameState.playerPositions[SceneManager.GetActiveScene().name].x, currentGameState.playerPositions[SceneManager.GetActiveScene().name].y); 
             } else {
-                player.GetComponent<Rigidbody2D>().position = new Vector3(0, 10);
-                currentGameState.checkpoints[SceneManager.GetActiveScene().name] = (0, 10);
+                player.GetComponent<Rigidbody2D>().position = new Vector3(0, 0);
+                currentGameState.checkpoints[SceneManager.GetActiveScene().name] = (0, 0);
                 currentGameState.playerPositions[SceneManager.GetActiveScene().name] = currentGameState.checkpoints[SceneManager.GetActiveScene().name];
             }
         }
