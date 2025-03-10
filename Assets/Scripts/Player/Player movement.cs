@@ -205,11 +205,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos() {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(boxCollider.bounds.center, boxCollider.bounds.size * 1.1f);
-    }
-
     #endregion
 
     #region Animation Triggers

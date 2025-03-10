@@ -139,7 +139,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   serializedVersion: 2
   m_Size: {x: 0.22216606, y: 0.20339298}
-  m_EdgeRadius: 0
+  m_EdgeRadius: 0.02
 --- !u!50 &3173470721143156305
 Rigidbody2D:
   serializedVersion: 4
@@ -208,9 +208,12 @@ MonoBehaviour:
   attackableLayer:
     serializedVersion: 2
     m_Bits: 8
-  obstacleLayer:
+  groundLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 576
+  platformLayer:
+    serializedVersion: 2
+    m_Bits: 2048
   jumpForce: 10
 --- !u!114 &779064695874661440
 MonoBehaviour:

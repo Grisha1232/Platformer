@@ -20,7 +20,7 @@ public class RangedMovement : DefaultMovement {
             Flip();
         }
         
-        animator.SetFloat("Speed", patrolSpeed);
+        // animator.SetFloat("Speed", patrolSpeed);
         // Движение в пределах патрулирования
         float moveDirection = Math.Sign(transform.localScale.x);
         body.velocity = new Vector2(moveDirection * patrolSpeed, body.velocity.y);

@@ -13,6 +13,7 @@ class PlayerHealth : Health {
         print("Died");
         CurrentHealth = maxHealth;
         healthBar.value = 1;
+        HasTakenDamage = false;
         GameManager.instance.ReturnToCheckpoint(true);
     }
 }

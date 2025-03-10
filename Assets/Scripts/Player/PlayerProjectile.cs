@@ -1,8 +1,7 @@
 using UnityEngine;
 
-public class Projectile : MonoBehaviour {
-    public int damage = 1; // Урон от стрелы
-    public string playerTag = "Player"; // Тег игрока
+public class PlayerProjectile : MonoBehaviour {
+    public float damage = 1; // Урон от стрелы
     private Vector2 startPosition;
 
     private void Update() {
@@ -25,14 +24,9 @@ public class Projectile : MonoBehaviour {
         if (collision.name == "Map") {
             gameObject.SetActive(false);
         }
-        if (collision.CompareTag(playerTag)) {
-            // Наносим урон игроку
-            PlayerHealth playerHealth = collision.GetComponent<PlayerHealth>();
-            if (playerHealth != null) {
-                playerHealth.TakeDamage(damage);
-            }
-
-            // Деактивируем стрелу после попадания
+        var enemyHealth = collision.gameObject.GetComponent<EnemyHealth>();
+        if (enemyHealth != null) {
+            enemyHealth.TakeDamage(damage);
             gameObject.SetActive(false);
         }
     }

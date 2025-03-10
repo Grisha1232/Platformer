@@ -234,7 +234,13 @@ public class Pathfinder : MonoBehaviour
             } else if (path[current] == Direction.Left) {
                 current -= biasX;
             }
-            if (rv.Count == 0 || path[current] != Direction.Up || (path[current] == Direction.Up && path[rv[^1]] != Direction.Up)) {
+            if (rv.Count == 0) {
+                rv.Add(current);
+            } else if (path[current] != Direction.Down && path[current] != Direction.Up) {
+                rv.Add(current);
+            } else if (path[current] == Direction.Up && path[rv[^1]] != Direction.Up) {
+                rv.Add(current);
+            } else if (path[current] == Direction.Down && path[rv[^1]] != Direction.Down) {
                 rv.Add(current);
             }
         }
@@ -330,18 +336,18 @@ public class Pathfinder : MonoBehaviour
         //     }
         // }
 
-        if (availableForGizmos != null) {
-            foreach (KeyValuePair<Vector3Int, Color> value in availableForGizmos) {
-                Gizmos.color = value.Value;
-                Gizmos.DrawWireCube(value.Key + bias, map.cellSize);
-            }
-        }
-        if (availableTilesPosition != null) {
-            foreach(var tile in availableTilesPosition) {
-                Gizmos.color = Color.blue;
-                Gizmos.DrawWireCube(tile + bias, map.cellSize);
-            }
-        }
+        // if (availableForGizmos != null) {
+        //     foreach (KeyValuePair<Vector3Int, Color> value in availableForGizmos) {
+        //         Gizmos.color = value.Value;
+        //         Gizmos.DrawWireCube(value.Key + bias, map.cellSize);
+        //     }
+        // }
+        // if (availableTilesPosition != null) {
+        //     foreach(var tile in availableTilesPosition) {
+        //         Gizmos.color = Color.blue;
+        //         Gizmos.DrawWireCube(tile + bias, map.cellSize);
+        //     }
+        // }
 
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(map.WorldToCell(playerTarget.transform.position) + bias, map.cellSize);

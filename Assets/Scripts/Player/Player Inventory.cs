@@ -24,6 +24,7 @@ public class PlayerInventory : MonoBehaviour {
         }
         healPotion = new HealPotion(GetComponent<PlayerHealth>());
         Items = new();
+        EquippedWeapon = new Claws();
     }
 
     void Update() {
@@ -32,6 +33,14 @@ public class PlayerInventory : MonoBehaviour {
         }
         if (UserInput.instance.controls.GameInteraction.UseItem.WasPressedThisFrame()) {
             UseItem();
+        }
+    }
+
+    public void SwitchWeapon() {
+        if (EquippedWeapon.IsRanged) {
+            EquippedWeapon = new Claws();
+        } else {
+            EquippedWeapon = new Bow();
         }
     }
 

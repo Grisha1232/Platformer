@@ -7,12 +7,6 @@ using UnityEngine;
  {
      private FlyingMobMovement movementScript;
      private RaycastHit2D[] hits;
- 
-     [SerializeField] protected float jumpForce = 10f;
- 
-     private float counterAfterBug = 0;
-     protected List<Vector3Int> pathToFollow;
-     protected int currentPointToFollow;
 
      private Vector2 directionToPlayer;
      private Vector2 avoidanceDirection;
@@ -56,7 +50,7 @@ using UnityEngine;
         directionToPlayer = (player.position - transform.position).normalized;
 
         // Проверяем, есть ли препятствие на пути к игроку
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, 2f, obstacleLayer);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, 2f, groundLayer | platformLayer);
 
         if (hit.collider != null)
         {
@@ -102,7 +96,7 @@ using UnityEngine;
          }
      }
  
-     protected override void ChaseToAttack()
+     public override void ChaseToAttack()
      {
          if (!PlayerInAggroRange())
          {
@@ -123,14 +117,6 @@ using UnityEngine;
          // ������ �������� �������������
          // animator.SetBool("isMoving", true);
  
-     }
- 
- 
-     void Flip()
-     {
-         Vector3 scale = transform.localScale;
-         scale.x *= -1;
-         transform.localScale = scale;
      }
  
      private void OnDrawGizmosSelected()

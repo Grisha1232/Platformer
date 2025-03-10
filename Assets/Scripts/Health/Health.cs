@@ -7,11 +7,14 @@ public abstract class Health : MonoBehaviour {
     [SerializeField] public Slider staminaManaBar;
     public float CurrentHealth {get; protected set;}
 
-    public bool HasTakenDamage {get; set;}
+    public bool HasTakenDamage {get; set;} = false;
 
     protected virtual void Start() {
+        HasTakenDamage = false;
         CurrentHealth = maxHealth;
-        healthBar.value = 1;
+        if (healthBar != null) {
+            healthBar.value = 1;
+        }
     }
 
     public virtual void TakeDamage( float damage ) {

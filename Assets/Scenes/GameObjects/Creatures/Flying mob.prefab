@@ -779,9 +779,12 @@ MonoBehaviour:
   attackableLayer:
     serializedVersion: 2
     m_Bits: 8
-  obstacleLayer:
+  groundLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 576
+  platformLayer:
+    serializedVersion: 2
+    m_Bits: 2048
   jumpForce: 10
 --- !u!114 &5471304899658305990
 MonoBehaviour:

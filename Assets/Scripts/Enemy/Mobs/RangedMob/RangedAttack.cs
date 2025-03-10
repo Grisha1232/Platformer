@@ -12,7 +12,7 @@ public class RangedAttack : DefaultAttack {
     private new void Start() {
         base.Start();
         attackRange = 25f;
-        aggroRange = 15f;
+        aggroRange = 25f;
         attackTimeCounter = attackCooldown;
     }
 
@@ -29,7 +29,7 @@ public class RangedAttack : DefaultAttack {
         float distanceToPlayer = Vector3.Distance(bossPosition, playerPosition);
 
          // 2. Атака в дальнем бою
-        if (distanceToPlayer >= aggroRange && distanceToPlayer <= attackRange && attackTimeCounter >= attackCooldown) {
+        if (distanceToPlayer <= aggroRange && attackTimeCounter >= attackCooldown) {
             Shoot();
             attackTimeCounter = 0;
         }
@@ -55,9 +55,6 @@ public class RangedAttack : DefaultAttack {
             {
                 arrowRb.velocity = direction * projectileSpeed;
             }
-
-            // Уничтожаем стрелу после прохождения расстояния
-            StartCoroutine(DestroyArrowAfterDistance(arrow));
         }
     }
 
@@ -65,19 +62,7 @@ public class RangedAttack : DefaultAttack {
         throw new System.NotImplementedException();
     }
 
-    private IEnumerator DestroyArrowAfterDistance(GameObject arrow) {
-        Vector2 startPosition = arrow.transform.position;
-
-        while (Vector2.Distance(startPosition, arrow.transform.position) < projectileLifeDistance)
-        {
-            yield return null; // Ждем каждый кадр
-        }
-
-        // Деактивируем стрелу
-        arrow.SetActive(false);
-    }
-
-    protected override void ChaseToAttack() {
+    public override void ChaseToAttack() {
         throw new System.NotImplementedException();
     }
 

@@ -38,13 +38,13 @@ public class ShadowCatMovement : DefaultMovement
     
     protected override void Update() {
         Patrol();
-        if (shadowCooldownCounter >= shadowCooldown && shadowDurationCounter == 0) {
-            UseShadow();
-        }
+        // if (shadowCooldownCounter >= shadowCooldown && shadowDurationCounter == 0) {
+        //     UseShadow();
+        // }
         
-        if (shadowDurationCounter >= shadowDuration) {
-            UnuseShadow();
-        }
+        // if (shadowDurationCounter >= shadowDuration) {
+        //     UnuseShadow();
+        // }
 
         if (isInShadow) {
             shadowDurationCounter += Time.deltaTime;
@@ -128,7 +128,7 @@ public class ShadowCatMovement : DefaultMovement
     }
 
     private void DrawPathToTarget() {
-        Gizmos.color = Color.blue;
+        Gizmos.color = Color.green;
         Pathfinder.instance.DrawPath(body.position);
     }
 

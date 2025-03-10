@@ -10,16 +10,6 @@ public class ShadowCatAttack : DefaultAttack
     private ShadowCatMovement movementScript;
     private RaycastHit2D[] hits;
 
-
-    private bool isJumping = false;
-    private bool jumpingPhase1 = false;
-    private bool jumpingPhase2 = false;
-    [SerializeField] protected float jumpForce = 10f;
-
-    private float counterAfterBug = 0;
-    protected List<Vector3Int> pathToFollow;
-    protected int currentPointToFollow;
-
     void Awake()
     {
         Start();
@@ -42,8 +32,7 @@ public class ShadowCatAttack : DefaultAttack
 
         attackTimeCounter += Time.deltaTime;
         if (PlayerInAggroRange()) {
-            UpdatePath();
-            followPath();
+            ChaseToAttack();
             if (PlayerInAttackRange() && attackTimeCounter >= attackCooldown) {
                 print("attack");
                 attackTimeCounter = 0;
@@ -52,74 +41,6 @@ public class ShadowCatAttack : DefaultAttack
         }
     }
     
-    protected void followPath() 
-    {
-        
-        {
-            // indicatorPatrol.SetActive(false);
-            // indicatorAttack.SetActive(true);
-            // indicatorShadow.SetActive(movementScript.isInShadow);
-        }
-
-        if (pathToFollow.Count == 0) {
-            return;
-        }
-
-        if (Pathfinder.instance.getPathLength(transform.position) <= 1) {
-            animator.SetFloat("Speed", 0);
-            return;
-        }
-
-        animator.SetFloat("Speed", chaseSpeed);
-
-        // Получаем текущую и следующую точку пути
-        Vector3 currentPoint = pathToFollow[0] + new Vector3(0.5f, 0.8f);
-        Vector3 nextPoint = pathToFollow[1] + new Vector3(0.5f, 0.8f);
-        Vector3 afterNextPoint = pathToFollow[2] + new Vector3(0.5f, 0.8f);
-
-        int dir = Math.Sign(currentPoint.x - nextPoint.x);
-        if (Math.Abs(currentPoint.y - nextPoint.y) == 0 && dir == Math.Sign(transform.localScale.x)) {
-            Flip();
-        } 
-       
-        if (Math.Abs(currentPoint.x - nextPoint.x) > 0) {
-            // Двигаемся к следующей точке
-            // Debug.Log("moving from " + transform.position + " towards " + nextPoint + " currentPoint " + currentPoint);
-            transform.position = Vector2.MoveTowards(transform.position, nextPoint, chaseSpeed * Time.deltaTime);
-        } else {
-            Jump(currentPoint, nextPoint, afterNextPoint);
-        }
-
-    }
-
-    
-    protected void Jump(Vector2 from, Vector2 to, Vector2 after) {
-        isJumping = true;
-        if (Math.Abs(transform.position.x - from.x) > 0.1f && !jumpingPhase1){        
-            // Debug.Log("prepare for jump " + transform.position + " towards " + from);
-            transform.position = Vector2.MoveTowards(transform.position, from, chaseSpeed * Time.deltaTime);
-            return;
-        } 
-        if ( Math.Abs(transform.position.y - to.y) > 0.1f && !jumpingPhase2) {
-            jumpingPhase1 = true;
-            body.gravityScale = 0;
-            // Debug.Log("levitating from " + transform.position + " to " + to);
-            transform.position = Vector2.MoveTowards(transform.position, to, jumpForce * Time.deltaTime);
-        } else {
-            jumpingPhase2 = true;
-            // Debug.Log("ending the jump from" + transform.position + " to " + after);
-            transform.position = Vector2.MoveTowards(transform.position, after, chaseSpeed * Time.deltaTime);
-            if (Vector2.Distance(transform.position, after) < 0.1f) {
-                isJumping = false;
-                jumpingPhase1 = false;
-                jumpingPhase2 = false;
-                body.gravityScale = 9.8f;
-            }
-            counterAfterBug += Time.deltaTime;
-        }
-    }
-
-
     protected override IEnumerator Attack()  { 
         attackTimeCounter = 0;
         List<PlayerHealth> listDamaged = new();
@@ -143,60 +64,17 @@ public class ShadowCatAttack : DefaultAttack
         }
     }
 
-    protected override void ChaseToAttack()
-    {
-        if (!PlayerInAggroRange()) {
-            return;
-        }
-
-        // Движение в сторону игрока
-        Vector2 direction = (player.position - transform.position).normalized;
-        
-        animator.SetFloat("Speed", Math.Abs(direction.x));
-        // Поворот в сторону игрока
-        if ((direction.x > 0 && Math.Sign(transform.localScale.x) == -1) || (direction.x < 0 && Math.Sign(transform.localScale.x) == 1))
-        {
-            Flip();
-        }
-        body.velocity = new Vector2(direction.x * chaseSpeed, body.velocity.y);
-
-        // Запуск анимации преследования
-        // animator.SetBool("isMoving", true);
-
-    }
-    
-    private void UpdatePath() {
-        if (isJumping) {
-            return;
-        }
-        if (Pathfinder.instance == null) {
-            Debug.LogError("Pathfinder.instance = null");
-            return;
-        }
-
-        if (Pathfinder.instance.getPathLength(transform.position) >= 30) {
-            return;
-        }
-        var path = Pathfinder.instance.getNextThreeTiles(transform.position);
-        if (path == null || path.Count == 0) {
-            return;
-        }
-        pathToFollow = path;
-    }
-
-    
-    void Flip() {
-        Vector3 scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
+    public override void ChaseToAttack() {
+        UpdatePath();
+        followPath();
     }
 
     private void OnDrawGizmosSelected() {
         Gizmos.DrawWireSphere(attackTransform.position, attackRange);
         
         
-        Vector3 from = new Vector3(transform.position.x - aggroRange, transform.position.y, transform.position.z);
-        Vector3 to = new Vector3(transform.position.x + aggroRange, transform.position.y, transform.position.z);     
+        Vector3 from = new Vector2(transform.position.x - aggroRange, transform.position.y);
+        Vector3 to = new Vector2(transform.position.x + aggroRange, transform.position.y);     
         Gizmos.DrawLine(from, to);
     }
 

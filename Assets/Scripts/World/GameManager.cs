@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text bossName;
 
     public GameObject player;
+    public GameObject playerModel;
 
     private void Awake() {
         if ( instance == null ) {
@@ -116,7 +117,7 @@ public class GameManager : MonoBehaviour
 
     public void ReturnToCheckpoint(bool isDeath = false) {
         LoadGame(isDeath);
-        player.GetComponent<PlayerMovement>().UnblockMovement();
+        playerModel.GetComponent<PlayerMovement>().UnblockMovement();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         if (isDeath) {
             bossUI.SetActive(false);
@@ -135,7 +136,7 @@ public class GameManager : MonoBehaviour
         currentGameState.currency = PlayerInventory.instance.Currency;
         currentGameState.Items = PlayerInventory.instance.Items;
         currentGameState.QuickItems = PlayerInventory.instance.quickItems;
-        currentGameState.playerPositions[sceneName] = (player.transform.position.x, player.transform.position.y);
+        currentGameState.playerPositions[sceneName] = (playerModel.transform.position.x, playerModel.transform.position.y);
         BinaryFormatter formatter = new BinaryFormatter();
         
         using (FileStream stream = new FileStream("save.dat", FileMode.Create)) {
@@ -157,18 +158,18 @@ public class GameManager : MonoBehaviour
         if (useCheckpoint) {
             currentGameState.countDeath++;
             if (currentGameState.checkpoints.ContainsKey(SceneManager.GetActiveScene().name)) {
-                player.GetComponent<Rigidbody2D>().position = new Vector3(currentGameState.checkpoints[SceneManager.GetActiveScene().name].x, currentGameState.checkpoints[SceneManager.GetActiveScene().name].y); 
+                playerModel.GetComponent<Rigidbody2D>().position = new Vector3(currentGameState.checkpoints[SceneManager.GetActiveScene().name].x, currentGameState.checkpoints[SceneManager.GetActiveScene().name].y); 
                 currentGameState.playerPositions[SceneManager.GetActiveScene().name] = currentGameState.checkpoints[SceneManager.GetActiveScene().name];
             } else {
-                player.GetComponent<Rigidbody2D>().position = new Vector3(0, 0);
+                playerModel.GetComponent<Rigidbody2D>().position = new Vector3(0, 0);
                 currentGameState.checkpoints[SceneManager.GetActiveScene().name] = (0, 0);
                 currentGameState.playerPositions[SceneManager.GetActiveScene().name] = currentGameState.checkpoints[SceneManager.GetActiveScene().name];
             }
         } else {
             if (currentGameState.playerPositions.ContainsKey(SceneManager.GetActiveScene().name)) {
-                player.GetComponent<Rigidbody2D>().position = new Vector3(currentGameState.playerPositions[SceneManager.GetActiveScene().name].x, currentGameState.playerPositions[SceneManager.GetActiveScene().name].y); 
+                playerModel.GetComponent<Rigidbody2D>().position = new Vector3(currentGameState.playerPositions[SceneManager.GetActiveScene().name].x, currentGameState.playerPositions[SceneManager.GetActiveScene().name].y); 
             } else {
-                player.GetComponent<Rigidbody2D>().position = new Vector3(0, 0);
+                playerModel.GetComponent<Rigidbody2D>().position = new Vector3(0, 0);
                 currentGameState.checkpoints[SceneManager.GetActiveScene().name] = (0, 0);
                 currentGameState.playerPositions[SceneManager.GetActiveScene().name] = currentGameState.checkpoints[SceneManager.GetActiveScene().name];
             }
