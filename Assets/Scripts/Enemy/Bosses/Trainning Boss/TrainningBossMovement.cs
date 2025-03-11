@@ -38,6 +38,7 @@ public class TrainningBossMovement : DefaultBoss
         int isDead = PlayerPrefs.GetInt("TrainingBossDead");
         if (isDead == 1) {
             gameObject.SetActive(false);
+            checkpoint.SetActive(true);
         }
 
         base.Start();
@@ -107,10 +108,6 @@ public class TrainningBossMovement : DefaultBoss
             return; // Прерываем выполнение, так как атака выбрана
         }
 
-        
-
-
-
         // Если ни одна атака не подошла, босс не атакует
         Debug.Log("Босс не нашел подходящей атаки. Рандом в деле");
         System.Random random = new();
@@ -134,6 +131,10 @@ public class TrainningBossMovement : DefaultBoss
             default:
                 break;
         }
+    }
+
+    public override void ShowCheckpoint() {
+        checkpoint.SetActive(true);
     }
 
     #region Movement methods

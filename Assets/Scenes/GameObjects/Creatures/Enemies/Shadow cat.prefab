@@ -230,6 +230,7 @@ MonoBehaviour:
   maxHealth: 3
   healthBar: {fileID: 8973390918573234156}
   staminaManaBar: {fileID: 0}
+  canTakeDamage: 0
 --- !u!95 &7932547720728107107
 Animator:
   serializedVersion: 5
@@ -905,7 +906,7 @@ Transform:
   m_GameObject: {fileID: 6176582523425541582}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.09, y: 0.02, z: 0}
+  m_LocalPosition: {x: 0.217, y: -0.028, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

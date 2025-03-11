@@ -12,9 +12,9 @@ class TrainningBossHealth : EnemyHealth {
     }
 
     public override void Die() {
-        GetComponent<DefaultBoss>().isDead = true;
         GameManager.instance.BossDied();
         base.Die();
         PlayerPrefs.SetInt("TrainingBossDead", 1);
+        GetComponent<DefaultBoss>().ShowCheckpoint();
     }
 }

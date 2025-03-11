@@ -9,6 +9,9 @@ public class CheckPointController : MonoBehaviour
     public GameObject canvasTip;
     public TMP_Text text;
 
+    public bool isTravel;
+    public string NextLevel;
+
     private InputAction interactAction;
 
     private GameObject bonefireUI;
@@ -18,13 +21,8 @@ public class CheckPointController : MonoBehaviour
     }
 
     private void Update() {
-        if (UserInput.instance.controls.GameInteraction.Interact.WasPressedThisFrame() && canvasTip.activeInHierarchy) {
-            GameManager.instance.SetCheckpoint(gameObject.transform.position);
-            UserInput.instance.DisableForGame();
-            bonefireUI.SetActive(true);
-        }
         OpenBonefireUI();
-
+        TravelToNextLevel();
         if (text.text != GetButtonNameForAction(interactAction)) {
             text.SetText(GetButtonNameForAction(interactAction));
         }
@@ -35,10 +33,28 @@ public class CheckPointController : MonoBehaviour
             bonefireUI = GameManager.FindInactiveObjectByTag("BonefireUI");
         }
         
-        if (UserInput.instance.controls.UIinteractive.Back.WasPressedThisFrame() && canvasTip.activeInHierarchy) {
+        if (UserInput.instance.controls.GameInteraction.Interact.WasPressedThisFrame() && canvasTip.activeInHierarchy) {
+            GameManager.instance.SetCheckpoint(gameObject.transform.position);
+            if (!isTravel) {
+                UserInput.instance.DisableForGame();
+                bonefireUI.SetActive(true);
+            }
+        }
+        
+        if (UserInput.instance.controls.UIinteractive.Back.WasPressedThisFrame() && canvasTip.activeInHierarchy && !isTravel) {
             UserInput.instance.EnableForGame();
             bonefireUI.SetActive(false);
         }
+    }
+
+    private void TravelToNextLevel() {
+        if (!isTravel) {
+            return;
+        }
+        if (UserInput.instance.controls.GameInteraction.Interact.WasPressedThisFrame() && isTravel) {
+            GameManager.instance.LoadScene(NextLevel);
+        }
+
     }
 
     void OnTriggerEnter2D(Collider2D collision) {

@@ -7,6 +7,8 @@ public class DefaultBoss : MonoBehaviour {
     public LayerMask groundLayer;
     public LayerMask playerLayer;
 
+    public GameObject checkpoint;
+
     protected float attackCooldown = 2f;
     protected float attackCooldownCounter;
     protected float moveSpeed = 5f;
@@ -16,15 +18,9 @@ public class DefaultBoss : MonoBehaviour {
     protected Animator animator;
     [HideInInspector] public bool isLocked = true;
 
-    public bool isDead = false;
-
     private Vector2 initialPosition;
 
     public void Start() {
-        if (isDead) {
-            gameObject.SetActive(false);
-            return;
-        }
         initialPosition = transform.position;
     }
 
@@ -33,4 +29,6 @@ public class DefaultBoss : MonoBehaviour {
         isLocked = true;
         transform.position = initialPosition;
     }
+
+    public virtual void ShowCheckpoint() {}
 }
