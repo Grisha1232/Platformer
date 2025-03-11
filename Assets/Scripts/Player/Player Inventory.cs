@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEditorInternal;
 using UnityEngine;
 
@@ -12,6 +13,8 @@ public class PlayerInventory : MonoBehaviour {
     public Item   CurrentItem { get; set; }
     public int    Currency { get; set; }
     private HealPotion healPotion;
+
+    public TMP_Text currentCurrency;
 
     public static PlayerInventory instance;
 
@@ -42,6 +45,11 @@ public class PlayerInventory : MonoBehaviour {
         } else {
             EquippedWeapon = new Bow();
         }
+    }
+
+    public void AddToCurrentCurency(int amount) {
+        Currency += amount;
+        currentCurrency.text = Currency.ToString();
     }
 
     private void UseHeal() {

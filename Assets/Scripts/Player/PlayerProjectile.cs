@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class PlayerProjectile : MonoBehaviour {
     public float damage = 1; // Урон от стрелы
-    private Vector2 startPosition;
+    public Vector2 startPosition;
 
     private void Update() {
         CheckTravelDistance();
     }
-
-    private void OnEnable() {
-        startPosition = transform.position;
+    
+    void OnDisable() {
+        transform.position = startPosition;
     }
 
     private void CheckTravelDistance() {

@@ -176,6 +176,7 @@ public class GameManager : MonoBehaviour
         }
         PlayerMovement.isMovementBlocked = false;
         PlayerInventory.instance.Currency = currentGameState.currency;
+        PlayerInventory.instance.AddToCurrentCurency(0);
         PlayerInventory.instance.Items = currentGameState.Items;
         PlayerInventory.instance.quickItems = currentGameState.QuickItems;
     }

@@ -5,4 +5,9 @@ public abstract class EnemyHealth : Health {
             healthBar.value = 1;
         }
     }
+
+    public override void Die() {
+        base.Die();
+        PlayerInventory.instance.AddToCurrentCurency(10);
+    }
 }
