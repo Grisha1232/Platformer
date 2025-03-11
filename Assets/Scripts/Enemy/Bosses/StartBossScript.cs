@@ -13,6 +13,9 @@ public class StartBossScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision == player.GetComponent<BoxCollider2D>()) {
+            if (PlayerPrefs.GetInt("TrainingBossDead") == 1) {
+                return;
+            }
             boss.isLocked = false;
             GameManager.instance.SetBossHealth(boss.GetComponent<EnemyHealth>(), "Training Boss");
         }

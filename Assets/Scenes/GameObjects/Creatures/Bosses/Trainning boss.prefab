@@ -264,3 +264,4 @@ MonoBehaviour:
   maxHealth: 20
   healthBar: {fileID: 0}
   staminaManaBar: {fileID: 0}
+  canTakeDamage: 0

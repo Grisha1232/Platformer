@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public abstract class Health : MonoBehaviour {
-    [SerializeField] public float maxHealth { get; protected set; } = 3f;
+    [SerializeField] public float maxHealth = 3f;
     [SerializeField] public Slider healthBar;
     [SerializeField] public Slider staminaManaBar;
     public float CurrentHealth {get; protected set;}

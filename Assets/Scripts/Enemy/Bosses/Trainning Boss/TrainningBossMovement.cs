@@ -35,6 +35,11 @@ public class TrainningBossMovement : DefaultBoss
     private bool isMovingToPlayer = false;
 
     private new void Start() {
+        int isDead = PlayerPrefs.GetInt("TrainingBossDead");
+        if (isDead == 1) {
+            gameObject.SetActive(false);
+        }
+
         base.Start();
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
@@ -46,6 +51,8 @@ public class TrainningBossMovement : DefaultBoss
     void Update() {
         if (isLocked) {
             return;
+        } else {
+            GetComponent<TrainningBossHealth>().canTakeDamage = true;
         }
 
         TurnToPlayer();
@@ -72,31 +79,37 @@ public class TrainningBossMovement : DefaultBoss
         // Вычисляем расстояние до игрока
         float distanceToPlayer = Vector3.Distance(bossPosition, playerPosition);
 
+
+
         // 1. Атака в ближнем бою
         if (distanceToPlayer <= 10f && playerPosition.y <= bossPosition.y + 1f) {
             StartMeleeAttack();
             return; // Прерываем выполнение, так как атака выбрана
         }
 
-        // 2. Атака в дальнем бою
-        if (distanceToPlayer >= 10f && distanceToPlayer <= 25f) {
-            ShootProjectile();
-            return; // Прерываем выполнение, так как атака выбрана
-        }
-
+        
         // 3. Удар по земле
         if (Mathf.Abs(bossPosition.y - playerPosition.y) <= 1f) {
             GroundPound();
             return; // Прерываем выполнение, так как атака выбрана
         }
-
-
+        
         // 4. Прыжок на платформу
         var checkPlatform = GetClosestPlatformOnSameLevel();
         if (checkPlatform != -1) {
             JumpToPlatform(checkPlatform);
             return; // Прерываем выполнение, так как атака выбрана
         }
+        
+        // 2. Атака в дальнем бою
+        if (distanceToPlayer >= 10f && distanceToPlayer <= 25f) {
+            ShootProjectile();
+            return; // Прерываем выполнение, так как атака выбрана
+        }
+
+        
+
+
 
         // Если ни одна атака не подошла, босс не атакует
         Debug.Log("Босс не нашел подходящей атаки. Рандом в деле");
