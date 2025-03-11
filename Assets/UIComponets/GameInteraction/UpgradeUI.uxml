@@ -1,0 +1,46 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UIComponets/GameInteraction/UpgradeUI.uss?fileID=7433441132597879392&amp;guid=728545d0a21bab641906ea9d35adeed4&amp;type=3#UpgradeUI" />
+    <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+        <ui:VisualElement name="UpgradePanel" class="panel" style="flex-grow: 1;">
+            <ui:Label tabindex="-1" text="Улучшение" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label" style="align-self: center; font-size: 30%;" />
+            <ui:VisualElement name="UpgradeElement" class="upgradeElement element" style="flex-grow: 1;">
+                <ui:Label tabindex="-1" text="Здоровье" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label" />
+                <ui:VisualElement style="flex-grow: 1;" />
+                <ui:Button text="/\" parse-escape-sequences="true" display-tooltip-when-elided="true" class="button" />
+                <ui:Button text="\/" parse-escape-sequences="true" display-tooltip-when-elided="true" class="button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="UpgradeElement" class="upgradeElement element" style="flex-grow: 1;">
+                <ui:Label tabindex="-1" text="Сопротивление" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label" />
+                <ui:VisualElement style="flex-grow: 1;" />
+                <ui:Button text="/\" parse-escape-sequences="true" display-tooltip-when-elided="true" class="button" />
+                <ui:Button text="\/" parse-escape-sequences="true" display-tooltip-when-elided="true" class="button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="UpgradeElement" class="upgradeElement element" style="flex-grow: 1;">
+                <ui:Label tabindex="-1" text="Специальные очки" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label" />
+                <ui:VisualElement style="flex-grow: 1;" />
+                <ui:Button text="/\" parse-escape-sequences="true" display-tooltip-when-elided="true" class="button" />
+                <ui:Button text="\/" parse-escape-sequences="true" display-tooltip-when-elided="true" class="button" />
+            </ui:VisualElement>
+            <ui:VisualElement class="space-maker" />
+        </ui:VisualElement>
+        <ui:VisualElement name="StatusPanel" class="panel" style="flex-grow: 1;">
+            <ui:Label tabindex="-1" text="Текущие значения" parse-escape-sequences="true" display-tooltip-when-elided="true" class="label" style="font-size: 30%;" />
+            <ui:VisualElement name="StatusElement" class="statusElement element" style="flex-grow: 1;">
+                <ui:Label tabindex="-1" text="Здоровье" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Name" class="label" />
+                <ui:VisualElement style="flex-grow: 1;" />
+                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IntValue" class="label" />
+            </ui:VisualElement>
+            <ui:VisualElement name="StatusElement" class="statusElement element" style="flex-grow: 1;">
+                <ui:Label tabindex="-1" text="Сопротивление" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Name" class="label" />
+                <ui:VisualElement style="flex-grow: 1;" />
+                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IntValue" class="label" />
+            </ui:VisualElement>
+            <ui:VisualElement name="StatusElement" class="statusElement element" style="flex-grow: 1;">
+                <ui:Label tabindex="-1" text="Специальные очки" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Name" class="label" />
+                <ui:VisualElement style="flex-grow: 1;" />
+                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="IntValue" class="label" />
+            </ui:VisualElement>
+            <ui:VisualElement class="space-maker" style="flex-grow: 1;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

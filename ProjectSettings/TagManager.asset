@@ -8,6 +8,9 @@ TagManager:
   - PauseMenu
   - Map
   - Platforms
+  - UpgradeUI
+  - BonefireUI
+  - InventoryUI
   layers:
   - Default
   - TransparentFX

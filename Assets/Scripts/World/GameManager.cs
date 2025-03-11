@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
 public class GameManager : MonoBehaviour
 {
 
@@ -49,7 +50,7 @@ public class GameManager : MonoBehaviour
         openPauseMenu();
     }
 
-    private GameObject FindInactiveObjectByTag(string tag)
+    public static GameObject FindInactiveObjectByTag(string tag)
     {
         GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
         foreach (GameObject obj in allObjects)
@@ -73,12 +74,11 @@ public class GameManager : MonoBehaviour
         }
         if (UserInput.instance.controls.UIinteractive.PauseMenu.WasPressedThisFrame()) {
             pauseMenu.SetActive(!pauseMenu.activeInHierarchy);
-        }
-        
-        if (pauseMenu.activeInHierarchy) {
-            UserInput.instance.controls.Jumping.Disable();
-        } else {
-            UserInput.instance.controls.Jumping.Enable();
+            if (!pauseMenu.activeInHierarchy) {
+                UserInput.instance.DisableForGame();
+            } else {
+                UserInput.instance.EnableForGame();
+            }
         }
     }
 
@@ -130,6 +130,7 @@ public class GameManager : MonoBehaviour
     public void SetCheckpoint(Vector2 position) {
         currentGameState.checkpoints[sceneName] = (position.x, position.y);
         SaveGame();
+        LoadGame(true);
     }
 
     public void SaveGame() {

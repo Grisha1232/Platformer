@@ -2,6 +2,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class CheckPointController : MonoBehaviour
 {
@@ -10,16 +11,33 @@ public class CheckPointController : MonoBehaviour
 
     private InputAction interactAction;
 
+    private GameObject bonefireUI;
+
     void Awake() {
         interactAction = UserInput.instance.controls.GameInteraction.Interact;
     }
 
     private void Update() {
-        if (UserInput.instance.controls.GameInteraction.Interact.WasPressedThisFrame()) {
+        if (UserInput.instance.controls.GameInteraction.Interact.WasPressedThisFrame() && canvasTip.activeInHierarchy) {
             GameManager.instance.SetCheckpoint(gameObject.transform.position);
+            UserInput.instance.DisableForGame();
+            bonefireUI.SetActive(true);
         }
+        OpenBonefireUI();
+
         if (text.text != GetButtonNameForAction(interactAction)) {
             text.SetText(GetButtonNameForAction(interactAction));
+        }
+    }
+
+    private void OpenBonefireUI() {
+        if (bonefireUI == null) {
+            bonefireUI = GameManager.FindInactiveObjectByTag("BonefireUI");
+        }
+        
+        if (UserInput.instance.controls.UIinteractive.Back.WasPressedThisFrame() && canvasTip.activeInHierarchy) {
+            UserInput.instance.EnableForGame();
+            bonefireUI.SetActive(false);
         }
     }
 
