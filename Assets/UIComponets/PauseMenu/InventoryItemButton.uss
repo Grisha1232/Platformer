@@ -1,0 +1,12 @@
+.button {
+    min-width: 250px;
+    -unity-text-align: middle-center;
+    font-size: 250%;
+    white-space: normal;
+    flex-grow: 1;
+    -unity-font-style: normal;
+    text-overflow: clip;
+    min-height: 250px;
+    max-width: 250px;
+    max-height: 250px;
+}

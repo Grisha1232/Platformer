@@ -4,9 +4,9 @@
         <ui:VisualElement name="QuickAccess" class="quickAccess noBackgroundColor" style="flex-grow: 1;" />
         <ui:VisualElement name="Fliters" class="filters noBackgroundColor" style="flex-grow: 1;" />
         <ui:VisualElement name="MainContent" class="mainContent noBackgroundColor" style="flex-grow: 1;">
-            <ui:ScrollView horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" class="inventoryItemsScroll noBackgroundColor" style="flex-direction: column; align-items: stretch; justify-content: flex-start; flex-grow: 0; align-self: auto;">
-                <ui:VisualElement name="InventoryItems" class="inventoryItems noBackgroundColor" style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; height: auto; min-height: auto; align-items: center; flex-direction: row; background-color: rgba(0, 0, 0, 0);">
-                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+            <ui:ScrollView horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="AlwaysVisible" class="inventoryItemsScroll noBackgroundColor">
+                <ui:VisualElement name="InventoryItems" class="inventoryItems noBackgroundColor" style="background-color: rgba(0, 0, 0, 0);">
+                    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="min-width: 50px; min-height: 60px;" />
                 </ui:VisualElement>
             </ui:ScrollView>
             <ui:VisualElement name="Description" class="description noBackgroundColor" style="flex-grow: 1;">

@@ -37,9 +37,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
         currentGameState = new GameState();
-        for (int i = 0; i < 10; i++) {
-            currentGameState.Items.Add(new Item(i.ToString()));
-        }
         sceneName = SceneManager.GetActiveScene().name;
     }
 
@@ -74,7 +71,7 @@ public class GameManager : MonoBehaviour
         }
         if (UserInput.instance.controls.UIinteractive.PauseMenu.WasPressedThisFrame()) {
             pauseMenu.SetActive(!pauseMenu.activeInHierarchy);
-            if (!pauseMenu.activeInHierarchy) {
+            if (pauseMenu.activeInHierarchy) {
                 UserInput.instance.DisableForGame();
             } else {
                 UserInput.instance.EnableForGame();
@@ -98,12 +95,12 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(name);
         } else {
             player.SetActive(true);
+            UserInput.instance.EnableForGame();
             SceneManager.LoadScene(name);
         }
         
     }
 
-    // called second
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("OnSceneLoaded: " + scene.name);
@@ -125,6 +122,9 @@ public class GameManager : MonoBehaviour
                 boss.Reset();
             }
         }
+        playerModel.GetComponent<PlayerHealth>().Reset();
+        PlayerInventory.instance.ResetHealPotions();
+        UserInput.instance.EnableForGame();
     }
 
     public void SetCheckpoint(Vector2 position) {
@@ -135,8 +135,6 @@ public class GameManager : MonoBehaviour
 
     public void SaveGame() {
         currentGameState.currency = PlayerInventory.instance.Currency;
-        currentGameState.Items = PlayerInventory.instance.Items;
-        currentGameState.QuickItems = PlayerInventory.instance.quickItems;
         currentGameState.playerPositions[sceneName] = (playerModel.transform.position.x, playerModel.transform.position.y);
         BinaryFormatter formatter = new BinaryFormatter();
         
@@ -178,8 +176,6 @@ public class GameManager : MonoBehaviour
         PlayerMovement.isMovementBlocked = false;
         PlayerInventory.instance.Currency = currentGameState.currency;
         PlayerInventory.instance.AddToCurrentCurency(0);
-        PlayerInventory.instance.Items = currentGameState.Items;
-        PlayerInventory.instance.quickItems = currentGameState.QuickItems;
     }
 
     public void SetBossHealth(EnemyHealth health, string name) {

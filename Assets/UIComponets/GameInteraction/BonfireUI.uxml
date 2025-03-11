@@ -2,9 +2,9 @@
     <Style src="project://database/Assets/UIComponets/MainMenu/MainMenu.uss?fileID=7433441132597879392&amp;guid=2f76548fe2873744f9bf44c687c43c72&amp;type=3#MainMenu" />
     <Style src="project://database/Assets/UIComponets/GameInteraction/BonefireUI.uss?fileID=7433441132597879392&amp;guid=0193b43eb26d0d74e90590d7f668bf51&amp;type=3#BonefireUI" />
     <ui:VisualElement class="panel-bonefire" style="flex-grow: 1;">
-        <ui:Button text="Отдохнуть" parse-escape-sequences="true" display-tooltip-when-elided="true" style="font-size: 20%; max-height: 10%;" />
-        <ui:Button text="Прокачаться" parse-escape-sequences="true" display-tooltip-when-elided="true" style="font-size: 20%; max-height: 10%;" />
-        <ui:Button text="Переместится" parse-escape-sequences="true" display-tooltip-when-elided="true" style="font-size: 20%; max-height: 10%;" />
-        <ui:Button text="Выйти" parse-escape-sequences="true" display-tooltip-when-elided="true" style="font-size: 20%; max-height: 10%;" />
+        <ui:Button text="Отдохнуть" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Rest" style="font-size: 20%; max-height: 10%;" />
+        <ui:Button text="Прокачаться" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Upgrade" style="font-size: 20%; max-height: 10%;" />
+        <ui:Button text="Переместится" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Travel" style="font-size: 20%; max-height: 10%;" />
+        <ui:Button text="Выйти" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Exit" style="font-size: 20%; max-height: 10%;" />
     </ui:VisualElement>
 </ui:UXML>

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public abstract class Health : MonoBehaviour {
-    [SerializeField] protected float maxHealth = 3f;
+    [SerializeField] public float maxHealth { get; protected set; } = 3f;
     [SerializeField] public Slider healthBar;
     [SerializeField] public Slider staminaManaBar;
     public float CurrentHealth {get; protected set;}
@@ -35,6 +35,11 @@ public abstract class Health : MonoBehaviour {
     }
 
     public virtual void Heal( float amount ) {
+        CurrentHealth += amount;
+        if (CurrentHealth > maxHealth) {
+            CurrentHealth = maxHealth;
+        }
+        healthBar.value = CurrentHealth / maxHealth;
         return;
     }
 }

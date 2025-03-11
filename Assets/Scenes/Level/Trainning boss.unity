@@ -318,6 +318,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ranged mob (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 7740102861755552171, guid: c9e3c84015929f341904089608367a4d, type: 3}
+      propertyPath: aggroRange
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7740102861755552171, guid: c9e3c84015929f341904089608367a4d, type: 3}
+      propertyPath: attackRange
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 7767988428349641033, guid: c9e3c84015929f341904089608367a4d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 35.8

@@ -29,9 +29,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 341059761551688087}
   - {fileID: 1742765104041275611}
   - {fileID: 5542265077699530536}
-  - {fileID: 341059761551688087}
   - {fileID: 8772810705021955810}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -112,6 +112,10 @@ PrefabInstance:
     - target: {fileID: 2695079281139172433, guid: 770e5133ddb747149a257483d97042ca, type: 3}
       propertyPath: m_Name
       value: Inventory
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695079281139172433, guid: 770e5133ddb747149a257483d97042ca, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2695079281139172433, guid: 770e5133ddb747149a257483d97042ca, type: 3}
       propertyPath: m_TagString
@@ -249,6 +253,10 @@ PrefabInstance:
     - target: {fileID: 3379018603328660222, guid: 3291fb3c699272c47b5d097721b2ea7c, type: 3}
       propertyPath: m_Name
       value: PauseMenuDocument
+      objectReference: {fileID: 0}
+    - target: {fileID: 3379018603328660222, guid: 3291fb3c699272c47b5d097721b2ea7c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4130436410826643938, guid: 3291fb3c699272c47b5d097721b2ea7c, type: 3}
       propertyPath: m_LocalPosition.x

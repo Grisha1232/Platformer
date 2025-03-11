@@ -52,11 +52,11 @@
     margin-right: 1%;
     margin-bottom: 1%;
     margin-left: 1%;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
-    align-items: flex-start;
-    align-self: auto;
-    justify-content: flex-end;
+    align-items: auto;
+    align-self: stretch;
+    justify-content: flex-start;
     display: flex;
     visibility: visible;
     overflow: visible;
@@ -82,8 +82,7 @@
 
 .inventoryItems {
     width: 100%;
-    background-color: rgb(49, 82, 255);
-    height: auto;
+    height: 500%;
     margin-top: 0;
     margin-right: 0;
     margin-bottom: 0;
@@ -91,11 +90,12 @@
     flex-direction: row;
     flex-wrap: wrap;
     align-items: flex-start;
-    align-self: auto;
+    align-self: flex-start;
     justify-content: flex-start;
     display: flex;
     visibility: visible;
     overflow: visible;
     opacity: 1;
-    min-height: 100%;
+    flex-grow: 1;
+    min-height: 500%;
 }

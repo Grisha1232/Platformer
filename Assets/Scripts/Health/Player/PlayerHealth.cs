@@ -16,4 +16,8 @@ class PlayerHealth : Health {
         HasTakenDamage = false;
         GameManager.instance.ReturnToCheckpoint(true);
     }
+
+    public void Reset() {
+         Start();
+    }
 }

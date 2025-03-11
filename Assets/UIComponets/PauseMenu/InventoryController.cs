@@ -12,6 +12,8 @@ public class InventoryController : MonoBehaviour
     private Label DescriptionText;
     private Dictionary<Button, Item> items;
 
+    private GameObject pauseMenu;
+
     private void OnEnable() {
         root = GetComponent<UIDocument>().rootVisualElement;
         items = new();
@@ -22,6 +24,7 @@ public class InventoryController : MonoBehaviour
         DescriptionText = root.Q<VisualElement>().Q<VisualElement>("MainContent").Q<Label>("descriptionText");
         DescriptionText.Clear();
         foreach (var item in PlayerInventory.instance.Items) {
+            Debug.Log(item);
             var itemHolder = itemBtn.Instantiate();
             Button btn = itemHolder.Q<Button>();
             btn.text = item.Name;
@@ -30,6 +33,12 @@ public class InventoryController : MonoBehaviour
             itemsList.Add(itemHolder);
             items[btn] = item;
         }
+
+        if (pauseMenu == null) {
+            pauseMenu = GameManager.FindInactiveObjectByTag("PauseMenu");
+        }
+        UserInput.instance.DisableForGame();
+        UserInput.instance.controls.UIinteractive.PauseMenu.Disable();
     }
 
     private void showDescription(Button sender) {
@@ -39,6 +48,8 @@ public class InventoryController : MonoBehaviour
     void Update() {
         if (UserInput.instance.controls.UIinteractive.Back.WasPressedThisFrame()) {
             gameObject.SetActive(false);
+            pauseMenu.SetActive(true);
+            UserInput.instance.controls.UIinteractive.PauseMenu.Enable();
         }
     }
 }

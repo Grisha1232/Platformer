@@ -49,6 +49,12 @@ public class PlayerAttack : MonoBehaviour
         // }
     }
 
+    private void OnEnable() {
+        foreach (var arrow in arrows) {
+            arrow.SetActive(false);
+        }
+    }
+
     #region Attack functions
 
     private IEnumerator MeleeAttack()  {   

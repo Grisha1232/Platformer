@@ -11,8 +11,6 @@ public class RangedAttack : DefaultAttack {
 
     private new void Start() {
         base.Start();
-        attackRange = 25f;
-        aggroRange = 25f;
         attackTimeCounter = attackCooldown;
     }
 

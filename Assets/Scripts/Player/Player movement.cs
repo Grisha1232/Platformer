@@ -54,7 +54,6 @@ public class PlayerMovement : MonoBehaviour
         anim = GetComponent<Animator>();
         health = GetComponent<PlayerHealth>();
         scaleFactor = transform.localScale.x;
-        GameManager.instance.currentGameState.Items = GetComponent<PlayerInventory>().Items;
         GameManager.instance.currentGameState.currency = 0;
     }
 
