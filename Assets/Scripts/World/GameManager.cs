@@ -36,7 +36,9 @@ public class GameManager : MonoBehaviour
         } else {
             Destroy(gameObject);
         }
+        // TODO: УБРАТЬ!!!!!!!
         PlayerPrefs.SetInt("TrainingBossDead", 0);
+        
         currentGameState = new GameState();
         sceneName = SceneManager.GetActiveScene().name;
     }
