@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3260910946249993903}
   - component: {fileID: 3447936639633913277}
+  - component: {fileID: 6244529461872289881}
   m_Layer: 5
   m_Name: UpgradeUI
   m_TagString: UpgradeUI
@@ -48,3 +49,15 @@ MonoBehaviour:
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 81a0e34162a31f745964c185719b5897, type: 3}
   m_SortingOrder: 0
+--- !u!114 &6244529461872289881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5119873917428999480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 003e6b59141443047a06f9c479f84186, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

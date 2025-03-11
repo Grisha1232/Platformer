@@ -32,6 +32,7 @@ public class BonefireController : MonoBehaviour
         if (upgradeUI == null) {
             upgradeUI = GameManager.FindInactiveObjectByTag("UpgradeUI");
         }
+        UserInput.instance.DisableForGame();
     }
 
     private void Rest() {
