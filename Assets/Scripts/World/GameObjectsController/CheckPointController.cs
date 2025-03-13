@@ -11,6 +11,7 @@ public class CheckPointController : MonoBehaviour
 
     public bool isTravel;
     public string NextLevel;
+    public Transform TravelTo;
 
     private InputAction interactAction;
 

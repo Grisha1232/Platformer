@@ -145,6 +145,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasTip: {fileID: 8837967119605120071}
+  text: {fileID: 2192390239933306373}
+  isTravel: 0
+  NextLevel: 
 --- !u!1 &8575483145614809788
 GameObject:
   m_ObjectHideFlags: 0

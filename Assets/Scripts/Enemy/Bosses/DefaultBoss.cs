@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class DefaultBoss : MonoBehaviour {
     
-    public LayerMask enemyLayer;
     public LayerMask platformLayer;
     public LayerMask groundLayer;
     public LayerMask playerLayer;

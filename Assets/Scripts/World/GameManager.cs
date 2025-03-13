@@ -138,7 +138,9 @@ public class GameManager : MonoBehaviour
 
     public void SaveGame() {
         currentGameState.currency = PlayerInventory.instance.Currency;
-        currentGameState.playerPositions[sceneName] = (playerModel.transform.position.x, playerModel.transform.position.y);
+        if (!bossUI.activeInHierarchy) {
+            currentGameState.playerPositions[sceneName] = (playerModel.transform.position.x, playerModel.transform.position.y);
+        }
         BinaryFormatter formatter = new BinaryFormatter();
         
         using (FileStream stream = new FileStream("save.dat", FileMode.Create)) {
