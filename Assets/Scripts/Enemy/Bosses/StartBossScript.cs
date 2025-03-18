@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class StartBossScript : MonoBehaviour
 {
-    public GameObject player;
+    private GameObject player;
     public DefaultBoss boss;
 
     private void Start() {
@@ -13,11 +13,12 @@ public class StartBossScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision == player.GetComponent<BoxCollider2D>()) {
-            if (PlayerPrefs.GetInt("TrainingBossDead") == 1) {
+            Debug.Log("start boss = " + boss.gameObject.name);
+            if (PlayerPrefs.GetInt(boss.gameObject.name + "Dead") == 1) {
                 return;
             }
             boss.isLocked = false;
-            GameManager.instance.SetBossHealth(boss.GetComponent<EnemyHealth>(), "Training Boss");
+            GameManager.instance.SetBossHealth(boss.GetComponent<EnemyHealth>(), boss.gameObject.name);
         }
     }
 }

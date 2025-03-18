@@ -758,6 +758,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -147.97
       objectReference: {fileID: 0}
+    - target: {fileID: 6364443366688052662, guid: d7fef8b25e5f5904db148d4a053c12d8, type: 3}
+      propertyPath: maxHealth
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6645000970566636280, guid: d7fef8b25e5f5904db148d4a053c12d8, type: 3}
       propertyPath: healRemaining
       value: 

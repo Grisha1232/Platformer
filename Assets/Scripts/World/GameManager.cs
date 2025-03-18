@@ -112,7 +112,12 @@ public class GameManager : MonoBehaviour
             LoadGame(false);
         } else {
             player.SetActive(false);
+            LoadGame(true);
         }
+    }
+
+    public void PlayDead() {
+        playerModel.GetComponent<PlayerMovement>().DeathAnim();
     }
 
     public void ReturnToCheckpoint(bool isDeath = false) {
@@ -134,6 +139,14 @@ public class GameManager : MonoBehaviour
         currentGameState.checkpoints[sceneName] = (position.x, position.y);
         SaveGame();
         LoadGame(true);
+    }
+
+    public void SetSleep(bool isSleep) {
+        if (isSleep) {
+            playerModel.GetComponent<PlayerMovement>().Sleeping();
+        } else {
+            playerModel.GetComponent<PlayerMovement>().StopSleeping();
+        }
     }
 
     public void SaveGame() {
@@ -179,8 +192,10 @@ public class GameManager : MonoBehaviour
             }
         }
         PlayerMovement.isMovementBlocked = false;
-        PlayerInventory.instance.Currency = currentGameState.currency;
-        PlayerInventory.instance.AddToCurrentCurency(0);
+        if (PlayerInventory.instance != null) {
+            PlayerInventory.instance.Currency = currentGameState.currency;
+            PlayerInventory.instance.AddToCurrentCurency(0);
+        }
     }
 
     public void SetBossHealth(EnemyHealth health, string name) {

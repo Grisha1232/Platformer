@@ -1,9 +1,9 @@
 
 class PlayerHealth : Health {
-    public bool framInvincable {get; set;}
+    public bool frameInvincable {get; set;}
 
     public override void TakeDamage( float damage ) {
-        if (!framInvincable) {
+        if (!frameInvincable) {
             base.TakeDamage( damage );
         }
     }
@@ -11,10 +11,7 @@ class PlayerHealth : Health {
     public override void Die()
     {
         print("Died");
-        CurrentHealth = maxHealth;
-        healthBar.value = 1;
-        HasTakenDamage = false;
-        GameManager.instance.ReturnToCheckpoint(true);
+        GameManager.instance.PlayDead();
     }
 
     public void Reset() {

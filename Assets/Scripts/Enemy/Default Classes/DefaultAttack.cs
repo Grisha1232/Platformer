@@ -112,6 +112,10 @@ public abstract class DefaultAttack : MonoBehaviour {
     
     protected void followPath() {
 
+        if (pathToFollow == null) {
+            return;
+        }
+
         if (pathToFollow.Count == 0) {
             return;
         }

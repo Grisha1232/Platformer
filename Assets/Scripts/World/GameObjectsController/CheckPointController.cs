@@ -16,6 +16,7 @@ public class CheckPointController : MonoBehaviour
     private InputAction interactAction;
 
     private GameObject bonefireUI;
+    private GameObject player;
 
     void Awake() {
         interactAction = UserInput.instance.controls.GameInteraction.Interact;
@@ -39,12 +40,14 @@ public class CheckPointController : MonoBehaviour
             if (!isTravel) {
                 UserInput.instance.DisableForGame();
                 bonefireUI.SetActive(true);
+                GameManager.instance.SetSleep(true);
             }
         }
         
         if (UserInput.instance.controls.UIinteractive.Back.WasPressedThisFrame() && canvasTip.activeInHierarchy && !isTravel) {
             UserInput.instance.EnableForGame();
             bonefireUI.SetActive(false);
+                GameManager.instance.SetSleep(false);
         }
     }
 
@@ -52,8 +55,11 @@ public class CheckPointController : MonoBehaviour
         if (!isTravel) {
             return;
         }
-        if (UserInput.instance.controls.GameInteraction.Interact.WasPressedThisFrame() && isTravel) {
+        if (UserInput.instance.controls.GameInteraction.Interact.WasPressedThisFrame() && isTravel && NextLevel != "") {
             GameManager.instance.LoadScene(NextLevel);
+        }
+        if (UserInput.instance.controls.GameInteraction.Interact.WasPressedThisFrame() && isTravel && TravelTo != null) {
+            player.GetComponent<PlayerMovement>().TeleportTo(TravelTo);
         }
 
     }
@@ -61,6 +67,7 @@ public class CheckPointController : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision) {
         if (collision.gameObject.tag == "Player") {
             canvasTip.SetActive(true);
+            player = collision.gameObject;
         }
     }
 

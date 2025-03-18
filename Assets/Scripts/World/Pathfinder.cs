@@ -197,7 +197,7 @@ public class Pathfinder : MonoBehaviour
 
         List<Vector3Int> rv = new();
         var current = start;
-        while (path[current] != Direction.None) {
+        while (path.ContainsKey(current) && path[current] != Direction.None) {
             if (path[current] == Direction.Up) {
                 current += biasY;
             } else if (path[current] == Direction.Down) {
