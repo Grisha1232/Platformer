@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEngine;
  
  public class FlyingMobMovement : DefaultMovement
@@ -107,5 +108,7 @@ using UnityEngine;
          Gizmos.DrawWireSphere(transform.position, chaseRange);
          Gizmos.color = Color.blue;
          Gizmos.DrawWireSphere(initialPosition, 0.5f);
+
+         Pathfinder.instance.DrawPath(body.position);
      }
  }

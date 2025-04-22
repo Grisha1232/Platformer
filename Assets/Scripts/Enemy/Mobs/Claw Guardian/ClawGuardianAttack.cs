@@ -133,6 +133,6 @@ public class ClawGuardianAttack : DefaultAttack
         Gizmos.DrawLine(from, to);
 
         Gizmos.color = Color.green;
-        Pathfinder.instance.DrawPath(body.position);
+        Pathfinder.instance.DrawPath2(body.position);
     }
 }

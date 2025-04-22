@@ -129,7 +129,7 @@ public class ShadowCatMovement : DefaultMovement
 
     private void DrawPathToTarget() {
         Gizmos.color = Color.green;
-        Pathfinder.instance.DrawPath(body.position);
+        Pathfinder.instance.DrawPath2(body.position);
     }
 
     private void DrawArrow(Vector3 center, Vector2 size, Direction direction)

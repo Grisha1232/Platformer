@@ -80,8 +80,6 @@ public class TrainningBossMovement : DefaultBoss
         // Вычисляем расстояние до игрока
         float distanceToPlayer = Vector3.Distance(bossPosition, playerPosition);
 
-
-
         // 1. Атака в ближнем бою
         if (distanceToPlayer <= 10f && playerPosition.y <= bossPosition.y + 1f) {
             StartMeleeAttack();

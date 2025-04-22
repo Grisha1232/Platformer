@@ -99,7 +99,7 @@ public abstract class DefaultAttack : MonoBehaviour {
             return;
         }
 
-        if (Pathfinder.instance.getPathLength(transform.position) >= 30) {
+        if (Pathfinder.instance.getPathLength2(transform.position) >= 30) {
             return;
         }
         var path = Pathfinder.instance.getNextThreeTiles(transform.position);
@@ -120,7 +120,7 @@ public abstract class DefaultAttack : MonoBehaviour {
             return;
         }
 
-        if (Pathfinder.instance.getPathLength(transform.position) <= 1) {
+        if (Pathfinder.instance.getPathLength2(transform.position) <= 1) {
             // animator.SetFloat("Speed", 0);
             return;
         }
