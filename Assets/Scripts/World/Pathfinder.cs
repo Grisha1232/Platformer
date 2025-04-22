@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using AlgoritmAStar;
 using Unity.VisualScripting;
+using UnityEngine.UIElements;
 
 public class Pathfinder : MonoBehaviour
 {
@@ -227,6 +228,81 @@ public class Pathfinder : MonoBehaviour
         return new List<Vector3Int>(); // Путь не найден
     }
 
+    public List<Vector3> FindPath(Vector3 from, Vector3 to)
+    {
+        Vector3Int start = map.WorldToCell(from);
+        Vector3Int goal = map.WorldToCell(to);
+
+        Vector3Int biasX = new Vector3Int((int)map.cellSize.x, 0);
+        Vector3Int biasY = new Vector3Int(0, (int)map.cellSize.y);
+
+        if (map.HasTile(goal) || platforms.HasTile(goal)) {
+            if ( !map.HasTile(goal + biasX) && !platforms.HasTile(goal + biasX) ) {
+                goal += biasX;
+            }
+            if ( map.HasTile(goal - biasX) && !platforms.HasTile(goal - biasX) ) {
+                goal -= biasX;
+            }
+            if ( !map.HasTile(goal + biasY) && !platforms.HasTile(goal + biasY) ) {
+                goal += biasY;
+            }
+            if ( !map.HasTile(goal - biasY) && !platforms.HasTile(goal - biasY) ) {
+                goal -= biasY;
+            }
+        }
+
+        HashSet<Vector3Int> closedSet = new HashSet<Vector3Int>();
+        PriorityQueue<Node> openSet = new PriorityQueue<Node>();
+
+        Dictionary<Vector3Int, Vector3Int> cameFrom = new Dictionary<Vector3Int, Vector3Int>();
+        Dictionary<Vector3Int, int> gScore = new Dictionary<Vector3Int, int>();
+
+        openSet.Enqueue(new Node(start, 0, Heuristic(start, goal)));
+        gScore[start] = 0;
+
+        Vector3Int[] directions = new Vector3Int[]
+        {
+            Vector3Int.up,
+            Vector3Int.down,
+            Vector3Int.left,
+            Vector3Int.right
+        };
+
+        while (openSet.Count > 0)
+        {
+            Node current = openSet.Dequeue();
+
+            if (current.Position == goal)
+            {
+                return ReconstructPath(cameFrom, current.Position).Select(v => new Vector3(v.x, v.y)) .ToList();
+            }
+
+            closedSet.Add(current.Position);
+
+            foreach (var dir in directions)
+            {
+                Vector3Int neighbor = current.Position + dir;
+
+                // Пропускаем, если это препятствие или уже в закрытом списке
+                if (map.HasTile(neighbor) || platforms.HasTile(neighbor) || closedSet.Contains(neighbor))
+                    continue;
+
+                int tentativeG = gScore[current.Position] + 1;
+
+                if (!gScore.ContainsKey(neighbor) || tentativeG < gScore[neighbor])
+                {
+                    cameFrom[neighbor] = current.Position;
+                    gScore[neighbor] = tentativeG;
+
+                    int fScore = tentativeG + Heuristic(neighbor, goal);
+                    openSet.Enqueue(new Node(neighbor, tentativeG, fScore));
+                }
+            }
+        }
+
+        return new List<Vector3>(); // Путь не найден
+    }
+
     private int Heuristic(Vector3Int a, Vector3Int b)
     {
         return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y); // Манхэттенская дистанция
@@ -244,6 +320,12 @@ public class Pathfinder : MonoBehaviour
 
         path.Reverse();
         return path;
+    }
+
+    public List<Vector3> getNextThreeTiles(Vector3 from) {
+        var temp = getPath(from);
+
+        return new() {temp[0], temp[1], temp[2]};
     }
 
     public int getPathLength2(Vector3 from) {
@@ -290,7 +372,7 @@ public class Pathfinder : MonoBehaviour
         return rv;
     }
 
-    public List<Vector3Int> getNextThreeTiles(Vector3 from) {
+    public List<Vector3Int> getNextThreeTiles2(Vector3 from) {
         Vector3Int start = map.WorldToCell(from);
 
         if (!availableTilesPosition.Contains(start)) {
@@ -437,7 +519,7 @@ public class Pathfinder : MonoBehaviour
 
     public void DrawPath2(Vector3 from) {
         Vector3 bias = new Vector3(map.cellSize.x / 2, map.cellSize.y / 2);
-        var listDiretions = getNextThreeTiles(from);
+        var listDiretions = getNextThreeTiles2(from);
         if (listDiretions == null || listDiretions.Count == 0) {
             return;
         }

@@ -1,4 +1,4 @@
-using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
  
  public class FlyingMobMovement : DefaultMovement
@@ -13,19 +13,22 @@ using UnityEngine;
     [HideInInspector] public bool isInShadow { get; private set; } = false;
  
     private Collider2D platformCollider;
+
+    private List<Vector3> pathToChase;
+    private int indexToChase = 0;
      private void Awake()
      {
-         base.Start();
-         attackScript = GetComponent<FlyingMobAttack>();
+        base.Start();
+        attackScript = GetComponent<FlyingMobAttack>();
+
      }
 
     private new void Start() {
-        
     }
 
     protected override void Update()
      {
-         if (attackScript.PlayerInAggroRange())
+         if (attackScript.PlayerInAggroRange() && !attackScript.PlayerInAttackRange())
          {
              ChasePlayer();
              ToggleIndicators(false);
@@ -40,37 +43,31 @@ using UnityEngine;
      protected override void Patrol()
      {
          Vector2 targetPosition = initialPosition + new Vector3(
-             Mathf.PingPong(Time.time * patrolSpeed, patrolRange * 3) - patrolRange,
-             Mathf.Sin(Time.time) * 4f
+            Mathf.PingPong(Time.time * patrolSpeed, patrolRange * 3) - patrolRange,
+            Mathf.Sin(Time.time) * 4f
          );
  
          MoveTowards(targetPosition, patrolSpeed);
          
          if ((targetPosition - (Vector2)transform.position).x > 0 != (transform.localScale.x > 0))
          {
-             Flip();
+            Flip();
          }
      }
  
      private void ChasePlayer()
      {
-         Vector2 targetPosition = (Vector2)player.position + new Vector2(0, verticalOffset);
-         
-         if (Vector2.Distance(transform.position, targetPosition) > stoppingDistance)
-         {
-             MoveTowards(targetPosition, chaseSpeed);
-         }
-         else
-         {
-             body.velocity = Vector2.zero;
-             animator.SetFloat("Speed", 0);
-         }
- 
-         Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
-         if (direction.x > 0 != (transform.localScale.x > 0))
-         {
-             Flip();
-         }
+        pathToChase ??= Pathfinder.instance.getNextThreeTiles(body.position);
+        print(Vector3.Distance(body.position, pathToChase[^1]));
+        if (Vector3.Distance(body.position, pathToChase[^1]) < 0.06f) {
+            pathToChase = Pathfinder.instance.getNextThreeTiles(body.position);
+            indexToChase = 0;
+        }
+        if (Vector3.Distance(body.position, pathToChase[indexToChase]) < 0.06f) {
+            indexToChase++;
+        }
+
+        MoveTowards(pathToChase[indexToChase], chaseSpeed);
      }
  
      private void MoveTowards(Vector2 target, float speed)
@@ -104,11 +101,14 @@ using UnityEngine;
  
      private void OnDrawGizmosSelected()
      {
-         Gizmos.color = Color.red;
-         Gizmos.DrawWireSphere(transform.position, chaseRange);
          Gizmos.color = Color.blue;
          Gizmos.DrawWireSphere(initialPosition, 0.5f);
 
-         Pathfinder.instance.DrawPath(body.position);
+        //  Pathfinder.instance.DrawPath(body.position);
+        Vector3 size = Vector3.one;
+        Gizmos.color = Color.black;
+        foreach (var tile in pathToChase) {
+            Gizmos.DrawWireCube(tile, size);
+        }
      }
  }

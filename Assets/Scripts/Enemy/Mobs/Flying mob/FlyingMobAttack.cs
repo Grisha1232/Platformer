@@ -5,139 +5,166 @@ using UnityEngine;
  
  public class FlyingMobAttack : DefaultAttack
  {
-     private FlyingMobMovement movementScript;
-     private RaycastHit2D[] hits;
 
-     private Vector2 directionToPlayer;
-     private Vector2 avoidanceDirection;
+    public float attackDashSpeed = 15f;
+    public float attackDashDuration = 0.5f;
+    public float stunDuration = 1f;
+    public float hitRadius = 1f;
+    private FlyingMobMovement movementScript;
+    private RaycastHit2D[] hits;
+
+    private bool isAttacking = false;
+    private List<Vector3> pathToAttackAgain;
+    private int indexToFollow = 0;
  
-     void Awake()
-     {
-         Start();
-         movementScript = GetComponent<FlyingMobMovement>();
-     }
- 
-     void Update()
-     {
- 
-         if (counterAfterBug >= 0.6f)
-         {
-             counterAfterBug = 0;
-             body.gravityScale = 9.8f;
-         }
- 
-         attackTimeCounter += Time.deltaTime;
-         if (PlayerInAggroRange())
-         {
-             FollowThePlayer();
-             if (PlayerInAttackRange() && attackTimeCounter >= attackCooldown)
-             {
-                 print("attack");
-                 animator.SetTrigger("Attack");
-                 StartCoroutine(Attack());
-             }
-         }
-     }
- 
-     protected void FollowThePlayer() {
-         if (player == null)
+    void Awake()
+    {
+        Start();
+        movementScript = GetComponent<FlyingMobMovement>();
+    }
+
+    void Update()
+    {
+
+        if (counterAfterBug >= 0.6f)
         {
-            Debug.LogWarning("Игрок не назначен!");
-            return;
+        counterAfterBug = 0;
+        body.gravityScale = 9.8f;
         }
 
-        // Вычисляем направление к игроку
-        directionToPlayer = (player.position - transform.position).normalized;
-
-        // Проверяем, есть ли препятствие на пути к игроку
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, 2f, groundLayer | platformLayer);
-
-        if (hit.collider != null)
+        attackTimeCounter += Time.deltaTime;
+        if (PlayerInAggroRange())
         {
-            // Если препятствие обнаружено, вычисляем направление для обхода
-            avoidanceDirection = Vector2.Perpendicular(hit.normal).normalized;
-
-            // Двигаемся в сторону обхода
-            transform.position = Vector2.MoveTowards(transform.position, (Vector2)transform.position + avoidanceDirection, chaseSpeed * Time.deltaTime);
+            if (PlayerInAttackRange() && attackTimeCounter >= attackCooldown)
+            {
+                print("attack");
+                animator.SetTrigger("Attack");
+                StartCoroutine(Attack());
+                TryGetDistanceFromPLayer();
+            } 
+            if (PlayerInAttackRange() && !isAttacking) {
+                FollowPath();
+            }
         }
-        else
-        {
-            // Если препятствий нет, двигаемся прямо к игроку
-            transform.position = Vector2.MoveTowards(transform.position, player.position, chaseSpeed * Time.deltaTime);
-        }
-     }
- 
- 
-     protected override IEnumerator Attack()
-     {
-         attackTimeCounter = 0;
-         List<PlayerHealth> listDamaged = new();
-         shouldBeDamaging = true;
-         while (shouldBeDamaging)
-         {
-             hits = Physics2D.CircleCastAll(attackTransform.position, attackRange, transform.right, 0f, attackableLayer);
- 
-             for (int i = 0; i < hits.Length; i++)
-             {
-                 PlayerHealth enemyHealth = hits[i].collider.gameObject.GetComponent<PlayerHealth>();
-                 if (enemyHealth != null && !enemyHealth.HasTakenDamage)
-                 {
-                     enemyHealth.TakeDamage(damage);
-                     listDamaged.Add(enemyHealth);
-                 }
-             }
- 
-             yield return null;
-         }
- 
-         foreach (PlayerHealth enemyHealth in listDamaged)
-         {
-             enemyHealth.HasTakenDamage = false;
-         }
-     }
- 
-     public override void ChaseToAttack()
-     {
-         if (!PlayerInAggroRange())
-         {
-             return;
-         }
- 
-         // �������� � ������� ������
-         Vector2 direction = (player.position - transform.position).normalized;
- 
-         animator.SetFloat("Speed", Math.Abs(direction.x));
-         // ������� � ������� ������
-         if ((direction.x > 0 && Math.Sign(transform.localScale.x) == -1) || (direction.x < 0 && Math.Sign(transform.localScale.x) == 1))
-         {
-             Flip();
-         }
-         body.velocity = new Vector2(direction.x * chaseSpeed, body.velocity.y);
- 
-         // ������ �������� �������������
-         // animator.SetBool("isMoving", true);
- 
-     }
- 
-     private void OnDrawGizmosSelected()
-     {
-         Gizmos.DrawWireSphere(attackTransform.position, attackRange);
- 
- 
-         Vector3 from = new Vector3(transform.position.x - aggroRange, transform.position.y, transform.position.z);
-         Vector3 to = new Vector3(transform.position.x + aggroRange, transform.position.y, transform.position.z);
-         Gizmos.DrawLine(from, to);
+    }
 
-         // Визуализация луча для обнаружения препятствий
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, aggroRange);
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+
+        //  Vector3 from = new Vector3(transform.position.x - aggroRange, transform.position.y, transform.position.z);
+        //  Vector3 to = new Vector3(transform.position.x + aggroRange, transform.position.y, transform.position.z);
+        //  Gizmos.DrawLine(from, to);
+
         if (player != null)
         {
+            Vector3 from = transform.position;
+            Vector3 to = player.position;
+            Vector3 direction = (to - from).normalized;
+            float distance = Vector3.Distance(from, to);
+
+            // Ограничение длины
+            float clampedDistance = Mathf.Min(distance, attackRange);
+            Vector3 endPoint = from + direction * clampedDistance;
+
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(transform.position, transform.position + (Vector3)directionToPlayer * 2f);
+            Gizmos.DrawLine(from, endPoint);
         }
-     }
+    }
  
      private void endOfAttack()
      {
          shouldBeDamaging = false;
      }
- }
+
+    protected override IEnumerator Attack()
+    {
+        if (isAttacking) yield break; // уже атакует
+        isAttacking = true;
+
+        // 1. Запоминаем позицию игрока
+        Vector2 targetPosition = player.position;
+        Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
+
+        float elapsed = 0f;
+        body.velocity = direction * attackDashSpeed;
+
+        while (elapsed < attackDashDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            // 2. Проверяем столкновение с игроком
+            Collider2D playerHit = Physics2D.OverlapCircle(transform.position, hitRadius, attackableLayer);
+            if (playerHit)
+            {
+                TryDealDamage(playerHit.gameObject);
+                break; // прерываем рывок
+            }
+
+            // 3. Проверяем столкновение с препятствием
+            Collider2D obstacleHit = Physics2D.OverlapCircle(transform.position, hitRadius, groundLayer);
+            if (obstacleHit)
+            {
+                Debug.Log("Stunned after hitting obstacle");
+                body.velocity = Vector2.zero;
+                yield return new WaitForSeconds(stunDuration);
+                isAttacking = false;
+                yield break;
+            }
+
+            yield return null;
+        }
+
+        // 4. Завершаем атаку
+        body.velocity = Vector2.zero;
+        isAttacking = false;
+    }
+
+    private void TryDealDamage(GameObject target)
+    {
+        Debug.Log("Hit player! Dealing damage.");
+        target.GetComponent<Health>().TakeDamage(damage);
+    }
+
+    private void TryGetDistanceFromPLayer() {
+        isAttacking = false;
+        float angle = UnityEngine.Random.Range(0f, Mathf.PI);
+        float r = Mathf.Sqrt(UnityEngine.Random.Range(0f, 1f)) * aggroRange;
+        float x = Mathf.Cos(angle) * r;
+        float y = Mathf.Sin(angle) * r;
+
+        Vector3 newPointToAttack = new(x, y);
+        indexToFollow = 0;
+        pathToAttackAgain = Pathfinder.instance.FindPath(body.position, newPointToAttack);
+    }
+
+    private void FollowPath() {
+        if (Vector3.Distance(body.position, pathToFollow[indexToFollow]) < 0.06f) {
+            indexToFollow++;
+        }
+
+        MoveTowards(pathToAttackAgain[indexToFollow], chaseSpeed);
+    }
+
+    
+    private void MoveTowards(Vector2 target, float speed)
+    {
+        Vector2 direction = (target - (Vector2)transform.position).normalized;
+        body.velocity = direction * speed;
+        animator.SetFloat("Speed", speed);
+    }
+
+    public override bool PlayerInAggroRange()
+    {
+        var hits = Physics2D.CircleCast(transform.position, aggroRange, transform.right, 0f, attackableLayer);
+        return hits.collider != null;
+    }
+
+    public override void ChaseToAttack()
+    {
+        throw new NotImplementedException();
+    }
+}

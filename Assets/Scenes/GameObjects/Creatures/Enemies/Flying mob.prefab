@@ -726,7 +726,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 9.8
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -770,12 +770,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chaseSpeed: 5
-  aggroRange: 10
+  aggroRange: 15
   damage: 1
-  attackRange: 1
+  attackRange: 6
   attackCooldown: 2
   multiplayerDamage: 2
-  attackTransform: {fileID: 5693140171132309020}
+  attackTransform: {fileID: 0}
   attackableLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -801,6 +801,7 @@ MonoBehaviour:
   maxHealth: 3
   healthBar: {fileID: 0}
   staminaManaBar: {fileID: 0}
+  canTakeDamage: 0
 --- !u!95 &5172788708165445441
 Animator:
   serializedVersion: 5

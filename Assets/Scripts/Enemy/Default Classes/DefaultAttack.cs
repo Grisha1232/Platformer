@@ -102,7 +102,7 @@ public abstract class DefaultAttack : MonoBehaviour {
         if (Pathfinder.instance.getPathLength2(transform.position) >= 30) {
             return;
         }
-        var path = Pathfinder.instance.getNextThreeTiles(transform.position);
+        var path = Pathfinder.instance.getNextThreeTiles2(transform.position);
         if (path == null || path.Count == 0) {
             return;
         }
