@@ -220,7 +220,7 @@ Transform:
   m_GameObject: {fileID: 5495838407193573702}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.09, y: 0.02, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -581,7 +581,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2326786714804618325}
   - component: {fileID: 7014512791681751499}
-  - component: {fileID: 5181176416960429445}
+  - component: {fileID: 530428184465415964}
   - component: {fileID: 3351482427936149016}
   - component: {fileID: 1901694592017287547}
   - component: {fileID: 6637814085316246760}
@@ -666,8 +666,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &5181176416960429445
-BoxCollider2D:
+--- !u!58 &530428184465415964
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -698,19 +698,9 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.011591911, y: -0.14024854}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.26, y: 0.26}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 1
-    adaptiveTiling: 0
-  m_AutoTiling: 0
+  m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Size: {x: 0.8204632, y: 0.7398467}
-  m_EdgeRadius: 0.02
+  m_Radius: 0.5
 --- !u!50 &3351482427936149016
 Rigidbody2D:
   serializedVersion: 4
@@ -775,17 +765,21 @@ MonoBehaviour:
   attackRange: 6
   attackCooldown: 2
   multiplayerDamage: 2
-  attackTransform: {fileID: 0}
+  attackTransform: {fileID: 5693140171132309020}
   attackableLayer:
     serializedVersion: 2
     m_Bits: 8
   groundLayer:
     serializedVersion: 2
-    m_Bits: 576
+    m_Bits: 2112
   platformLayer:
     serializedVersion: 2
     m_Bits: 2048
   jumpForce: 10
+  attackDashSpeed: 20
+  attackDashDuration: 0.5
+  stunDuration: 1
+  hitRadius: 0.5
 --- !u!114 &5471304899658305990
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -177,6 +177,29 @@ public class Pathfinder : MonoBehaviour
     {
         Vector3Int start = map.WorldToCell(from);
         Vector3Int target = map.WorldToCell(playerTarget.transform.position);
+
+        Vector3Int biasX = new Vector3Int((int)map.cellSize.x, 0);
+        Vector3Int biasY = new Vector3Int(0, (int)map.cellSize.y);
+
+        if (map.HasTile(target) || platforms.HasTile(target)) {
+            if ( !map.HasTile(target + biasX) && !platforms.HasTile(target + biasX) ) {
+                target += biasX;
+            }
+            if ( map.HasTile(target - biasX) && !platforms.HasTile(target - biasX) ) {
+                target -= biasX;
+            }
+            if ( !map.HasTile(target + biasY) && !platforms.HasTile(target + biasY) ) {
+                target += biasY;
+            }
+            if ( !map.HasTile(target - biasY) && !platforms.HasTile(target - biasY) ) {
+                target -= biasY;
+            }
+        }
+
+        if (map.HasTile(target)) {
+            return new();
+        }
+
         HashSet<Vector3Int> closedSet = new HashSet<Vector3Int>();
         PriorityQueue<Node> openSet = new PriorityQueue<Node>();
 
@@ -322,10 +345,19 @@ public class Pathfinder : MonoBehaviour
         return path;
     }
 
-    public List<Vector3> getNextThreeTiles(Vector3 from) {
+    public List<Vector3> getNextTiles(Vector3 from) {
+        Vector3 bias = new Vector3(map.cellSize.x / 2, map.cellSize.y / 2);
         var temp = getPath(from);
+        List<Vector3> rv = new();
 
-        return new() {temp[0], temp[1], temp[2]};
+        for (int i = 0; i < temp.Count(); i++) {
+            if (rv.Count() >= 6) {
+                break;
+            }
+            rv.Add(temp[i] + bias);
+        }
+
+        return rv;
     }
 
     public int getPathLength2(Vector3 from) {

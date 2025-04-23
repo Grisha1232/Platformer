@@ -43,7 +43,7 @@ public abstract class DefaultAttack : MonoBehaviour {
     /// </summary>
     [HideInInspector] public bool isAttackMode {get; set;} = false;
 
-    private BoxCollider2D boxCollider;
+    private Collider2D boxCollider;
     protected Rigidbody2D body;
     protected Animator animator;
     protected Transform player;
@@ -67,7 +67,7 @@ public abstract class DefaultAttack : MonoBehaviour {
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
-        boxCollider = GetComponent<BoxCollider2D>();
+        boxCollider = GetComponent<Collider2D>();
     }
 
     abstract protected IEnumerator Attack();

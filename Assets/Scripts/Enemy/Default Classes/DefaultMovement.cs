@@ -33,7 +33,7 @@ public abstract class DefaultMovement : MonoBehaviour
     /// </summary>
     protected Rigidbody2D body;
 
-    protected BoxCollider2D boxCollider;
+    protected Collider2D boxCollider;
 
     /// <summary>
     /// Аниматор врага
@@ -48,7 +48,7 @@ public abstract class DefaultMovement : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         body = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
+        boxCollider = GetComponent<Collider2D>();
         attackScript = GetComponent<DefaultAttack>();
         initialPosition = body.position; // Сохранение начальной позиции
         player = GameObject.FindGameObjectWithTag("Player").transform; // Поиск игрока по тегу

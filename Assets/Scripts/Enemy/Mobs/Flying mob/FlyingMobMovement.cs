@@ -30,13 +30,17 @@ using UnityEngine;
      {
          if (attackScript.PlayerInAggroRange() && !attackScript.PlayerInAttackRange())
          {
-             ChasePlayer();
-             ToggleIndicators(false);
+            Debug.Log("flying movement chasing");
+            ChasePlayer();
+            ToggleIndicators(false);
          }
-         else
+
+         if (!attackScript.isAttackMode && !attackScript.PlayerInAggroRange())
          {
-             Patrol();
-             ToggleIndicators(true);
+            pathToChase = null;
+            Debug.Log("flying movement patrol");
+            Patrol();
+            ToggleIndicators(true);
          }
      }
  
@@ -57,17 +61,19 @@ using UnityEngine;
  
      private void ChasePlayer()
      {
-        pathToChase ??= Pathfinder.instance.getNextThreeTiles(body.position);
-        print(Vector3.Distance(body.position, pathToChase[^1]));
-        if (Vector3.Distance(body.position, pathToChase[^1]) < 0.06f) {
-            pathToChase = Pathfinder.instance.getNextThreeTiles(body.position);
+         if (pathToChase == null || pathToChase.Count == 0) {
+            pathToChase = Pathfinder.instance.getNextTiles(body.position);
             indexToChase = 0;
-        }
-        if (Vector3.Distance(body.position, pathToChase[indexToChase]) < 0.06f) {
+         }
+         if (Vector3.Distance(body.position, pathToChase[^1]) < 0.1f) {
+            pathToChase = Pathfinder.instance.getNextTiles(body.position);
+            indexToChase = 0;
+         }
+         if (Vector3.Distance(body.position, pathToChase[indexToChase]) < 0.1f) {
             indexToChase++;
-        }
+         }
 
-        MoveTowards(pathToChase[indexToChase], chaseSpeed);
+         MoveTowards(pathToChase[indexToChase], chaseSpeed);
      }
  
      private void MoveTowards(Vector2 target, float speed)
@@ -77,21 +83,13 @@ using UnityEngine;
          animator.SetFloat("Speed", speed);
      }
  
-     private void ToggleIndicators(bool isPatrolling)
-     {
-        //  indicatorPatrol.SetActive(isPatrolling);
-        //  indicatorAttack.SetActive(!isPatrolling);
-        //  indicatorShadow.SetActive(isInShadow);
-     }
-
-     private void OnCollisionEnter2D(Collision2D collision) {
-        Debug.Log(LayerMaskToLayerIndex(LayerMask.NameToLayer("Platform")) + " " + collision.gameObject);
-        if (collision.gameObject.name == "Platforms") {
-            platformCollider = collision.collider;
-            Debug.Log("disabling");
-            Physics2D.IgnoreCollision(boxCollider, collision.collider, true);
-        }
+    private void ToggleIndicators(bool isPatrolling)
+    {
+    //  indicatorPatrol.SetActive(isPatrolling);
+    //  indicatorAttack.SetActive(!isPatrolling);
+    //  indicatorShadow.SetActive(isInShadow);
     }
+
 
     private int LayerMaskToLayerIndex(LayerMask layerMask)
     {
@@ -104,11 +102,12 @@ using UnityEngine;
          Gizmos.color = Color.blue;
          Gizmos.DrawWireSphere(initialPosition, 0.5f);
 
-        //  Pathfinder.instance.DrawPath(body.position);
-        Vector3 size = Vector3.one;
-        Gizmos.color = Color.black;
-        foreach (var tile in pathToChase) {
-            Gizmos.DrawWireCube(tile, size);
-        }
+         Pathfinder.instance.DrawPath(body.position);
+
+         if (pathToChase != null && pathToChase.Count != 0) {
+            Gizmos.color = Color.black;
+            Gizmos.DrawWireCube(pathToChase[indexToChase], Vector2.one);
+         }
+
      }
  }
