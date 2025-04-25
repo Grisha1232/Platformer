@@ -2,6 +2,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine.UI;
+using TMPro;
+using UnityEngine.InputSystem;
 public class GameManager : MonoBehaviour
 {
 
@@ -17,7 +20,12 @@ public class GameManager : MonoBehaviour
 
     [HideInInspector] public GameState currentGameState;
 
+    public GameObject bossUI;
+    public Slider bossHealthBar;
+    public TMP_Text bossName;
+
     public GameObject player;
+    public GameObject playerModel;
 
     private void Awake() {
         if ( instance == null ) {
@@ -28,10 +36,10 @@ public class GameManager : MonoBehaviour
         } else {
             Destroy(gameObject);
         }
+        // TODO: УБРАТЬ!!!!!!!
+        PlayerPrefs.SetInt("TrainingBossDead", 0);
+        
         currentGameState = new GameState();
-        for (int i = 0; i < 10; i++) {
-            currentGameState.Items.Add(new Item(i.ToString()));
-        }
         sceneName = SceneManager.GetActiveScene().name;
     }
 
@@ -42,7 +50,7 @@ public class GameManager : MonoBehaviour
         openPauseMenu();
     }
 
-    private GameObject FindInactiveObjectByTag(string tag)
+    public static GameObject FindInactiveObjectByTag(string tag)
     {
         GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
         foreach (GameObject obj in allObjects)
@@ -53,9 +61,6 @@ public class GameManager : MonoBehaviour
             }
         }
         return null;
-    }
-
-    private void OnEnable() {
     }
 
     #region Pause Menu
@@ -69,12 +74,11 @@ public class GameManager : MonoBehaviour
         }
         if (UserInput.instance.controls.UIinteractive.PauseMenu.WasPressedThisFrame()) {
             pauseMenu.SetActive(!pauseMenu.activeInHierarchy);
-        }
-        
-        if (pauseMenu.activeInHierarchy) {
-            UserInput.instance.controls.Jumping.Disable();
-        } else {
-            UserInput.instance.controls.Jumping.Enable();
+            if (pauseMenu.activeInHierarchy) {
+                UserInput.instance.DisableForGame();
+            } else {
+                UserInput.instance.EnableForGame();
+            }
         }
     }
 
@@ -94,12 +98,12 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(name);
         } else {
             player.SetActive(true);
+            UserInput.instance.EnableForGame();
             SceneManager.LoadScene(name);
         }
         
     }
 
-    // called second
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("OnSceneLoaded: " + scene.name);
@@ -108,20 +112,48 @@ public class GameManager : MonoBehaviour
             LoadGame(false);
         } else {
             player.SetActive(false);
+            LoadGame(true);
         }
+    }
+
+    public void PlayDead() {
+        playerModel.GetComponent<PlayerMovement>().DeathAnim();
     }
 
     public void ReturnToCheckpoint(bool isDeath = false) {
         LoadGame(isDeath);
-        GetComponent<PlayerMovement>().UnblockMovement();
+        playerModel.GetComponent<PlayerMovement>().UnblockMovement();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (isDeath) {
+            bossUI.SetActive(false);
+            foreach (var boss in FindObjectsOfType<DefaultBoss>(true)) {
+                boss.Reset();
+            }
+        }
+        playerModel.GetComponent<PlayerHealth>().Reset();
+        PlayerInventory.instance.ResetHealPotions();
+        UserInput.instance.EnableForGame();
+    }
+
+    public void SetCheckpoint(Vector2 position) {
+        currentGameState.checkpoints[sceneName] = (position.x, position.y);
+        SaveGame();
+        LoadGame(true);
+    }
+
+    public void SetSleep(bool isSleep) {
+        if (isSleep) {
+            playerModel.GetComponent<PlayerMovement>().Sleeping();
+        } else {
+            playerModel.GetComponent<PlayerMovement>().StopSleeping();
+        }
     }
 
     public void SaveGame() {
         currentGameState.currency = PlayerInventory.instance.Currency;
-        currentGameState.Items = PlayerInventory.instance.Items;
-        currentGameState.QuickItems = PlayerInventory.instance.quickItems;
-        currentGameState.playerPositions[sceneName] = (player.transform.position.x, player.transform.position.y);
+        if (!bossUI.activeInHierarchy) {
+            currentGameState.playerPositions[sceneName] = (playerModel.transform.position.x, playerModel.transform.position.y);
+        }
         BinaryFormatter formatter = new BinaryFormatter();
         
         using (FileStream stream = new FileStream("save.dat", FileMode.Create)) {
@@ -143,27 +175,37 @@ public class GameManager : MonoBehaviour
         if (useCheckpoint) {
             currentGameState.countDeath++;
             if (currentGameState.checkpoints.ContainsKey(SceneManager.GetActiveScene().name)) {
-                player.GetComponent<Rigidbody2D>().position = new Vector3(currentGameState.checkpoints[SceneManager.GetActiveScene().name].x, currentGameState.checkpoints[SceneManager.GetActiveScene().name].y); 
+                playerModel.GetComponent<Rigidbody2D>().position = new Vector3(currentGameState.checkpoints[SceneManager.GetActiveScene().name].x, currentGameState.checkpoints[SceneManager.GetActiveScene().name].y); 
                 currentGameState.playerPositions[SceneManager.GetActiveScene().name] = currentGameState.checkpoints[SceneManager.GetActiveScene().name];
             } else {
-                player.GetComponent<Rigidbody2D>().position = new Vector3(0, 10);
-                currentGameState.checkpoints[SceneManager.GetActiveScene().name] = (0, 10);
+                playerModel.GetComponent<Rigidbody2D>().position = new Vector3(0, 0);
+                currentGameState.checkpoints[SceneManager.GetActiveScene().name] = (0, 0);
                 currentGameState.playerPositions[SceneManager.GetActiveScene().name] = currentGameState.checkpoints[SceneManager.GetActiveScene().name];
             }
         } else {
             if (currentGameState.playerPositions.ContainsKey(SceneManager.GetActiveScene().name)) {
-                player.GetComponent<Rigidbody2D>().position = new Vector3(currentGameState.playerPositions[SceneManager.GetActiveScene().name].x, currentGameState.playerPositions[SceneManager.GetActiveScene().name].y); 
-                currentGameState.checkpoints[SceneManager.GetActiveScene().name] = currentGameState.playerPositions[SceneManager.GetActiveScene().name];
+                playerModel.GetComponent<Rigidbody2D>().position = new Vector3(currentGameState.playerPositions[SceneManager.GetActiveScene().name].x, currentGameState.playerPositions[SceneManager.GetActiveScene().name].y); 
             } else {
-                player.GetComponent<Rigidbody2D>().position = new Vector3(0, 10);
-                currentGameState.checkpoints[SceneManager.GetActiveScene().name] = (0, 10);
+                playerModel.GetComponent<Rigidbody2D>().position = new Vector3(0, 0);
+                currentGameState.checkpoints[SceneManager.GetActiveScene().name] = (0, 0);
                 currentGameState.playerPositions[SceneManager.GetActiveScene().name] = currentGameState.checkpoints[SceneManager.GetActiveScene().name];
             }
         }
         PlayerMovement.isMovementBlocked = false;
-        PlayerInventory.instance.Currency = currentGameState.currency;
-        PlayerInventory.instance.Items = currentGameState.Items;
-        PlayerInventory.instance.quickItems = currentGameState.QuickItems;
+        if (PlayerInventory.instance != null) {
+            PlayerInventory.instance.Currency = currentGameState.currency;
+            PlayerInventory.instance.AddToCurrentCurency(0);
+        }
+    }
+
+    public void SetBossHealth(EnemyHealth health, string name) {
+        bossUI.SetActive(true);
+        health.healthBar = bossHealthBar;
+        bossName.text = name;
+    }
+
+    public void BossDied() {
+        bossUI.SetActive(false);
     }
 
 #endregion

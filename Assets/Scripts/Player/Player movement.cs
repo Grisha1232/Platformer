@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
+using UnityEditor.Callbacks;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -54,7 +56,6 @@ public class PlayerMovement : MonoBehaviour
         anim = GetComponent<Animator>();
         health = GetComponent<PlayerHealth>();
         scaleFactor = transform.localScale.x;
-        GameManager.instance.currentGameState.Items = GetComponent<PlayerInventory>().Items;
         GameManager.instance.currentGameState.currency = 0;
     }
 
@@ -133,7 +134,7 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(dashSpeed * Math.Sign(transform.localScale.x), 0);
             rb.gravityScale = 0;
             dashTimeCounter = dashTime;
-            health.framInvincable = true;
+            health.frameInvincable = true;
         }
     }
 
@@ -150,14 +151,34 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(0, 0);
             rb.gravityScale = 6;
             dashCooldownTimer = 0;
-            health.framInvincable = false;
+            health.frameInvincable = false;
             anim.SetTrigger("StopDash");
         }
+    }
+
+    public void TeleportTo(Transform point) {
+        rb.position = point.position;
     }
 
     #endregion
 
     #region Help methods
+
+    public void Sleeping() {
+        anim.SetTrigger("Sleep");
+    }
+
+    public void StopSleeping() {
+        anim.SetTrigger("StopSleep");
+    }
+
+    public void DeathAnim() {
+        anim.SetTrigger("Death");
+    }
+
+    private void resetAfterDeath() {
+        GameManager.instance.ReturnToCheckpoint(true);
+    }
 
     private void DisableCollisionWithPlatforms() {
         if (platformCollider == null) {
@@ -203,11 +224,6 @@ public class PlayerMovement : MonoBehaviour
         if (groundHit.collider != null || enemyHit.collider != null) {
             anim.SetTrigger("isGrounded");
         }
-    }
-
-    private void OnDrawGizmos() {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(boxCollider.bounds.center, boxCollider.bounds.size * 1.1f);
     }
 
     #endregion

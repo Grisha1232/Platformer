@@ -80,6 +80,7 @@ public class PauseMenuController : MonoBehaviour
     private void openInventory() {
         Debug.Log("Inventory");
         inventory.SetActive(true);
+        gameObject.SetActive(false);
     }
 
     private void openStatus() {

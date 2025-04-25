@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using AlgoritmAStar;
+using Unity.VisualScripting;
+using UnityEngine.UIElements;
 
 public class Pathfinder : MonoBehaviour
 {
@@ -112,7 +115,7 @@ public class Pathfinder : MonoBehaviour
             }
                 
         }
-        availableTilesPosition = availableTilesPosition.Concat(toAdd).ToHashSet();
+        availableTilesPosition = System.Linq.Enumerable.ToHashSet(availableTilesPosition.Concat(toAdd));
     }
 
     // Update is called once per frame
@@ -169,10 +172,199 @@ public class Pathfinder : MonoBehaviour
         }
     }
 
-    public int getPathLength(Vector3 from) {
+    // Нахождение пути для воздушных
+    public List<Vector3Int> getPath(Vector3 from)
+    {
+        Vector3Int start = map.WorldToCell(from);
+        Vector3Int target = map.WorldToCell(playerTarget.transform.position);
+
+        Vector3Int biasX = new Vector3Int((int)map.cellSize.x, 0);
+        Vector3Int biasY = new Vector3Int(0, (int)map.cellSize.y);
+
+        if (map.HasTile(target) || platforms.HasTile(target)) {
+            if ( !map.HasTile(target + biasX) && !platforms.HasTile(target + biasX) ) {
+                target += biasX;
+            }
+            if ( map.HasTile(target - biasX) && !platforms.HasTile(target - biasX) ) {
+                target -= biasX;
+            }
+            if ( !map.HasTile(target + biasY) && !platforms.HasTile(target + biasY) ) {
+                target += biasY;
+            }
+            if ( !map.HasTile(target - biasY) && !platforms.HasTile(target - biasY) ) {
+                target -= biasY;
+            }
+        }
+
+        if (map.HasTile(target)) {
+            return new();
+        }
+
+        HashSet<Vector3Int> closedSet = new HashSet<Vector3Int>();
+        PriorityQueue<Node> openSet = new PriorityQueue<Node>();
+
+        Dictionary<Vector3Int, Vector3Int> cameFrom = new Dictionary<Vector3Int, Vector3Int>();
+        Dictionary<Vector3Int, int> gScore = new Dictionary<Vector3Int, int>();
+
+        openSet.Enqueue(new Node(start, 0, Heuristic(start, target)));
+        gScore[start] = 0;
+
+        Vector3Int[] directions = new Vector3Int[]
+        {
+            Vector3Int.up,
+            Vector3Int.down,
+            Vector3Int.left,
+            Vector3Int.right
+        };
+
+        while (openSet.Count > 0)
+        {
+            Node current = openSet.Dequeue();
+
+            if (current.Position == target)
+            {
+                return ReconstructPath(cameFrom, current.Position);
+            }
+
+            closedSet.Add(current.Position);
+
+            foreach (var dir in directions)
+            {
+                Vector3Int neighbor = current.Position + dir;
+
+                if (map.HasTile(neighbor) || platforms.HasTile(neighbor) || closedSet.Contains(neighbor))
+                    continue;
+
+                int tentativeG = gScore[current.Position] + 1;
+
+                if (!gScore.ContainsKey(neighbor) || tentativeG < gScore[neighbor])
+                {
+                    cameFrom[neighbor] = current.Position;
+                    gScore[neighbor] = tentativeG;
+
+                    int fScore = tentativeG + Heuristic(neighbor, target);
+                    openSet.Enqueue(new Node(neighbor, tentativeG, fScore));
+                }
+            }
+        }
+
+        return new List<Vector3Int>(); // Путь не найден
+    }
+
+    public List<Vector3> FindPath(Vector3 from, Vector3 to)
+    {
+        Vector3Int start = map.WorldToCell(from);
+        Vector3Int goal = map.WorldToCell(to);
+
+        Vector3Int biasX = new Vector3Int((int)map.cellSize.x, 0);
+        Vector3Int biasY = new Vector3Int(0, (int)map.cellSize.y);
+
+        if (map.HasTile(goal) || platforms.HasTile(goal)) {
+            if ( !map.HasTile(goal + biasX) && !platforms.HasTile(goal + biasX) ) {
+                goal += biasX;
+            }
+            if ( map.HasTile(goal - biasX) && !platforms.HasTile(goal - biasX) ) {
+                goal -= biasX;
+            }
+            if ( !map.HasTile(goal + biasY) && !platforms.HasTile(goal + biasY) ) {
+                goal += biasY;
+            }
+            if ( !map.HasTile(goal - biasY) && !platforms.HasTile(goal - biasY) ) {
+                goal -= biasY;
+            }
+        }
+
+        HashSet<Vector3Int> closedSet = new HashSet<Vector3Int>();
+        PriorityQueue<Node> openSet = new PriorityQueue<Node>();
+
+        Dictionary<Vector3Int, Vector3Int> cameFrom = new Dictionary<Vector3Int, Vector3Int>();
+        Dictionary<Vector3Int, int> gScore = new Dictionary<Vector3Int, int>();
+
+        openSet.Enqueue(new Node(start, 0, Heuristic(start, goal)));
+        gScore[start] = 0;
+
+        Vector3Int[] directions = new Vector3Int[]
+        {
+            Vector3Int.up,
+            Vector3Int.down,
+            Vector3Int.left,
+            Vector3Int.right
+        };
+
+        while (openSet.Count > 0)
+        {
+            Node current = openSet.Dequeue();
+
+            if (current.Position == goal)
+            {
+                return ReconstructPath(cameFrom, current.Position).Select(v => new Vector3(v.x, v.y)) .ToList();
+            }
+
+            closedSet.Add(current.Position);
+
+            foreach (var dir in directions)
+            {
+                Vector3Int neighbor = current.Position + dir;
+
+                // Пропускаем, если это препятствие или уже в закрытом списке
+                if (map.HasTile(neighbor) || platforms.HasTile(neighbor) || closedSet.Contains(neighbor))
+                    continue;
+
+                int tentativeG = gScore[current.Position] + 1;
+
+                if (!gScore.ContainsKey(neighbor) || tentativeG < gScore[neighbor])
+                {
+                    cameFrom[neighbor] = current.Position;
+                    gScore[neighbor] = tentativeG;
+
+                    int fScore = tentativeG + Heuristic(neighbor, goal);
+                    openSet.Enqueue(new Node(neighbor, tentativeG, fScore));
+                }
+            }
+        }
+
+        return new List<Vector3>(); // Путь не найден
+    }
+
+    private int Heuristic(Vector3Int a, Vector3Int b)
+    {
+        return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y); // Манхэттенская дистанция
+    }
+
+    private List<Vector3Int> ReconstructPath(Dictionary<Vector3Int, Vector3Int> cameFrom, Vector3Int current)
+    {
+        List<Vector3Int> path = new List<Vector3Int> { current };
+
+        while (cameFrom.ContainsKey(current))
+        {
+            current = cameFrom[current];
+            path.Add(current);
+        }
+
+        path.Reverse();
+        return path;
+    }
+
+    public List<Vector3> getNextTiles(Vector3 from) {
+        Vector3 bias = new Vector3(map.cellSize.x / 2, map.cellSize.y / 2);
+        var temp = getPath(from);
+        List<Vector3> rv = new();
+
+        for (int i = 0; i < temp.Count(); i++) {
+            if (rv.Count() >= 6) {
+                break;
+            }
+            rv.Add(temp[i] + bias);
+        }
+
+        return rv;
+    }
+
+    public int getPathLength2(Vector3 from) {
         return getPath2(from).Count;
     }
 
+    // Нахождение пути для наземных
     public List<Vector3Int> getPath2(Vector3 from) {
         Vector3Int start = map.WorldToCell(from);
 
@@ -197,7 +389,7 @@ public class Pathfinder : MonoBehaviour
 
         List<Vector3Int> rv = new();
         var current = start;
-        while (path[current] != Direction.None) {
+        while (path.ContainsKey(current) && path[current] != Direction.None) {
             if (path[current] == Direction.Up) {
                 current += biasY;
             } else if (path[current] == Direction.Down) {
@@ -212,7 +404,7 @@ public class Pathfinder : MonoBehaviour
         return rv;
     }
 
-    public List<Vector3Int> getNextThreeTiles(Vector3 from) {
+    public List<Vector3Int> getNextThreeTiles2(Vector3 from) {
         Vector3Int start = map.WorldToCell(from);
 
         if (!availableTilesPosition.Contains(start)) {
@@ -234,65 +426,17 @@ public class Pathfinder : MonoBehaviour
             } else if (path[current] == Direction.Left) {
                 current -= biasX;
             }
-            if (rv.Count == 0 || path[current] != Direction.Up || (path[current] == Direction.Up && path[rv[^1]] != Direction.Up)) {
+            if (rv.Count == 0) {
+                rv.Add(current);
+            } else if (path[current] != Direction.Down && path[current] != Direction.Up) {
+                rv.Add(current);
+            } else if (path[current] == Direction.Up && path[rv[^1]] != Direction.Up) {
+                rv.Add(current);
+            } else if (path[current] == Direction.Down && path[rv[^1]] != Direction.Down) {
                 rv.Add(current);
             }
         }
         return rv;
-    }
-
-    private Vector3Int GetCellWithLowestFScore(List<Vector3Int> openSet, Dictionary<Vector3Int, int> fScore)
-    {
-        return openSet.OrderBy(cell => fScore[cell]).First();
-    }
-
-    private List<Vector3Int> GetNeighbors(Vector3Int cell, Dictionary<Vector3Int, Vector3Int> cameFrom)
-    {
-        
-        Vector3Int biasX = new Vector3Int((int)map.cellSize.x, 0);
-        Vector3Int biasY = new Vector3Int(0, (int)map.cellSize.y);
-
-        List<Vector3Int> neighbors = new List<Vector3Int>();
-
-        // Проверка соседей по горизонтали
-        Vector3Int leftNeighbor = cell - biasX;
-        Vector3Int rightNeighbor = cell + biasX;
-
-        if (availableTilesPosition.Contains(leftNeighbor))
-            neighbors.Add(leftNeighbor);
-        if (availableTilesPosition.Contains(rightNeighbor))
-            neighbors.Add(rightNeighbor);
-
-        // Проверка прыжков вверх
-        for (int i = 1; i <= 6; i++) // Максимальная высота прыжка 6 клеток
-        {
-            Vector3Int jumpNeighbor = cell + new Vector3Int(0, i * (int)map.cellSize.y);
-            if (availableTilesPosition.Contains(jumpNeighbor))
-            {
-                neighbors.Add(jumpNeighbor);
-                break; // Прерываем цикл, если нашли доступную клетку для прыжка
-            } else {
-            }
-        }
-        return neighbors;
-    }
-
-    private int Heuristic(Vector3Int a, Vector3Int b)
-    {
-        int dx = Mathf.Abs(a.x - b.x);
-        int dy = Mathf.Abs(a.y - b.y);
-        return dx + dy; // Манхэттенское расстояние
-    }
-
-    private List<Vector3Int> ReconstructPath(Dictionary<Vector3Int, Vector3Int> cameFrom, Vector3Int current)
-    {
-        List<Vector3Int> path = new List<Vector3Int> { current };
-        while (cameFrom.ContainsKey(current))
-        {
-            current = cameFrom[current];
-            path.Insert(0, current);
-        }
-        return path;
     }
 
 #endregion
@@ -305,43 +449,44 @@ public class Pathfinder : MonoBehaviour
         BoundsInt.PositionEnumerator positions = map.cellBounds.allPositionsWithin;
 
         Vector3 bias = new Vector3(map.cellSize.x / 2, map.cellSize.y / 2);
-        // foreach (var position in positions) {
 
-        //     if (map.GetTile(position) != null){
-        //         Gizmos.color = Color.red;
-        //     } else {
-        //         continue;
-        //     }
+        foreach (var position in positions) {
+
+            if (map.GetTile(position) != null){
+                Gizmos.color = Color.red;
+            } else {
+                continue;
+            }
             
-        //     Gizmos.DrawWireCube(position + bias, map.cellSize);
-        // }
+            Gizmos.DrawWireCube(position + bias, map.cellSize);
+        }
 
-        // if (platforms != null) {
-        //     BoundsInt.PositionEnumerator positions1 = platforms.cellBounds.allPositionsWithin;
-        //     foreach (var position in positions1) {
+        if (platforms != null) {
+            BoundsInt.PositionEnumerator positions1 = platforms.cellBounds.allPositionsWithin;
+            foreach (var position in positions1) {
 
-        //         if (platforms.GetTile(position) != null){
-        //             Gizmos.color = Color.red;
-        //         } else {
-        //             continue;
-        //         }
+                if (platforms.GetTile(position) != null){
+                    Gizmos.color = Color.red;
+                } else {
+                    continue;
+                }
                 
-        //         Gizmos.DrawWireCube(position + bias, map.cellSize);
+                Gizmos.DrawWireCube(position + bias, map.cellSize);
+            }
+        }
+
+        // if (availableForGizmos != null) {
+        //     foreach (KeyValuePair<Vector3Int, Color> value in availableForGizmos) {
+        //         Gizmos.color = value.Value;
+        //         Gizmos.DrawWireCube(value.Key + bias, map.cellSize);
         //     }
         // }
-
-        if (availableForGizmos != null) {
-            foreach (KeyValuePair<Vector3Int, Color> value in availableForGizmos) {
-                Gizmos.color = value.Value;
-                Gizmos.DrawWireCube(value.Key + bias, map.cellSize);
-            }
-        }
-        if (availableTilesPosition != null) {
-            foreach(var tile in availableTilesPosition) {
-                Gizmos.color = Color.blue;
-                Gizmos.DrawWireCube(tile + bias, map.cellSize);
-            }
-        }
+        // if (availableTilesPosition != null) {
+        //     foreach(var tile in availableTilesPosition) {
+        //         Gizmos.color = Color.blue;
+        //         Gizmos.DrawWireCube(tile + bias, map.cellSize);
+        //     }
+        // }
 
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(map.WorldToCell(playerTarget.transform.position) + bias, map.cellSize);
@@ -404,9 +549,9 @@ public class Pathfinder : MonoBehaviour
         Gizmos.DrawLine(end, rightWing);
     }
 
-    public void DrawPath(Vector3 from) {
+    public void DrawPath2(Vector3 from) {
         Vector3 bias = new Vector3(map.cellSize.x / 2, map.cellSize.y / 2);
-        var listDiretions = getNextThreeTiles(from);
+        var listDiretions = getNextThreeTiles2(from);
         if (listDiretions == null || listDiretions.Count == 0) {
             return;
         }
@@ -415,6 +560,16 @@ public class Pathfinder : MonoBehaviour
         for (int i = 0; i < listDiretions.Count - 1; i++) {
             Gizmos.DrawWireCube(listDiretions[i] + bias, map.cellSize);
         }
+    }
+
+    public void DrawPath(Vector3 from) {
+        Vector3 bias = new Vector3(map.cellSize.x / 2, map.cellSize.y / 2);
+        var listTiles = getPath(from);
+        Gizmos.color = Color.green;
+        for (int i = 0; i < listTiles.Count - 1; i++) {
+            Gizmos.DrawLine(listTiles[i] + bias, listTiles[i + 1] + bias);
+        }
+        Gizmos.DrawLine(listTiles[^2] + bias, listTiles[^1] + bias);
     }
 #endregion
 }

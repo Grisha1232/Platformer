@@ -17,10 +17,6 @@ public abstract class DefaultMovement : MonoBehaviour
 
     [SerializeField] protected float jumpForce = 10f;
 
-    [SerializeField] protected GameObject indicatorShadow;
-    [SerializeField] protected GameObject indicatorAttack;
-    [SerializeField] protected GameObject indicatorPatrol;
-
 
     /// <summary>
     /// Ссылка на игрока
@@ -37,6 +33,8 @@ public abstract class DefaultMovement : MonoBehaviour
     /// </summary>
     protected Rigidbody2D body;
 
+    protected Collider2D boxCollider;
+
     /// <summary>
     /// Аниматор врага
     /// </summary>
@@ -50,6 +48,7 @@ public abstract class DefaultMovement : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         body = GetComponent<Rigidbody2D>();
+        boxCollider = GetComponent<Collider2D>();
         attackScript = GetComponent<DefaultAttack>();
         initialPosition = body.position; // Сохранение начальной позиции
         player = GameObject.FindGameObjectWithTag("Player").transform; // Поиск игрока по тегу
@@ -58,5 +57,12 @@ public abstract class DefaultMovement : MonoBehaviour
     abstract protected void Update();
 
     abstract protected void Patrol();
+
+    
+    protected void Flip() {
+        Vector3 scale = transform.localScale;
+        scale.x *= -1;
+        transform.localScale = scale;
+    }
 
 }

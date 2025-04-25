@@ -1,85 +1,138 @@
+using System;
+using System.Collections;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 
-public class ClawGuardianAttack : MonoBehaviour
+public class ClawGuardianAttack : DefaultAttack
 {
-    public float attackCooldown = 1f; // Время между атаками
-    public int maxComboAttacks = 3; // Максимальное количество атак в комбо
-    public float dashDistance = 2f; // Дистанция рывка
-    public float dashCooldown = 3f; // Время перезарядки рывка
-    public float nextDashTime = 0f; // Время, когда можно выполнить следующий рывок
+    [SerializeField] private float rushSpeed = 10f; // Скорость рывка
+    [SerializeField] private float rushDistance = 5f; // Дистанция рывка
+    [SerializeField] private float timeBetweenAttacks = 0.5f; // Время между атаками в серии
 
-    private Animator animator; // Ссылка на Animator
-    private float nextAttackTime = 0f; // Время, когда можно атаковать
-    private int currentCombo = 0; // Текущий счетчик комбо
-    private Transform player; // Ссылка на игрока
+    private bool isRushing = false; // Флаг для рывка
+    private bool isAttackingSeries = false; // Флаг для серии атак
+    private bool isFirstAttack = true; // Флаг для первой атаки
 
-    void Start()
-    {
-        animator = GetComponent<Animator>(); // Получение компонента Animator
-        player = GameObject.FindGameObjectWithTag("Player").transform; // Поиск игрока по тегу
+    private new void Start() {
+        base.Start();
     }
 
-    public void PerformAttack()
-    {
-        if (Time.time >= nextAttackTime)
-        {
-            if (currentCombo < maxComboAttacks)
-            {
-                Attack();
-                currentCombo++; // Увеличиваем счетчик комбо
+    private void Update() {
+        attackTimeCounter += Time.deltaTime;
+        if (PlayerInAggroRange()) {
+            ChaseToAttack();
+            if (attackTimeCounter >= attackCooldown && !isAttackingSeries && !isRushing && Mathf.Abs(player.transform.position.y - transform.position.y) <= 1f) {
+                StartAttackSequence();
             }
-            else
-            {
-                // Если достигли максимального количества атак в комбо, сбрасываем счетчик
-                currentCombo = 0;
+        } else {
+            isFirstAttack = true;
+        }
+    }
+
+    private void StartAttackSequence() {
+        if (!isGrounded()) {
+            return;
+        }
+        if (isFirstAttack) {
+            // Первая атака начинается с рывка
+            StartCoroutine(RushAttack());
+            isFirstAttack = false; // Сбрасываем флаг первой атаки
+            return;
+        }
+
+        Vector3 playerPosition = player.transform.position;
+
+        
+        if (!PlayerInAttackRange() && Mathf.Abs(transform.position.y - playerPosition.y) <= 0.1f) {
+            StartCoroutine(RushAttack());
+        } else {
+            StartCoroutine(AttackSeries());
+        }
+    }
+
+    private IEnumerator AttackSeries() {
+        Debug.Log("Attack series");
+        attackTimeCounter = 0;
+        isAttackingSeries = true;
+
+        // Серия из 3 атак
+        for (int i = 0; i < 3; i++) {
+            if (PlayerInAttackRange()) {
+                // Наносим урон
+                DealDamage();
+                // animator.SetTrigger("Attack"); // Анимация атаки
+            }
+            yield return new WaitForSeconds(timeBetweenAttacks);
+        }
+
+        isAttackingSeries = false;
+    }
+
+    protected override IEnumerator Attack() {
+        // Этот метод больше не используется, так как атака начинается с рывка
+        yield break;
+    }
+
+    private IEnumerator RushAttack() {
+        Debug.Log("rush");
+        attackTimeCounter = 0;
+        isRushing = true;
+        if (Mathf.Sign(player.transform.position.x - transform.position.x) != Mathf.Sign(transform.localScale.x)) {
+            Flip();
+        }
+        Vector2 rushDirection = (player.transform.position - transform.position).normalized;
+        rushDirection.y = 0;
+        float rushTime = rushDistance / rushSpeed;
+
+        var temp = body.gravityScale;
+        body.gravityScale = 0;
+        // Рывок в сторону игрока
+        float elapsedTime = 0f;
+        while (elapsedTime < rushTime) {
+            body.velocity = rushDirection * rushSpeed;
+            elapsedTime += Time.deltaTime;
+            DealDamage();
+            yield return null;
+        }
+
+        player.gameObject.GetComponent<PlayerHealth>().HasTakenDamage = false;
+
+        // Останавливаем рывок
+        body.gravityScale = temp;
+        body.velocity = Vector2.zero;
+        isRushing = false;
+        
+        Debug.Log("stop rush");
+    }
+
+    private void DealDamage() {
+        var hits = Physics2D.CircleCast(attackTransform.position, attackRange, transform.right, 0f, attackableLayer);
+        if (hits.collider != null && shouldBeDamaging) {
+            // Наносим урон игроку
+            PlayerHealth playerHealth = hits.collider.GetComponent<PlayerHealth>();
+            if (playerHealth != null && !playerHealth.HasTakenDamage) {
+                playerHealth.TakeDamage(damage);
             }
         }
     }
 
-    void Attack()
-    {
-        nextAttackTime = Time.time + attackCooldown; // Установка времени следующей атаки
-        Debug.Log("Когтистый охранник атакует!");
-
-        // Триггер анимации атаки
-        animator.SetTrigger("Attack");
-
-        // Логика нанесения урона игроку
-        // Здесь можно добавить код для нанесения урона, если игрок в радиусе атаки
-
-        // Пример: вызов мощной атаки при третьем ударе
-        if (currentCombo == 2) // Если это третий удар (индекс 2)
-        {
-            PerformPowerAttack();
+    public override void ChaseToAttack() {
+        if ( isRushing && isAttackingSeries ) {
+            return;
         }
+        UpdatePath();
+        followPath();
     }
 
-    void PerformPowerAttack()
-    {
-        Debug.Log("Когтистый охранник выполняет мощную атаку!");
-        animator.SetTrigger("PowerAttack");
+    private void OnDrawGizmosSelected() {
+        Gizmos.DrawWireSphere(attackTransform.position, attackRange);
+        
+        
+        Vector3 from = new Vector2(transform.position.x - aggroRange, transform.position.y);
+        Vector3 to = new Vector2(transform.position.x + aggroRange, transform.position.y);     
+        Gizmos.DrawLine(from, to);
 
-        // Логика мощной атаки (например, дополнительные эффекты)
-    }
-
-    public void PerformDash()
-    {
-        if (Time.time >= nextDashTime)
-        {
-            nextDashTime = Time.time + dashCooldown; // Установка времени следующего рывка
-            Debug.Log("Когтистый охранник выполняет рывок на игрока!");
-
-            // Анимация рывка
-            animator.SetTrigger("Dash");
-
-            // Расчет направления рывка
-            Vector3 dashDirection = (player.position - transform.position).normalized; 
-            transform.position += dashDirection * dashDistance; // Движение в направлении игрока
-        }
-    }
-
-    public void ResetCombo()
-    {
-        currentCombo = 0; // Сброс комбо при выходе из радиуса атаки или после атаки
+        Gizmos.color = Color.green;
+        Pathfinder.instance.DrawPath2(body.position);
     }
 }

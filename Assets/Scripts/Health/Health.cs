@@ -2,16 +2,19 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public abstract class Health : MonoBehaviour {
-    [SerializeField] protected float maxHealth = 3f;
+    [SerializeField] public float maxHealth = 3f;
     [SerializeField] public Slider healthBar;
     [SerializeField] public Slider staminaManaBar;
     public float CurrentHealth {get; protected set;}
 
-    public bool HasTakenDamage {get; set;}
+    public bool HasTakenDamage {get; set;} = false;
 
     protected virtual void Start() {
+        HasTakenDamage = false;
         CurrentHealth = maxHealth;
-        healthBar.value = 1;
+        if (healthBar != null) {
+            healthBar.value = 1;
+        }
     }
 
     public virtual void TakeDamage( float damage ) {
@@ -22,16 +25,21 @@ public abstract class Health : MonoBehaviour {
             healthBar.value = CurrentHealth / maxHealth;
         }
         print("Taken damage");
-        if (CurrentHealth == 0) {
+        if (CurrentHealth <= 0) {
             Die();
         }
     }
 
-    protected virtual void Die() {
+    public virtual void Die() {
         Destroy(gameObject);
     }
 
     public virtual void Heal( float amount ) {
+        CurrentHealth += amount;
+        if (CurrentHealth > maxHealth) {
+            CurrentHealth = maxHealth;
+        }
+        healthBar.value = CurrentHealth / maxHealth;
         return;
     }
 }

@@ -9,16 +9,21 @@ using static Pathfinder;
 
 public class ShadowCatMovement : DefaultMovement
 {
+    public Canvas healthBar;
     /// <summary>
     /// Маска земли
     /// </summary>
     [SerializeField] private LayerMask groundLayer;
-    private BoxCollider2D boxCollider;
 
     /// <summary>
     /// Находится ли Теневой кот в тени
     /// </summary>
-    [HideInInspector] public bool isInShadow {get; private set;}= false;
+    [HideInInspector] public bool isInShadow { get; private set; } = false;
+
+    private float shadowCooldown = 2f;
+    private float shadowDuration = 3f;
+    private float shadowDurationCounter = 0;
+    private float shadowCooldownCounter;
 
 
     /// <summary>
@@ -28,19 +33,24 @@ public class ShadowCatMovement : DefaultMovement
         base.Start();
         attackScript = GetComponent<ShadowCatAttack>();
         boxCollider = GetComponent<BoxCollider2D>();
+        shadowCooldownCounter = shadowCooldown;
     }
     
-    protected override void Update()
-    {
+    protected override void Update() {
         Patrol();
-        
-        // print("----------");
-
-        // print("++++++++++");
-        // foreach (var pair in compressedPath) {
-        //     Debug.Log(pair.vect + " Direction = " + pair.dir);
+        // if (shadowCooldownCounter >= shadowCooldown && shadowDurationCounter == 0) {
+        //     UseShadow();
         // }
-        // print("++++++++++");
+        
+        // if (shadowDurationCounter >= shadowDuration) {
+        //     UnuseShadow();
+        // }
+
+        if (isInShadow) {
+            shadowDurationCounter += Time.deltaTime;
+        } else {
+            shadowCooldownCounter += Time.deltaTime;
+        }
     }
 
 
@@ -52,9 +62,9 @@ public class ShadowCatMovement : DefaultMovement
             return;
         }
         {
-            indicatorPatrol.SetActive(true);
-            indicatorAttack.SetActive(false);
-            indicatorShadow.SetActive(isInShadow);
+            // indicatorPatrol.SetActive(true);
+            // indicatorAttack.SetActive(false);
+            // indicatorShadow.SetActive(isInShadow);
         }
         // Поворот в пределах патрулирования
         if (Math.Abs(transform.position.x - initialPosition.x ) >= patrolRange && Math.Sign(transform.localScale.x) != Math.Sign(initialPosition.x - transform.position.x))
@@ -70,16 +80,24 @@ public class ShadowCatMovement : DefaultMovement
         // animator.SetBool("isMoving", true);
     }
 
+    private void UseShadow() {
+        isInShadow = true;
+        body.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.05f);
+        Debug.Log("shadow " + body.GetComponent<SpriteRenderer>().color);
+        healthBar.gameObject.SetActive(false);
+        shadowCooldownCounter = 0;
+    }
+
+    private void UnuseShadow() {
+        isInShadow = false;
+        body.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+        healthBar.gameObject.SetActive(true);
+        shadowDurationCounter = 0;
+    }
 
     #endregion
 
     #region Help functions
-
-    void Flip() {
-        Vector3 scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
-    }
 
      private void OnDrawGizmosSelected() {
         Vector3 from = new Vector3(initialPosition.x - patrolRange, initialPosition.y + 1, initialPosition.z);
@@ -110,11 +128,10 @@ public class ShadowCatMovement : DefaultMovement
     }
 
     private void DrawPathToTarget() {
-        Gizmos.color = Color.blue;
-        Pathfinder.instance.DrawPath(body.position);
+        Gizmos.color = Color.green;
+        Pathfinder.instance.DrawPath2(body.position);
     }
 
-    
     private void DrawArrow(Vector3 center, Vector2 size, Direction direction)
     {
         // Центр квадрата

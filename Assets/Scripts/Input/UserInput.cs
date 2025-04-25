@@ -21,6 +21,25 @@ public class UserInput : MonoBehaviour
 
         controls = new Controls();
         controls.Movement.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+        
+        var jsonSettings = PlayerPrefs.GetString("rebinds");
+        if (jsonSettings != "") {
+            controls.LoadBindingOverridesFromJson(jsonSettings);
+        }
+    }
+
+    public void DisableForGame() {
+        controls.Jumping.Disable();
+        controls.Attacking.Disable();
+        controls.Dashing.Disable();
+        controls.Movement.Disable();
+    }
+
+    public void EnableForGame() {
+        controls.Jumping.Enable();
+        controls.Attacking.Enable();
+        controls.Dashing.Enable();
+        controls.Movement.Enable();
     }
 
     private void OnEnable() {

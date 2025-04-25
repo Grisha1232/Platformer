@@ -4,16 +4,21 @@ using UnityEngine;
 
 public class StartBossScript : MonoBehaviour
 {
-    public BoxCollider2D playerCollider;
+    private GameObject player;
+    public DefaultBoss boss;
 
     private void Start() {
-        playerCollider = GameObject.FindGameObjectWithTag("Player").GetComponent<BoxCollider2D>();
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
-        Debug.Log(collision + " " + playerCollider);
-        if (collision == playerCollider) {
-            DefaultBoss.isLocked = false;
+        if (collision == player.GetComponent<BoxCollider2D>()) {
+            Debug.Log("start boss = " + boss.gameObject.name);
+            if (PlayerPrefs.GetInt(boss.gameObject.name + "Dead") == 1) {
+                return;
+            }
+            boss.isLocked = false;
+            GameManager.instance.SetBossHealth(boss.GetComponent<EnemyHealth>(), boss.gameObject.name);
         }
     }
 }

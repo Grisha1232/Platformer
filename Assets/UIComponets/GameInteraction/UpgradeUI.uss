@@ -1,0 +1,62 @@
+.upgradeElement {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    align-self: auto;
+}
+
+.panel {
+    background-color: rgba(0, 0, 0, 0.31);
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
+    min-width: 50%;
+    align-self: auto;
+    flex-grow: 1;
+}
+
+.button {
+    background-color: rgba(0, 0, 0, 0.27);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    border-top-left-radius: 10%;
+    border-top-right-radius: 10%;
+    border-bottom-right-radius: 10%;
+    border-bottom-left-radius: 10%;
+    color: rgb(255, 255, 255);
+    max-width: 10%;
+}
+
+.button:hover {
+    background-color: rgba(255, 162, 162, 0.31);
+}
+
+.button:focus {
+    background-color: rgba(255, 163, 163, 0.31);
+}
+
+.label {
+    color: rgb(255, 255, 255);
+}
+
+.statusElement {
+    align-self: auto;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.space-maker {
+    min-height: 30%;
+}
+
+.element {
+    max-height: 20%;
+    min-height: 20%;
+}
