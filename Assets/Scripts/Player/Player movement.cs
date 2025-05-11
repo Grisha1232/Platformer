@@ -173,10 +173,13 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public void DeathAnim() {
+        UserInput.instance.DisableForGame();
+        rb.velocity = Vector2.zero;
         anim.SetTrigger("Death");
     }
 
     private void resetAfterDeath() {
+        UserInput.instance.EnableForGame();
         GameManager.instance.ReturnToCheckpoint(true);
     }
 
