@@ -8,10 +8,12 @@ public abstract class Health : MonoBehaviour {
     public float CurrentHealth {get; protected set;}
 
     public bool HasTakenDamage {get; set;} = false;
+    protected bool alreadyDead = false;
 
     protected virtual void Start() {
         HasTakenDamage = false;
         CurrentHealth = maxHealth;
+        alreadyDead = false;
         if (healthBar != null) {
             healthBar.value = 1;
         }

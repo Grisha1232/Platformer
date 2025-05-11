@@ -10,8 +10,11 @@ class PlayerHealth : Health {
 
     public override void Die()
     {
-        print("Died");
-        GameManager.instance.PlayDead();
+        if (!alreadyDead) {
+            alreadyDead = true;
+            print("Died");
+            GameManager.instance.PlayDead();
+        }
     }
 
     public void Reset() {
