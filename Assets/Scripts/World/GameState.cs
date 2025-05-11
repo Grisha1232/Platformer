@@ -8,7 +8,9 @@ public class GameState {
         playerPositions = new();
         currency = new();
         countDeath = 0;
+        LastScene = "";
     }
+    public string LastScene;
     public Dictionary<string, (float x, float y)> checkpoints { get; set; }
     public Dictionary<string, (float x, float y)> playerPositions { get; set; }
 
