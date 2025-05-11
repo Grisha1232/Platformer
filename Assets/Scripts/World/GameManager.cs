@@ -100,6 +100,7 @@ public class GameManager : MonoBehaviour
             player.SetActive(true);
             UserInput.instance.EnableForGame();
             SceneManager.LoadScene(name);
+            currentGameState.LastScene = name;
         }
         
     }

@@ -47,12 +47,18 @@ public class MainMenuController : MonoBehaviour
     }
 
     private void Continue() {
-        levelSelector.SetActive(true);
-        gameObject.SetActive(false);
+        if (GameManager.instance.currentGameState.LastScene == "") {
+            NewGame();
+        }
+        GameManager.instance.LoadGame(false);
+        GameManager.instance.LoadScene(GameManager.instance.currentGameState.LastScene);
+        // levelSelector.SetActive(true);
+        // gameObject.SetActive(false);
     }
 
     private void NewGame() {
-        Continue();
+        // Continue();
+        GameManager.instance.LoadScene("Trainning boss");
     }
 
     private void OpenSettings() {
